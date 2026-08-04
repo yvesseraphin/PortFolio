@@ -220,13 +220,12 @@
     });
   });
 
-  const path = window.location.pathname.replace(/\/$/, "") || "/";
-  const filename = path.split("/").pop() || "index.html";
+  const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
   buttons.forEach((btn) => {
     const href = btn.dataset.href;
     if (!href) return;
-    const btnFile = href.split("/").pop() || "index.html";
-    if (filename === btnFile || (filename === "" && btnFile === "index.html")) {
+    const normHref = href.replace(/\/$/, "") || "/";
+    if (currentPath === normHref) {
       const dot = btn.querySelector(".dock-indicator");
       if (dot) dot.style.opacity = "1";
     }
