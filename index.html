@@ -1,0 +1,898 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Seraphin</title>
+
+    <link rel="shortcut icon" href="favicon.svg" />
+    <meta name="author" content="Seraphin" />
+    <meta name="description" content="Devouring details." />
+    <meta name="robots" content="index,follow" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:description" content="Devouring details." />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="/" />
+    <script>
+      !(function () {
+        try {
+          var d = document.documentElement.classList;
+          d.remove("dark", "light");
+          var e = localStorage.getItem("theme");
+          if ("system" === e || !e) {
+            var t = "(prefers-color-scheme: dark)",
+              m = window.matchMedia(t);
+            m.media !== t || m.matches ? d.add("dark") : d.add("light");
+          } else if (e) {
+            d.add(e);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <link
+      rel="preload"
+      href="X-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="X-Medium.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <footer
+      id="footer"
+      class="dock"
+      role="navigation"
+      aria-label="Site navigation"
+    >
+      <div aria-hidden="true" class="dock-highlight"></div>
+      <div class="dock-items">
+        <!-- Home -->
+        <button class="dock-btn" aria-label="Home" data-href="#">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              d="M20 18.8V6.63998L13.6514 2.81501C13.0511 2.45333 12.751 2.2725 12.4304 2.20186C12.1469 2.13938 11.8531 2.13938 11.5696 2.20186C11.249 2.2725 10.9489 2.45334 10.3486 2.81501L4 6.64001V18.8C4 19.9201 4 20.4802 4.21799 20.908C4.40973 21.2843 4.71569 21.5903 5.09202 21.782C5.51984 22 6.0799 22 7.2 22H16.8C17.9201 22 18.4802 22 18.908 21.782C19.2843 21.5903 19.5903 21.2843 19.782 20.908C20 20.4802 20 19.9201 20 18.8Z"
+              fill="currentColor"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M1.14251 9.5145C1.42665 9.98808 2.04091 10.1416 2.51449 9.85749L12 4.16619L21.4855 9.85749C21.9591 10.1416 22.5733 9.98808 22.8575 9.5145C23.1416 9.04092 22.9881 8.42666 22.5145 8.14251L13.029 2.45121C12.3956 2.07119 11.6044 2.07119 10.971 2.45121L1.4855 8.14251C1.01192 8.42666 0.858357 9.04092 1.14251 9.5145Z"
+              fill="currentColor"
+            />
+            <path
+              d="M9 16C9 14.3431 10.3431 13 12 13C13.6569 13 15 14.3431 15 16V22H9V16Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <!-- Craft -->
+        <button class="dock-btn" aria-label="Craft" data-href="#">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M5.49998 3.50004C7.29283 1.70719 10.1189 1.5772 12.0615 3.11008C12.3818 3.36283 12.6631 3.66091 12.9502 3.95004L21.6787 12.6786C21.9424 12.9423 22.0192 13.2934 21.9465 13.6089C21.8635 13.9692 21.5853 14.2829 21.1677 14.3664L18.2968 14.9406C18.1032 14.9793 17.9254 15.0745 17.7858 15.2141L11.4142 21.5858C10.6331 22.3668 9.36678 22.3668 8.58573 21.5858L2.41416 15.4142C1.63311 14.6332 1.63311 13.3668 2.41416 12.5858C3.2879 11.712 4.16159 10.8382 5.03534 9.96448C3.5819 8.02573 3.73678 5.26324 5.49998 3.50004ZM6.47443 8.52539L10.5253 4.47449C9.39087 3.7881 7.89376 3.93469 6.9142 4.91425C5.93463 5.89382 5.78804 7.39093 6.47443 8.52539Z"
+              fill="currentColor"
+            />
+            <path
+              d="M14.7928 17C15.2383 17 15.4614 17.5386 15.1464 17.8536L11.4142 21.5858C10.6331 22.3668 9.36679 22.3668 8.58574 21.5858L4.8535 17.8536C4.53852 17.5386 4.7616 17 5.20706 17H14.7928Z"
+              fill="currentColor"
+            />
+            <path
+              d="M22 20.0001C22 21.1047 21.1046 22.0001 20 22.0001C18.8954 22.0001 18 21.1047 18 20.0001C18 18.8592 19.1571 17.7183 19.711 17.2374C19.8788 17.0918 20.1212 17.0918 20.289 17.2374C20.8429 17.7183 22 18.8592 22 20.0001Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <!-- Projects -->
+        <button class="dock-btn" aria-label="Projects" data-href="#">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M8 20C8 19.4477 8.44772 19 9 19H15C15.5523 19 16 19.4477 16 20V21C16 22.6569 14.6569 24 13 24H11C9.34315 24 8 22.6569 8 21V20Z"
+              fill="currentColor"
+            />
+            <path
+              opacity="0.25"
+              d="M20 8C20 10.5264 18.8289 12.7793 17 14.2454V15C17 16.1046 16.1046 17 15 17H9C7.89543 17 7 16.1046 7 15V14.2454C5.17107 12.7793 4 10.5264 4 8C4 3.58172 7.58172 0 12 0C16.4183 0 20 3.58172 20 8Z"
+              fill="currentColor"
+            />
+            <path
+              d="M10.7071 8.29289C10.3166 7.90237 9.68342 7.90237 9.29289 8.29289C8.90237 8.68342 8.90237 9.31658 9.29289 9.70711L11 11.4142V17H13V11.4142L14.7071 9.70711C15.0976 9.31658 15.0976 8.68342 14.7071 8.29289C14.3166 7.90237 13.6834 7.90237 13.2929 8.29289L12 9.58579L10.7071 8.29289Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <!-- Photos -->
+        <button class="dock-btn" aria-label="Photos" data-href="#">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              d="M2 8.34233C2 6.96573 2.93689 5.76578 4.27239 5.4319L6 5L7.1094 3.3359C7.6658 2.5013 8.60249 2 9.60555 2H14.3944C15.3975 2 16.3342 2.5013 16.8906 3.3359L18 5L19.7276 5.4319C21.0631 5.76578 22 6.96573 22 8.34233V19C22 20.6569 20.6569 22 19 22H5C3.34315 22 2 20.6569 2 19V8.34233Z"
+              fill="currentColor"
+            />
+            <path
+              d="M18 10C18.5523 10 19 9.55228 19 9C19 8.44772 18.5523 8 18 8C17.4477 8 17 8.44772 17 9C17 9.55228 17.4477 10 18 10Z"
+              fill="currentColor"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M16 13C16 15.2091 14.2091 17 12 17C9.79086 17 8 15.2091 8 13C8 10.7909 9.79086 9 12 9C14.2091 9 16 10.7910 16 13ZM14 13C14 14.1046 13.1046 15 12 15C10.8954 15 10 14.1046 10 13C10 11.8954 10.8954 11 12 11C13.1046 11 14 11.8954 14 13Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <hr class="dock-divider" />
+
+        <!-- Twitter -->
+        <button
+          class="dock-btn"
+          aria-label="Twitter"
+          data-href="https://www.instagram.com/0x_serap_hin/"
+        >
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              d="M20.9999 7.5C21.4999 15 15.9999 21 8.99995 21C6.58804 21 4.17613 20.6768 2.28388 19.7706C1.85051 19.5631 2.0199 18.985 2.49936 18.9532C4.82944 18.7987 6.75765 18.2423 7.99995 17C11.0001 14 11.5 13 12.2646 9.02396C12.0933 8.54804 11.9999 8.03492 11.9999 7.5C11.9999 5.01472 14.0147 3 16.4999 3C18.0181 3 19.3607 3.75182 20.1757 4.90346L21.8929 4.65815C22.3207 4.59703 22.6194 5.07087 22.3796 5.43047L20.9999 7.5Z"
+              fill="currentColor"
+            />
+            <path
+              d="M7.99998 16.9999C2.58358 15.1944 1.64928 8.49939 2.62226 5.00708C2.73651 4.59701 3.26964 4.59488 3.48453 4.96234C5.14601 7.80359 8.30518 9.38991 12.2646 9.02385C18.5 9.02385 17 19.9999 7.99998 16.9999Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <!-- GitHub -->
+        <button
+          class="dock-btn"
+          aria-label="GitHub"
+          data-href="https://github.com/yvesseraphin"
+        >
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path
+              d="M12 2C6.475 2 2 6.475 2 12a9.994 9.994 0 006.838 9.488c.5.087.687-.213.687-.476 0-.237-.013-1.024-.013-1.862-2.512.463-3.162-.612-3.362-1.175-.113-.288-.6-1.175-1.025-1.413-.35-.187-.85-.65-.013-.662.788-.013 1.35.725 1.538 1.025.9 1.512 2.338 1.087 2.912.825.088-.65.35-1.087.638-1.337-2.225-.25-4.55-1.113-4.55-4.938 0-1.088.387-1.987 1.025-2.688-.1-.25-.45-1.275.1-2.65 0 0 .837-.262 2.75 1.026a9.28 9.28 0 012.5-.338c.85 0 1.7.112 2.5.337 1.912-1.3 2.75-1.024 2.75-1.024.55 1.375.2 2.4.1 2.65.637.7 1.025 1.587 1.025 2.687 0 3.838-2.337 4.688-4.562 4.938.362.312.675.912.675 1.85 0 1.337-.013 2.412-.013 2.75 0 .262.188.574.688.474A10.016 10.016 0 0022 12c0-5.525-4.475-10-10-10z"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <!-- Mail -->
+        <button
+          class="dock-btn"
+          aria-label="Mail"
+          data-href="mailto:myvesseraphin@gmail.com"
+        >
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              d="M1 6C1 4.34315 2.34315 3 4 3H20C21.6569 3 23 4.34315 23 6V18C23 19.6569 21.6569 21 20 21H4C2.34315 21 1 19.6569 1 18V6Z"
+              fill="currentColor"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M5.23177 7.35981C5.58534 6.93553 6.2159 6.87821 6.64018 7.23177L11.3598 11.1648C11.7307 11.4738 12.2693 11.4738 12.6402 11.1648L17.3598 7.23177C17.7841 6.87821 18.4147 6.93553 18.7682 7.35981C19.1218 7.78409 19.0645 8.41465 18.6402 8.76822L13.9205 12.7012C12.808 13.6284 11.192 13.6284 10.0794 12.7012L5.35981 8.76822C4.93553 8.41465 4.87821 7.78409 5.23177 7.35981Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <hr class="dock-divider" />
+
+        <!-- Theme toggle -->
+        <button id="btn-theme" class="dock-btn" aria-label="Toggle theme">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <span class="icon-sun" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3v1M12 20v1M4.22 4.22l.71.71M18.36 18.36l.71.71M3 12h1M20 12h1M4.22 19.78l.71-.71M18.36 5.64l.71-.71"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="4"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+          </span>
+          <span class="icon-moon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+      </div>
+    </footer>
+    <main class="page-wrapper">
+      <div>
+        <!-- BIO SECTION -->
+        <section class="bio-section">
+          <!-- Static header: clock · location (fades in via JS) -->
+          <header
+            id="header-bar"
+            class="header-bar"
+            aria-label="Current time and location"
+          >
+            <span class="header-meta">
+              <span data-clock>12:50:12</span>
+              <span class="meta-dot">·</span>
+              <span>Kigali, Rwanda</span>
+            </span>
+          </header>
+
+          <!-- Screen-reader h1 -->
+          <h1 class="vh">
+            Seraphin. Creating software that makes people feel something. Design
+            engineer unsatisfiably curious about novel interfaces. Relentlessly
+            devoted to fine, detailed polish.
+          </h1>
+
+          <!-- Visual bio (aria-hidden — screen readers use the h1 above) -->
+          <div aria-hidden="true" class="bio-text">
+            <span class="bio-name">Seraphin.</span>
+            Creating<svg
+              class="bio-icon"
+              width="24"
+              height="24"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M21 7.353v9.294a.6.6 0 01-.309.525l-8.4 4.666a.6.6 0 01-.582 0l-8.4-4.666A.6.6 0 013 16.647V7.353a.6.6 0 01.309-.524l8.4-4.667a.6.6 0 01.582 0l8.4 4.667a.6.6 0 01.309.524z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M3.528 7.294l8.18 4.544a.6.6 0 00.583 0l8.209-4.56M12 21v-9"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+            >software that <span class="mirror-letter">m</span>akes people feel
+            something. De<span class="mirror-letter">s</span>ign engi<span
+              class="mirror-letter"
+              >n</span
+            >eer<svg
+              class="bio-icon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M10.5 16.5L7 15M2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2C6.477 2 2 6.477 2 12Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8.5 9C8.36739 9 8.24021 8.94732 8.14645 8.85355C8.05268 8.75979 8 8.63261 8 8.5C8 8.36739 8.05268 8.24021 8.14645 8.14645C8.24021 8.05268 8.36739 8 8.5 8C8.63261 8 8.75979 8.05268 8.85355 8.14645C8.94732 8.24021 9 8.36739 9 8.5C9 8.63261 8.94732 8.75979 8.85355 8.85355C8.75979 8.94732 8.63261 9 8.5 9ZM15.5 9C15.3674 9 15.2402 8.94732 15.1464 8.85355C15.0527 8.75979 15 8.63261 15 8.5C15 8.36739 15.0527 8.24021 15.1464 8.14645C15.2402 8.05268 15.3674 8 15.5 8C15.6326 8 15.7598 8.05268 15.8536 8.14645C15.9473 8.24021 16 8.36739 16 8.5C16 8.63261 15.9473 8.75979 15.8536 8.85355C15.7598 8.94732 15.6326 9 15.5 9Z"
+                fill="currentColor"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+            >unsatisfiably curious about nove<span class="italic-letter"
+              >l</span
+            >
+            interfaces. Relentlessly devoted to fine, detailed<svg
+              class="bio-icon"
+              width="24"
+              height="24"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M16 6.28a2.28 2.28 0 01-.662 1.606c-.976.984-1.923 2.01-2.936 2.958a.597.597 0 01-.822-.017l-2.918-2.94a2.281 2.281 0 010-3.214 2.277 2.277 0 013.232 0L12 4.78l.106-.107A2.276 2.276 0 0116 6.28z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M18 20l3.824-3.824a.6.6 0 00.176-.424V10.5A1.5 1.5 0 0020.5 9v0a1.5 1.5 0 00-1.5 1.5V15"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M18 16l.858-.858a.484.484 0 00.142-.343v0a.485.485 0 00-.268-.433l-.443-.221a2 2 0 00-2.308.374l-.895.895a2 2 0 00-.586 1.414V20M6 20l-3.824-3.824A.6.6 0 012 15.752V10.5A1.5 1.5 0 013.5 9v0A1.5 1.5 0 015 10.5V15"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M6 16l-.858-.858A.485.485 0 015 14.799v0c0-.183.104-.35.268-.433l.443-.221a2 2 0 012.308.374l.895.895a2 2 0 01.586 1.414V20"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+            >polish. Currently at
+            <a
+              href="https://www.rca.ac.rw/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bio-link"
+              >Rwanda Coding Academy</a
+            >.
+          </div>
+        </section>
+        <div class="carousel-section" aria-label="Work samples">
+          <svg
+            id="name-svg"
+            aria-hidden="true"
+            class="name-svg-overlay"
+            viewBox="408 287 692 190"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <path
+              id="L1"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M498.5 365.03C485.5 365.03 472.5 365.03 459.5 365.03C458.21 359.2 461.89 348.67 454.5 346.96C453.35 347.58 452.27 347.83 451.66 349.17C450.04 352.72 450.57 365.98 453.79 368.66C457.11 371.42 462.87 371.59 466.94 372.53C473.69 374.1 480.52 377.15 485.94 381.54C499.2 392.27 499.02 404.79 499.09 420.5C499.16 435.36 498.87 448.45 488.88 460.35C469.06 483.96 429.7 478.68 415.27 452.25C408.37 439.63 409.39 418.81 410.5 404.75C423.83 404.75 437.17 404.75 450.5 404.75C451.98 410.22 448.66 419.78 454.5 422.81C456.07 422.43 457.4 422.33 458.3 420.76C459.87 418.03 459.47 404.54 457.4 402.11C454.15 398.3 447.54 398.58 443.02 397.48C434.51 395.43 424.98 391.07 419.15 384.31C410 373.68 410.17 361.85 410.2 348.5C410.24 334.78 410.32 322.02 419.38 310.84C438.22 287.59 475.96 289.03 492.35 314.18C499.24 324.75 499.09 336.33 499.06 348.5C499.04 353.96 499.64 359.7 498.5 365.03Z"
+            />
+            <path
+              id="L2"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M589.03 294.97C589.03 314.5 589.03 334.02 589.03 353.55C575.62 353.55 562.22 353.55 548.81 353.55C548.81 361.6 548.81 369.65 548.81 377.7C553.79 377.7 558.78 377.7 563.77 377.7C563.77 382.61 563.77 387.52 563.77 392.42C558.79 392.42 553.8 392.42 548.82 392.42C548.82 400.24 548.82 408.05 548.82 415.87C562.23 415.87 575.64 415.87 589.05 415.87C589.05 435.41 589.05 454.96 589.05 474.5C579.73 475.61 569.9 474.88 560.5 474.87C552.81 474.86 544.96 475.39 537.54 472.98C523.07 468.28 511.47 456.07 508.53 440.94C506.87 432.38 507.79 423.17 507.78 414.5C507.77 402.17 507.72 389.83 507.73 377.5C507.73 367.83 507.66 358.16 507.76 348.5C507.93 333.08 508.46 319.07 520.02 307.53C532.77 294.8 548.59 294.84 565.5 294.94C573.34 294.99 581.19 294.8 589.03 294.97Z"
+            />
+            <path
+              id="L3"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M598.04 295.21C607.48 294.52 617.04 294.98 626.5 294.94C641.24 294.88 655.04 294.14 667.75 302.73C682.06 312.4 686.83 327.99 686.69 344.5C686.62 353.13 685.31 361.5 680.31 368.78C675.74 375.41 669.43 379.21 662.3 382.5C669.45 387.48 675.09 387.17 680.85 395.67C687.96 406.16 686.79 418.45 686.82 430.5C686.87 444.96 688.38 460.48 686.47 474.81C673.11 474.81 659.74 474.81 646.38 474.81C645.08 458.55 646.09 441.82 646.11 425.5C646.12 420.01 648.03 409.93 640 410.5C636.51 414.43 638.26 423.38 638.27 428.5C638.29 443.86 639.11 459.51 638.01 474.82C624.69 474.82 611.36 474.82 598.04 474.82C598.04 414.95 598.04 355.08 598.04 295.21ZM639.5 342.5C637.32 346.04 637.52 358.8 639.5 362.36C647.44 364.68 646.09 355.74 646.07 350.5C646.06 348.12 646.7 344.63 644.59 342.91C642.87 341.5 641.43 342.16 639.5 342.5Z"
+            />
+            <path
+              id="L4"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M781.05 474.81C768.26 474.81 755.46 474.81 742.66 474.81C742.66 447.68 742.66 420.55 742.66 393.41C739.81 392.06 738.15 392.16 735.14 393.13C735.14 420.36 735.14 447.59 735.14 474.82C722.01 474.82 708.89 474.82 695.76 474.82C693.87 461.19 695.47 445.39 695.44 431.5C695.41 421.17 695.36 410.83 695.46 400.5C695.61 384.17 695.31 367.83 695.44 351.5C695.51 342.53 694.78 333.44 697.31 324.72C702.7 306.17 720.49 294.02 739.5 294.15C757.77 294.26 774.78 306.87 779.89 324.55C782.5 333.58 781.66 343.22 781.67 352.5C781.69 368.17 781.69 383.83 781.65 399.5C781.63 409.17 781.61 418.83 781.64 428.5C781.67 438.5 781.7 448.5 781.68 458.5C781.68 463.84 782.28 469.64 781.05 474.81ZM739.5 375.18C733.22 377.37 731.98 389.08 741.5 387.83C744 383.83 743.54 377.86 739.5 375.18Z"
+            />
+            <path
+              id="L5"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M829.2 402.5C829.2 426.61 829.2 450.71 829.2 474.82C816.22 474.82 803.24 474.82 790.26 474.82C790.26 415.05 790.26 355.27 790.26 295.5C798.11 294.16 806.52 294.91 814.5 294.93C831.35 294.97 848.11 293.62 860.91 306.6C872.7 318.56 873.64 333.62 873.59 349.5C873.54 365.2 872.73 380.5 860.31 391.83C850.34 400.94 841.9 401.13 829.2 402.5ZM830.4 362.5C831.97 362.88 833.38 363.39 834.86 362.33C836.83 360.91 836.4 357.58 836.44 355.5C836.52 350.29 838.21 340.53 830.28 342.5C828.05 347.47 828.14 357.53 830.4 362.5Z"
+            />
+            <path
+              id="L6"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M918.74 294.98C918.74 322.47 918.74 349.95 918.74 377.44C921.16 377.44 923.58 377.44 926 377.44C926 349.95 926 322.46 926 294.97C938.29 294.97 950.58 294.97 962.88 294.97C962.88 354.92 962.88 414.86 962.88 474.81C950.58 474.81 938.29 474.81 926 474.81C926 447.39 926 419.97 926 392.55C923.83 392.55 921.67 392.55 919.5 392.55C917.72 399.04 918.73 406.71 918.73 413.5C918.74 426.5 918.68 439.5 918.72 452.5C918.74 459.73 919.66 467.76 918.15 474.82C906.05 474.82 893.95 474.82 881.85 474.82C881.85 414.87 881.85 354.92 881.85 294.98C894.15 294.98 906.44 294.98 918.74 294.98Z"
+            />
+            <path
+              id="L7"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M971.08 294.96C983.54 294.96 996.01 294.96 1008.47 294.96C1008.47 354.91 1008.47 414.87 1008.47 474.82C996.01 474.82 983.54 474.82 971.08 474.82C971.08 414.87 971.08 354.91 971.08 294.96Z"
+            />
+            <path
+              id="L8"
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M1096.76 474.82C1084.68 474.82 1072.59 474.82 1060.5 474.82C1059.58 464.84 1060.26 454.54 1060.26 444.5C1060.27 427.5 1060.21 410.5 1060.26 393.5C1060.27 388.82 1061.38 373.34 1059.54 369.94C1058.61 368.23 1057.12 368.37 1055.5 368.12C1054.62 368.92 1053.68 369.51 1053.31 370.72C1051.66 376.11 1053.09 389.28 1053.04 395.5C1052.92 412.83 1053.04 430.17 1053.06 447.5C1053.07 456.53 1053.71 465.84 1052.75 474.81C1040.72 474.81 1028.7 474.81 1016.67 474.81C1015.97 470.46 1016.38 465.92 1016.35 461.5C1016.26 451.5 1016.31 441.5 1016.35 431.5C1016.38 421.5 1016.31 411.5 1016.35 401.5C1016.38 394.17 1016.33 386.83 1016.33 379.5C1016.33 370.5 1016.36 361.5 1016.32 352.5C1016.29 344.94 1015.65 336.98 1016.84 329.5C1019.19 314.71 1029.42 301.3 1043.72 296.29C1048.14 294.74 1052.82 294.13 1057.5 294.16C1075.5 294.3 1091.5 308.33 1095.81 325.55C1097.75 333.34 1097.17 341.54 1097.16 349.5C1097.14 360.17 1097.15 370.83 1097.16 381.5C1097.17 401.5 1097.13 421.5 1097.13 441.5C1097.13 452.5 1097.95 463.9 1096.76 474.82Z"
+            />
+          </svg>
+
+          <div id="carousel-inner" class="carousel-inner" style="opacity: 0">
+            <div
+              aria-hidden="true"
+              class="carousel-fade carousel-fade--left"
+            ></div>
+            <div
+              aria-hidden="true"
+              class="carousel-fade carousel-fade--right"
+            ></div>
+
+            <div data-carousel class="carousel-track">
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 1"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/1.jpg"
+                  alt="Photo 1"
+                  width="320"
+                  height="340"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 2"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/2.jpg"
+                  alt="Photo 2"
+                  width="320"
+                  height="340"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 3"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/3.jpg"
+                  alt="Photo 3"
+                  width="320"
+                  height="340"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 4"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/4.jpg"
+                  alt="Photo 4"
+                  width="320"
+                  height="340"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 5"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/5.jpg"
+                  alt="Photo 5"
+                  width="320"
+                  height="340"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 6"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/6.jpg"
+                  alt="Photo 6"
+                  width="320"
+                  height="340"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 7"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/7.jpg"
+                  alt="Photo 7"
+                  width="320"
+                  height="340"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+              <a
+                href="#"
+                class="carousel-card"
+                aria-label="Photo 8"
+                carousel-item
+                tabindex="-1"
+              >
+                <img
+                  src="assets/images/8.jpg"
+                  alt="Photo 8"
+                  width="320"
+                  height="340"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div
+                  data-fake-button=""
+                  class="card-arrow-btn"
+                  aria-hidden="true"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+
+              <div class="carousel-dupe" aria-hidden="true">
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/1.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/2.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/3.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/4.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/5.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/6.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/7.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+                <a href="#" class="carousel-card" carousel-item tabindex="-1"
+                  ><img
+                    src="assets/images/8.jpg"
+                    alt=""
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async" />
+                  <div data-fake-button="" class="card-arrow-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 12h12.5m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg></div
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div aria-hidden="true" class="blend-overlay"></div>
+    <div aria-hidden="true" class="noise-canvas-wrap">
+      <canvas id="noise-canvas"></canvas>
+    </div>
+    <script src="assets/js/main.js" defer></script>
+  </body>
+</html>
