@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Blog — Seraphin</title>
+    <link rel="shortcut icon" href="favicon.svg" />
+    <meta name="author" content="Seraphin" />
+    <meta name="description" content="Thoughts and writing by Seraphin." />
+    <script>
+      !(function () {
+        try {
+          var d = document.documentElement.classList;
+          d.remove("dark", "light");
+          var e = localStorage.getItem("theme");
+          if ("system" === e || !e) {
+            var t = "(prefers-color-scheme: dark)", m = window.matchMedia(t);
+            m.media !== t || m.matches ? d.add("dark") : d.add("light");
+          } else if (e) { d.add(e); }
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="preload" href="X-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="X-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+      .posts-grid {
+        max-width: 672px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        background: var(--gray4);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .post-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 20px 24px;
+        background: var(--gray1);
+        text-decoration: none;
+        color: inherit;
+        transition: background 150ms ease;
+        cursor: pointer;
+      }
+
+      .post-card:hover { background: var(--gray2); }
+
+      .post-card:first-child { border-radius: 12px 12px 0 0; }
+      .post-card:last-child  { border-radius: 0 0 12px 12px; }
+      .post-card:only-child  { border-radius: 12px; }
+
+      .post-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--gray12);
+        letter-spacing: -0.3px;
+      }
+
+      .post-excerpt {
+        font-size: 14px;
+        color: var(--gray10);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .post-meta {
+        font-size: 13px;
+        color: var(--gray9);
+      }
+
+      .post-cover {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        flex-shrink: 0;
+        background: var(--gray3);
+      }
+
+      .post-card-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .post-card-text { flex: 1; min-width: 0; }
+
+      .page-header {
+        max-width: 672px;
+        margin: 0 auto 32px;
+      }
+
+      .page-title {
+        font-size: 14px;
+        color: var(--gray10);
+        text-transform: lowercase;
+        letter-spacing: -0.2px;
+        margin-bottom: 24px;
+      }
+
+      .empty-state {
+        max-width: 672px;
+        margin: 0 auto;
+        color: var(--gray9);
+        font-size: 14px;
+        text-transform: lowercase;
+      }
+
+      .skeleton {
+        background: var(--gray3);
+        border-radius: 4px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- DOCK -->
+    <footer id="footer" class="dock" role="navigation" aria-label="Site navigation">
+      <div aria-hidden="true" class="dock-highlight"></div>
+      <div class="dock-items">
+        <button class="dock-btn" aria-label="Home" data-href="/">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path opacity="0.25" d="M20 18.8V6.63998L13.6514 2.81501C13.0511 2.45333 12.751 2.2725 12.4304 2.20186C12.1469 2.13938 11.8531 2.13938 11.5696 2.20186C11.249 2.2725 10.9489 2.45334 10.3486 2.81501L4 6.64001V18.8C4 19.9201 4 20.4802 4.21799 20.908C4.40973 21.2843 4.71569 21.5903 5.09202 21.782C5.51984 22 6.0799 22 7.2 22H16.8C17.9201 22 18.4802 22 18.908 21.782C19.2843 21.5903 19.5903 21.2843 19.782 20.908C20 20.4802 20 19.9201 20 18.8Z" fill="currentColor"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.14251 9.5145C1.42665 9.98808 2.04091 10.1416 2.51449 9.85749L12 4.16619L21.4855 9.85749C21.9591 10.1416 22.5733 9.98808 22.8575 9.5145C23.1416 9.04092 22.9881 8.42666 22.5145 8.14251L13.029 2.45121C12.3956 2.07119 11.6044 2.07119 10.971 2.45121L1.4855 8.14251C1.01192 8.42666 0.858357 9.04092 1.14251 9.5145Z" fill="currentColor"/>
+            <path d="M9 16C9 14.3431 10.3431 13 12 13C13.6569 13 15 14.3431 15 16V22H9V16Z" fill="currentColor"/>
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <button class="dock-btn" aria-label="Blog" data-href="/blog.html">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path opacity="0.25" d="M4 4C4 2.89543 4.89543 2 6 2H14L20 8V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z" fill="currentColor"/>
+            <path d="M14 2L20 8H14V2Z" fill="currentColor"/>
+            <path d="M8 13H16M8 17H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <button class="dock-btn" aria-label="Projects" data-href="/projects.html">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 20C8 19.4477 8.44772 19 9 19H15C15.5523 19 16 19.4477 16 20V21C16 22.6569 14.6569 24 13 24H11C9.34315 24 8 22.6569 8 21V20Z" fill="currentColor"/>
+            <path opacity="0.25" d="M20 8C20 10.5264 18.8289 12.7793 17 14.2454V15C17 16.1046 16.1046 17 15 17H9C7.89543 17 7 16.1046 7 15V14.2454C5.17107 12.7793 4 10.5264 4 8C4 3.58172 7.58172 0 12 0C16.4183 0 20 3.58172 20 8Z" fill="currentColor"/>
+            <path d="M10.7071 8.29289C10.3166 7.90237 9.68342 7.90237 9.29289 8.29289C8.90237 8.68342 8.90237 9.31658 9.29289 9.70711L11 11.4142V17H13V11.4142L14.7071 9.70711C15.0976 9.31658 15.0976 8.68342 14.7071 8.29289C14.3166 7.90237 13.6834 7.90237 13.2929 8.29289L12 9.58579L10.7071 8.29289Z" fill="currentColor"/>
+          </svg>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+
+        <hr class="dock-divider" />
+
+        <button id="btn-theme" class="dock-btn" aria-label="Toggle theme">
+          <div aria-hidden="true" class="dock-btn-sheen"></div>
+          <span class="icon-sun" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3v1M12 20v1M4.22 4.22l.71.71M18.36 18.36l.71.71M3 12h1M20 12h1M4.22 19.78l.71-.71M18.36 5.64l.71-.71" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </span>
+          <span class="icon-moon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <div class="dock-indicator" aria-hidden="true"></div>
+        </button>
+      </div>
+    </footer>
+
+    <main class="page-wrapper">
+      <div>
+        <div class="page-header">
+          <p class="page-title">writing</p>
+        </div>
+        <div id="posts-container"></div>
+      </div>
+    </main>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+      // ── Sanity config ──
+      const PROJECT_ID = 'bps9n75q';
+      const DATASET = 'production';
+      const API_VERSION = '2024-01-01';
+
+      function sanityImageUrl(ref) {
+        if (!ref) return null;
+        const [, id, dims, fmt] = ref.split('-');
+        return `https://cdn.sanity.io/images/${PROJECT_ID}/${DATASET}/${id}-${dims}.${fmt}`;
+      }
+
+      function formatDate(iso) {
+        if (!iso) return '';
+        return new Date(iso).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'});
+      }
+
+      async function loadPosts() {
+        const query = encodeURIComponent(
+          `*[_type == "post"] | order(publishedAt desc) { _id, title, slug, publishedAt, excerpt, coverImage }`
+        );
+        const url = `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}?query=${query}`;
+
+        const container = document.getElementById('posts-container');
+
+        // Show skeletons
+        container.innerHTML = Array(3).fill(`
+          <div class="post-card">
+            <div class="post-card-inner">
+              <div class="post-card-text">
+                <div class="skeleton" style="height:16px;width:60%;margin-bottom:8px;"></div>
+                <div class="skeleton" style="height:13px;width:90%;margin-bottom:4px;"></div>
+                <div class="skeleton" style="height:13px;width:70%;"></div>
+              </div>
+              <div class="skeleton post-cover"></div>
+            </div>
+          </div>
+        `).join('');
+        container.querySelector('.post-card').style.borderRadius = '12px 12px 0 0';
+
+        try {
+          const res = await fetch(url);
+          const { result } = await res.json();
+
+          if (!result || result.length === 0) {
+            container.innerHTML = '<p class="empty-state">no posts yet.</p>';
+            return;
+          }
+
+          container.innerHTML = `<div class="posts-grid">${result.map((post, i) => `
+            <a
+              href="/post.html?slug=${post.slug.current}"
+              class="post-card"
+              aria-label="${post.title}"
+            >
+              <div class="post-card-inner">
+                <div class="post-card-text">
+                  <div class="post-title">${post.title}</div>
+                  ${post.excerpt ? `<div class="post-excerpt">${post.excerpt}</div>` : ''}
+                  <div class="post-meta">${formatDate(post.publishedAt)}</div>
+                </div>
+                ${post.coverImage ? `<img class="post-cover" src="${sanityImageUrl(post.coverImage.asset._ref)}?w=160&h=120&fit=crop" alt="${post.title}" loading="lazy" />` : ''}
+              </div>
+            </a>
+          `).join('')}</div>`;
+        } catch (err) {
+          container.innerHTML = '<p class="empty-state">failed to load posts.</p>';
+        }
+      }
+
+      loadPosts();
+    </script>
+  </body>
+</html>
