@@ -212,6 +212,8 @@
     btn.addEventListener("click", () => {
       if (href.startsWith("http") || href.startsWith("mailto")) {
         window.open(href, "_blank", "noopener,noreferrer");
+      } else if (href === "#") {
+        // no-op
       } else {
         window.location.href = href;
       }
@@ -219,13 +221,12 @@
   });
 
   const path = window.location.pathname.replace(/\/$/, "") || "/";
+  const filename = path.split("/").pop() || "index.html";
   buttons.forEach((btn) => {
     const href = btn.dataset.href;
     if (!href) return;
-    // Normalise: strip leading slash for comparison on file:// too
-    const btnPath = href.startsWith("/") ? href : "/" + href;
-    const normBtn = btnPath.replace(/\/$/, "") || "/";
-    if (path === normBtn) {
+    const btnFile = href.split("/").pop() || "index.html";
+    if (filename === btnFile || (filename === "" && btnFile === "index.html")) {
       const dot = btn.querySelector(".dock-indicator");
       if (dot) dot.style.opacity = "1";
     }
