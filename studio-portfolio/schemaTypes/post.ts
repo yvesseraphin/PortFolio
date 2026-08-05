@@ -1,11 +1,11 @@
-import {defineField, defineType, defineArrayMember} from 'sanity'
+﻿import {defineField, defineType, defineArrayMember} from 'sanity'
 
 export const postType = defineType({
   name: 'post',
   title: 'Blog Post',
   type: 'document',
   fields: [
-    // ── Meta ──────────────────────────────────────────────
+    // â”€â”€ Meta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     defineField({
       name: 'title',
       title: 'Title',
@@ -37,16 +37,16 @@ export const postType = defineType({
       title: 'Cover Image',
       description: 'Used as the blog grid card thumbnail.',
       type: 'image',
-      options: {hotspot: true, metadata: ['dimensions', 'lqip']},
+      options: {hotspot: true, metadata: ['blurhash', 'lqip']},
     }),
     defineField({
       name: 'aspectRatio',
       title: 'Aspect Ratio Override',
       type: 'number',
-      description: 'Card width÷height (e.g. 1.6 = landscape, 1.0 = square, 0.8 = portrait). Leave empty — auto from cover image.',
+      description: 'Card widthÃ·height (e.g. 1.6 = landscape, 1.0 = square, 0.8 = portrait). Leave empty â€” auto from cover image.',
     }),
 
-    // ── Body — structured sections ─────────────────────────
+    // â”€â”€ Body â€” structured sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Each item in this array is one "section" of the post.
     // Sections appear top-to-bottom exactly as ordered here.
     // The table of contents is auto-generated from section headings.
@@ -78,15 +78,15 @@ export const postType = defineType({
               description: 'Add blocks in order: paragraphs, images, videos. Mix freely.',
               type: 'array',
               of: [
-                // ── Text paragraph ──
+                // â”€â”€ Text paragraph â”€â”€
                 defineArrayMember({type: 'block'}),
 
-                // ── Image ──
+                // â”€â”€ Image â”€â”€
                 defineArrayMember({
                   name: 'postImage',
                   title: 'Image',
                   type: 'image',
-                  options: {hotspot: true, metadata: ['dimensions', 'lqip']},
+                  options: {hotspot: true, metadata: ['blurhash', 'lqip']},
                   fields: [
                     defineField({
                       name: 'alt',
@@ -103,7 +103,7 @@ export const postType = defineType({
                   ],
                 }),
 
-                // ── Video (external URL — YouTube, Vimeo, mp4) ──
+                // â”€â”€ Video (external URL â€” YouTube, Vimeo, mp4) â”€â”€
                 defineArrayMember({
                   name: 'postVideo',
                   title: 'Video',
@@ -134,12 +134,12 @@ export const postType = defineType({
                   ],
                 }),
 
-                // ── Divider line (like the hr between sections) ──
+                // â”€â”€ Divider line (like the hr between sections) â”€â”€
                 defineArrayMember({
                   name: 'divider',
                   title: 'Divider',
                   type: 'object',
-                  preview: {prepare: () => ({title: '── Divider ──'})},
+                  preview: {prepare: () => ({title: 'â”€â”€ Divider â”€â”€'})},
                   fields: [
                     defineField({
                       name: '_key',
@@ -169,3 +169,4 @@ export const postType = defineType({
     select: {title: 'title', media: 'coverImage', subtitle: 'publishedAt'},
   },
 })
+
