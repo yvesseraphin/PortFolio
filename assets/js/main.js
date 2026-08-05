@@ -659,12 +659,351 @@ void main(){
 })();
 
 /* ============================================================
-   6. BODY SCROLL LOCK
+   6. BODY SCROLL LOCK  (home page only)
    ============================================================ */
 (function () {
   "use strict";
+  // Only lock scroll on the home page — blog/projects need free scroll
+  const isBlog    = window.location.pathname.includes("/blog");
+  const isProject = window.location.pathname.includes("/projects");
+  if (isBlog || isProject) return;
+
   document.body.style.overflow = "hidden";
   document.body.style.overscrollBehaviorX = "none";
   document.body.style.overscrollBehaviorY = "none";
   document.documentElement.style.overflow = "hidden";
+})();
+
+/* ============================================================
+   7. BLOG COLUMN SCROLL
+   Each column auto-scrolls upward via CSS animation.
+   Wheel / touch input nudges a JS offset on top of the animation
+   so the user can scroll manually while the auto-scroll continues.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  const columns = Array.from(document.querySelectorAll(".column"));
+  if (!columns.length) return;
+
+  // Per-column state
+  const state = columns.map((col) => {
+    const inner = col.querySelector(".column-inner");
+    if (!inner) return null;
+
+    // Read the CSS animation duration so we can match the auto-scroll speed
+    const dur = parseFloat(
+      getComputedStyle(col).getPropertyValue("--scroll-duration") || "30"
+    );
+
+    return {
+      col,
+      inner,
+      dur,           // animation duration in seconds
+      offset: 0,     // manual px offset applied via translateY
+      velocity: 0,   // momentum after flick
+      raf: null,
+    };
+  }).filter(Boolean);
+
+  if (!state.length) return;
+
+  // ── Helpers ────────────────────────────────────────────────
+
+  function getInnerHeight(s) {
+    // column-inner contains original + clone, so half = one full set
+    return s.inner.scrollHeight / 2;
+  }
+
+  function applyOffset(s) {
+    // Clamp to one full set height for seamless wrap
+    const h = getInnerHeight(s);
+    if (h > 0) s.offset = ((s.offset % h) + h) % h;
+    // Stack on top of the CSS keyframe animation via a second transform
+    // CSS animation handles the base upward movement; we add manual delta
+    s.inner.style.transform = `translateY(${-s.offset}px)`;
+  }
+
+  // ── Momentum glide ─────────────────────────────────────────
+
+  function glide(s) {
+    if (Math.abs(s.velocity) < 0.2) {
+      s.velocity = 0;
+      s.raf = null;
+      return;
+    }
+    s.velocity *= 0.92;
+    s.offset += s.velocity;
+    applyOffset(s);
+    s.raf = requestAnimationFrame(() => glide(s));
+  }
+
+  // ── Wheel ──────────────────────────────────────────────────
+  // Find which column is under the pointer and scroll that one,
+  // or scroll all equally if pointer is over the grid area.
+
+  function getTargetStates(clientX) {
+    // Find the column under the cursor
+    for (const s of state) {
+      const rect = s.col.getBoundingClientRect();
+      if (clientX >= rect.left && clientX <= rect.right) return [s];
+    }
+    return state; // fallback: scroll all
+  }
+
+  window.addEventListener("wheel", (e) => {
+    const grid = document.querySelector(".grid");
+    if (!grid) return;
+    const rect = grid.getBoundingClientRect();
+    // Only intercept wheel when over the grid
+    if (
+      e.clientY < rect.top || e.clientY > rect.bottom ||
+      e.clientX < rect.left || e.clientX > rect.right
+    ) return;
+
+    e.preventDefault();
+
+    const delta = e.deltaY || e.deltaX;
+    const targets = getTargetStates(e.clientX);
+
+    targets.forEach((s) => {
+      cancelAnimationFrame(s.raf);
+      s.velocity = 0;
+      s.offset += delta;
+      applyOffset(s);
+    });
+  }, { passive: false });
+
+  // ── Touch ──────────────────────────────────────────────────
+
+  let touchY = null;
+  let touchTargets = state;
+
+  window.addEventListener("touchstart", (e) => {
+    const grid = document.querySelector(".grid");
+    if (!grid) return;
+    const touch = e.touches[0];
+    const rect = grid.getBoundingClientRect();
+    if (touch.clientY < rect.top || touch.clientY > rect.bottom) return;
+    touchY = touch.clientY;
+    touchTargets = getTargetStates(touch.clientX);
+    touchTargets.forEach((s) => {
+      cancelAnimationFrame(s.raf);
+      s.velocity = 0;
+    });
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (e) => {
+    if (touchY === null) return;
+    const touch = e.touches[0];
+    const dy = touchY - touch.clientY;
+    touchY = touch.clientY;
+    touchTargets.forEach((s) => {
+      s.velocity = dy;
+      s.offset += dy;
+      applyOffset(s);
+    });
+    e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener("touchend", () => {
+    if (touchY === null) return;
+    touchY = null;
+    touchTargets.forEach((s) => {
+      cancelAnimationFrame(s.raf);
+      s.raf = requestAnimationFrame(() => glide(s));
+    });
+  }, { passive: true });
+
+})();
+
+/* ============================================================
+   8. SANITY BLOG GRID — fetch posts & projects, render cards
+   ============================================================ */
+(function () {
+  "use strict";
+
+  // Only runs on the blog page
+  const grid = document.getElementById("blog-grid");
+  if (!grid) return;
+
+  const PROJECT_ID = "bvxz357b";
+  const DATASET    = "production";
+  const API_VER    = "2024-01-01";
+
+  // ── Sanity CDN fetch ───────────────────────────────────────
+  // Fetches both posts and projects in a single request using
+  // GROQ's array concatenation. Returns them merged and sorted
+  // by publishedAt descending.
+  function sanityFetch(query) {
+    const encoded = encodeURIComponent(query);
+    const url = `https://${PROJECT_ID}.apicdn.sanity.io/v${API_VER}/data/query/${DATASET}?query=${encoded}`;
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
+      return r.json();
+    });
+  }
+
+  // ── GROQ query ─────────────────────────────────────────────
+  // Fetches posts and projects together.
+  // aspectRatio: uses manual override if set, otherwise falls back
+  //              to the image's natural dimensions from Sanity metadata.
+  // imageUrl: uses Sanity's image CDN URL with w=800 for performance.
+  // date: formatted as "Month YYYY" for the card subtitle.
+  const QUERY = `
+    *[_type in ["post","project"]] | order(publishedAt desc) {
+      _type,
+      title,
+      publishedAt,
+      "slug": slug.current,
+      "url": select(_type == "post" => null, url),
+      "imageUrl": coverImage.asset->url + "?w=800&auto=format",
+      "imageRatio": coalesce(
+        aspectRatio,
+        coverImage.asset->metadata.dimensions.aspectRatio
+      )
+    }
+  `;
+
+  // ── Date formatter ─────────────────────────────────────────
+  function formatDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  }
+
+  // ── Arrow SVG ─────────────────────────────────────────────
+  var ARROW_SVG =
+    '<svg data-arrow width="16px" height="16px" stroke-width="1.5" ' +
+    'viewBox="0 0 24 24" fill="none" color="currentColor">' +
+    '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
+    'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+
+  var ARROW_SVG_EXT =
+    '<svg data-arrow width="16px" height="16px" stroke-width="1.5" ' +
+    'viewBox="0 0 24 24" fill="none" color="currentColor" style="transform:rotate(-45deg)">' +
+    '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
+    'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+
+  // ── Text class string (shared by all <p> elements) ────────
+  var P_BASE = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 " +
+               "c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 " +
+               "c-iLbGmI-cOWITQ-color-gray12 ";
+
+  // ── Build one card's inner HTML ────────────────────────────
+  // item = { _type, title, publishedAt, slug, url, imageUrl, imageRatio }
+  // hasLink = true  → wraps in <a>, shows button
+  // hasLink = false → wraps in <div>, no button
+  function buildCard(item, hasLink) {
+    var ratio   = (item.imageRatio || 1.4).toFixed(5);
+    var title   = escapeHtml(item.title || "Untitled");
+    var date    = escapeHtml(formatDate(item.publishedAt));
+    var imgSrc  = item.imageUrl || "";
+    var imgAlt  = title;
+
+    // Determine link href and button label
+    var href, btnLabel, isExternal;
+    if (item._type === "post") {
+      href       = "/blog/" + (item.slug || "#");
+      btnLabel   = "Read Post";
+      isExternal = false;
+    } else {
+      href       = item.url || "#";
+      btnLabel   = "View Project";
+      isExternal = !!item.url;
+    }
+
+    // Inner media + overlay row — same for both card types
+    // linked cards use iekRYXs-css (has gradient overlay ::after)
+    // display cards use ikgVxhC-css (same gradient, no border-radius)
+    var mediaClass = hasLink
+      ? "c-lesPJm c-lesPJm-iekRYXs-css"
+      : "c-lesPJm c-lesPJm-ikgVxhC-css";
+
+    var mediaHtml =
+      '<div class="' + mediaClass + '">' +
+        '<div class="c-kjYPsQ" style="aspect-ratio:' + ratio + '/1">' +
+          (imgSrc
+            ? '<img src="' + imgSrc + '" alt="' + imgAlt + '" loading="lazy" />'
+            : "") +
+        "</div>" +
+        '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center ' +
+             'c-gqwkJN-knmidH-justify-between c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-iiIbqbF-css">' +
+          '<p class="' + P_BASE + 'c-iLbGmI-ifMJHCC-css">' + title + "</p>" +
+          '<p class="' + P_BASE + 'c-iLbGmI-ijLzJmS-css">' + date  + "</p>" +
+        "</div>" +
+      "</div>";
+
+    if (hasLink) {
+      var targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
+      var btnArrow   = isExternal ? ARROW_SVG_EXT : ARROW_SVG;
+      return (
+        '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' + href + '"' + targetAttr + ">" +
+          mediaHtml +
+          '<div data-fake-button>' + btnLabel + btnArrow + "</div>" +
+        "</a>"
+      );
+    } else {
+      return '<div class="c-dcJSMY">' + mediaHtml + "</div>";
+    }
+  }
+
+  // ── HTML escape ────────────────────────────────────────────
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // ── Distribute items across 3 columns ─────────────────────
+  // Round-robin by index so items are spread evenly.
+  // Posts get a button; projects get a button only if they have a url,
+  // otherwise they show as display-only cards.
+  function distributeToColumns(items) {
+    var cols = [[], [], []];
+    items.forEach(function (item, i) {
+      cols[i % 3].push(item);
+    });
+    return cols;
+  }
+
+  // ── Render columns ─────────────────────────────────────────
+  function renderColumns(items) {
+    var cols = distributeToColumns(items);
+    ["col-1-inner", "col-2-inner", "col-3-inner"].forEach(function (id, ci) {
+      var inner = document.getElementById(id);
+      if (!inner) return;
+
+      var colItems = cols[ci];
+      if (!colItems.length) return;
+
+      // Build original cards HTML
+      var cardsHtml = colItems.map(function (item) {
+        // Posts always get a button.
+        // Projects get a button only if they have a live url.
+        var hasLink = item._type === "post" || !!item.url;
+        return buildCard(item, hasLink);
+      }).join("");
+
+      // Duplicate for seamless infinite loop (original + clone)
+      inner.innerHTML = cardsHtml + cardsHtml;
+    });
+  }
+
+  // ── Fetch & render ─────────────────────────────────────────
+  sanityFetch(QUERY)
+    .then(function (data) {
+      var items = (data && data.result) ? data.result : [];
+      if (!items.length) {
+        // Nothing in Sanity yet — grid stays empty, no visual change
+        return;
+      }
+      renderColumns(items);
+    })
+    .catch(function (err) {
+      console.warn("[blog grid] Sanity fetch error:", err);
+    });
+
 })();
