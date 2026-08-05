@@ -1,11 +1,11 @@
-﻿import {defineField, defineType, defineArrayMember} from 'sanity'
+import {defineField, defineType, defineArrayMember} from 'sanity'
 
 export const postType = defineType({
   name: 'post',
   title: 'Blog Post',
   type: 'document',
   fields: [
-    // â”€â”€ Meta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Meta ──────────────────────────────────────────────
     defineField({
       name: 'title',
       title: 'Title',
@@ -37,31 +37,30 @@ export const postType = defineType({
       title: 'Cover Image',
       description: 'Used as the blog grid card thumbnail.',
       type: 'image',
-      options: {hotspot: true, metadata: ['blurhash', 'lqip']},
+      options: {hotspot: true, metadata: ['dimensions', 'lqip']},
     }),
     defineField({
       name: 'aspectRatio',
       title: 'Aspect Ratio Override',
       type: 'number',
-      description:
-        'Card widthÃ·height (e.g. 1.6 = landscape, 1.0 = square, 0.8 = portrait). Leave empty â€” auto from cover image.',
+      description: 'Card width÷height (e.g. 1.6 = landscape, 1.0 = square, 0.8 = portrait). Leave empty — auto from cover image.',
     }),
 
-    // â”€â”€ Body â€” structured sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // Each item is one "section" of the post.
+    // ── Body — structured sections ─────────────────────────
+    // Each item in this array is one "section" of the post.
     // Sections appear top-to-bottom exactly as ordered here.
     // The table of contents is auto-generated from section headings.
     defineField({
       name: 'sections',
       title: 'Sections',
-      description:
-        'Add sections one by one. Each section = a heading + its content blocks in order.',
+      description: 'Add sections one by one. Each section = a heading + its content blocks in order.',
       type: 'array',
       of: [
         defineArrayMember({
           name: 'section',
           title: 'Section',
           type: 'object',
+          // Preview shows the section heading in the Studio list
           preview: {
             select: {title: 'heading'},
             prepare: ({title}) => ({title: title || 'Untitled section'}),
@@ -70,8 +69,7 @@ export const postType = defineType({
             defineField({
               name: 'heading',
               title: 'Section Heading',
-              description:
-                'Becomes a table-of-contents entry. Leave empty for an intro section with no heading.',
+              description: 'Becomes a table-of-contents entry. Leave empty for an intro section with no heading.',
               type: 'string',
             }),
             defineField({
@@ -80,15 +78,15 @@ export const postType = defineType({
               description: 'Add blocks in order: paragraphs, images, videos. Mix freely.',
               type: 'array',
               of: [
-                // â”€â”€ Text paragraph â”€â”€
+                // ── Text paragraph ──
                 defineArrayMember({type: 'block'}),
 
-                // â”€â”€ Image â”€â”€
+                // ── Image ──
                 defineArrayMember({
                   name: 'postImage',
                   title: 'Image',
                   type: 'image',
-                  options: {hotspot: true, metadata: ['blurhash', 'lqip']},
+                  options: {hotspot: true, metadata: ['dimensions', 'lqip']},
                   fields: [
                     defineField({
                       name: 'alt',
@@ -105,7 +103,7 @@ export const postType = defineType({
                   ],
                 }),
 
-                // â”€â”€ Video (external URL â€” YouTube, Vimeo, mp4) â”€â”€
+                // ── Video (external URL — YouTube, Vimeo, mp4) ──
                 defineArrayMember({
                   name: 'postVideo',
                   title: 'Video',
@@ -136,12 +134,12 @@ export const postType = defineType({
                   ],
                 }),
 
-                // â”€â”€ Divider line â”€â”€
+                // ── Divider line (like the hr between sections) ──
                 defineArrayMember({
                   name: 'divider',
                   title: 'Divider',
                   type: 'object',
-                  preview: {prepare: () => ({title: 'â”€â”€ Divider â”€â”€'})},
+                  preview: {prepare: () => ({title: '── Divider ──'})},
                   fields: [
                     defineField({
                       name: '_key',
