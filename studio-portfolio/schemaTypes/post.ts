@@ -5,7 +5,7 @@ export const postType = defineType({
   title: 'Blog Post',
   type: 'document',
   fields: [
-    // â”€â”€ Meta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // -- Meta --
     defineField({
       name: 'title',
       title: 'Title',
@@ -43,24 +43,23 @@ export const postType = defineType({
       name: 'aspectRatio',
       title: 'Aspect Ratio Override',
       type: 'number',
-      description: 'Card widthÃ·height (e.g. 1.6 = landscape, 1.0 = square, 0.8 = portrait). Leave empty â€” auto from cover image.',
+      description:
+        'Card width / height (e.g. 1.6 = landscape, 1.0 = square, 0.8 = portrait). Leave empty to use cover image dimensions.',
     }),
 
-    // â”€â”€ Body â€” structured sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // Each item in this array is one "section" of the post.
-    // Sections appear top-to-bottom exactly as ordered here.
+    // -- Body: structured sections --
+    // Each item is one section of the post (heading + content blocks).
     // The table of contents is auto-generated from section headings.
     defineField({
       name: 'sections',
       title: 'Sections',
-      description: 'Add sections one by one. Each section = a heading + its content blocks in order.',
+      description: 'Add sections one by one. Each section = a heading + content blocks.',
       type: 'array',
       of: [
         defineArrayMember({
           name: 'section',
           title: 'Section',
           type: 'object',
-          // Preview shows the section heading in the Studio list
           preview: {
             select: {title: 'heading'},
             prepare: ({title}) => ({title: title || 'Untitled section'}),
@@ -69,7 +68,8 @@ export const postType = defineType({
             defineField({
               name: 'heading',
               title: 'Section Heading',
-              description: 'Becomes a table-of-contents entry. Leave empty for an intro section with no heading.',
+              description:
+                'Becomes a table-of-contents entry. Leave empty for an intro section with no heading.',
               type: 'string',
             }),
             defineField({
@@ -78,10 +78,10 @@ export const postType = defineType({
               description: 'Add blocks in order: paragraphs, images, videos. Mix freely.',
               type: 'array',
               of: [
-                // â”€â”€ Text paragraph â”€â”€
+                // Text paragraph
                 defineArrayMember({type: 'block'}),
 
-                // â”€â”€ Image â”€â”€
+                // Image
                 defineArrayMember({
                   name: 'postImage',
                   title: 'Image',
@@ -103,7 +103,7 @@ export const postType = defineType({
                   ],
                 }),
 
-                // â”€â”€ Video (external URL â€” YouTube, Vimeo, mp4) â”€â”€
+                // Video (mp4 / YouTube / Vimeo URL)
                 defineArrayMember({
                   name: 'postVideo',
                   title: 'Video',
@@ -134,18 +134,20 @@ export const postType = defineType({
                   ],
                 }),
 
-                // â”€â”€ Divider line (like the hr between sections) â”€â”€
+                // Divider line
+                // No custom fields needed — Sanity auto-assigns _key for array items
                 defineArrayMember({
                   name: 'divider',
                   title: 'Divider',
                   type: 'object',
-                  preview: {prepare: () => ({title: 'â”€â”€ Divider â”€â”€'})},
+                  preview: {prepare: () => ({title: '--- Divider ---'})},
                   fields: [
                     defineField({
-                      name: '_key',
+                      name: 'style',
+                      title: 'Style',
                       type: 'string',
+                      initialValue: 'line',
                       hidden: true,
-                      initialValue: () => Math.random().toString(36).slice(2),
                     }),
                   ],
                 }),
@@ -169,4 +171,3 @@ export const postType = defineType({
     select: {title: 'title', media: 'coverImage', subtitle: 'publishedAt'},
   },
 })
-
