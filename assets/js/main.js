@@ -263,21 +263,8 @@
     }, 1000);
   }
 
-  // Fetch visitor's city via ipapi.co (free, no key needed)
-  if (locationEl) {
-    fetch("https://ipapi.co/json/")
-      .then((r) => r.json())
-      .then((data) => {
-        const city = data.city || data.region || data.country_name;
-        if (city) locationEl.textContent = city;
-      })
-      .catch(() => {
-        // Fall back to timezone-derived city name if fetch fails
-        const parts = userTimeZone.split("/");
-        const city = (parts[1] || parts[0]).replace(/_/g, " ");
-        locationEl.textContent = city;
-      });
-  }
+  // Location is hardcoded — no IP fetch needed
+  // locationEl stays as the default "Kigali, Rwanda" set in HTML
 
   // Fade header bar in after a short delay
   if (headerBar) {
