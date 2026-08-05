@@ -11,6 +11,9 @@
     "dev": "sanity dev",
     "start": "sanity start"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "keywords": [
     "sanity"
   ],
