@@ -845,8 +845,10 @@ void main(){
     });
   }
 
-  // ── GraphQL query — posts + projects ──────────────────────
-  // Both sorted by postDate descending, merged client-side
+  // ── GraphQL query — posts only for now ────────────────────
+  // Projects query will be added once the Project model is
+  // created in Hygraph. Adding it before causes the entire
+  // query to return null (GraphQL fails on unknown fields).
   var QUERY = `
     {
       posts(orderBy: postDate_DESC) {
@@ -854,15 +856,6 @@ void main(){
         title
         slug
         postDate
-        coverImage { url width height }
-        aspectRation
-      }
-      projects(orderBy: postDate_DESC) {
-        _type: __typename
-        title
-        slug
-        postDate
-        url
         coverImage { url width height }
         aspectRation
       }
