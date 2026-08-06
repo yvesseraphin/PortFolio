@@ -117,7 +117,10 @@
     if (dateEl)  dateEl.textContent  = dateStr;
 
     /* ── Body: iterate sections ── */
-    var sections = post.sections || [];
+    // Hygraph returns sections as array if multiple values enabled,
+    // or as a single object if only one section. Normalise to array.
+    var rawSections = post.sections || [];
+    var sections = Array.isArray(rawSections) ? rawSections : [rawSections];
     var html = "";
     var tocItems = [];
 
@@ -136,9 +139,14 @@
           escHtml(section.heading) + "</h3>";
       }
 
-      // Rich text content — Hygraph returns html directly
-      if (section.content && section.content.html) {
-        html += styleRichHtml(section.content.html);
+      // Rich text content — content is an array of rich text blocks, join all html
+      if (section.content) {
+        var contentBlocks = Array.isArray(section.content) ? section.content : [section.content];
+        contentBlocks.forEach(function (block) {
+          if (block && block.html) {
+            html += styleRichHtml(block.html);
+          }
+        });
       }
     });
 
@@ -266,7 +274,9 @@
         coverImage { url }
         sections {
           heading
-          content { html }
+          content {
+            html
+          }
         }
       }
       # Prev post (older)
