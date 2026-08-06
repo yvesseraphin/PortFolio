@@ -818,61 +818,73 @@ void main(){
 })();
 
 /* ============================================================
-   8. SANITY BLOG GRID — fetch posts & projects, render cards
+   8. HYGRAPH BLOG GRID — fetch posts + projects, render cards
    ============================================================ */
 (function () {
   "use strict";
 
   // Only runs on the blog page
-  const grid = document.getElementById("blog-grid");
+  var grid = document.getElementById("blog-grid");
   if (!grid) return;
 
-  const PROJECT_ID = "bvxz357b";
-  const DATASET    = "production";
-  const API_VER    = "2024-01-01";
+  var HYGRAPH_ENDPOINT = "https://eu-west-2.cdn.hygraph.com/content/cms96wuqa009e07uugpyxsqs7/master";
+  var HYGRAPH_TOKEN    = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE3ODU5NzY3ODgsImF1ZCI6WyJodHRwczovL2FwaS1ldS13ZXN0LTIuaHlncmFwaC5jb20vdjIvY21zOTZ3dXFhMDA5ZTA3dXVncHl4c3FzNy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC1ldS13ZXN0LTIuaHlncmFwaC5jb20vIiwic3ViIjoiMGE4MWZiZTEtNWQ2OS00NTlhLWI1OWEtOWE0NjVlZDMxZTFkIiwianRpIjoiY21zZ3NndHB6MG84dzA3bW9kc2ZlZDQyMiJ9.QfZ5aFKj3rE-m77VOd_EZ0X54CW74yizyS7e2G30HSfXOlSrfs86CWPpMpzIyGu0af_HHPaJ8gSx7o31RLU66ldZNakjFEuqPKiKgRnnj1hu8m6iWq724rfCKJPfuakOhD1_KS2Dj2h2bL4h7T6p9Bqc98mr856jjaWFVtahkpTVMvL98SJfeuR1ZzlZyEiuczmxeS_g1H0iEk-cMgI7knXF2uj7G_Eizclgh4HrBph-uMdJOycZOfYWY3klCxGPHVGusSfkJfvc3Z2FFjbbw1t23NgWGGHtW4ckXwqJZNyxcfjZiq4RRU4X0MU-rC_BjLqfO9b1fgMVfiZpPRVnrGSbOOU491CQHwEFgagcabc9MmEkOYqg6ofrg3J0NTfsV2KHThZWKyv8K4yiBKf5ayjbDXpIpQVeE_Domr9MHyblyFEh1nlmZGqJgb5n9CgPzRFbBDgehfa61b_Jnc2eeA18AMaxzO_RpX4vdc8ud96VfGiVqmxfpYzDngFo5X4Z0OsI-p_-j3-huWeX24AcDjF3PegERCILhPkv0DHUnJLWXDWAL0RZBH4UjyXixaWawMDUzVGqqLTTRYQLYiJafFmbyshmdGIDOsMH4w_AIMOYZQbceviGYjEL0-CfuJ0MC46O-lmcL9mYgc-2J6lsbdjetu7lZPkvQzSDPPMuORM";
 
-  // ── Sanity CDN fetch ───────────────────────────────────────
-  // Fetches both posts and projects in a single request using
-  // GROQ's array concatenation. Returns them merged and sorted
-  // by publishedAt descending.
-  function sanityFetch(query) {
-    const encoded = encodeURIComponent(query);
-    const url = `https://${PROJECT_ID}.apicdn.sanity.io/v${API_VER}/data/query/${DATASET}?query=${encoded}`;
-    return fetch(url).then(function (r) {
-      if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
+  // ── Hygraph GraphQL fetch ──────────────────────────────────
+  function hygraphFetch(query) {
+    return fetch(HYGRAPH_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + HYGRAPH_TOKEN
+      },
+      body: JSON.stringify({ query: query })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Hygraph fetch failed: " + r.status);
       return r.json();
     });
   }
 
-  // ── GROQ query ─────────────────────────────────────────────
-  // Fetches posts and projects together.
-  // aspectRatio: uses manual override if set, otherwise falls back
-  //              to the image's natural dimensions from Sanity metadata.
-  // imageUrl: uses Sanity's image CDN URL with w=800 for performance.
-  // date: formatted as "Month YYYY" for the card subtitle.
-  const QUERY = `
-    *[_type in ["post","project"]] | order(publishedAt desc) {
-      _type,
-      title,
-      publishedAt,
-      "slug": slug.current,
-      "url": select(_type == "post" => null, url),
-      "imageUrl": coverImage.asset->url + "?w=800&auto=format",
-      "imageRatio": coalesce(
-        aspectRatio,
-        coverImage.asset->metadata.dimensions.aspectRatio
-      )
+  // ── GraphQL query — posts + projects ──────────────────────
+  // Both sorted by postDate descending, merged client-side
+  var QUERY = `
+    {
+      posts(orderBy: postDate_DESC) {
+        _type: __typename
+        title
+        slug
+        postDate
+        coverImage { url width height }
+        aspectRation
+      }
+      projects(orderBy: postDate_DESC) {
+        _type: __typename
+        title
+        slug
+        postDate
+        url
+        coverImage { url width height }
+        aspectRation
+      }
     }
   `;
 
   // ── Date formatter ─────────────────────────────────────────
   function formatDate(iso) {
     if (!iso) return "";
-    var d = new Date(iso);
-    return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    return new Date(iso).toLocaleDateString("en-US", { month: "long", year: "numeric" });
   }
 
-  // ── Arrow SVG ─────────────────────────────────────────────
+  // ── HTML escape ────────────────────────────────────────────
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // ── Arrow SVGs ────────────────────────────────────────────
   var ARROW_SVG =
     '<svg data-arrow width="16px" height="16px" stroke-width="1.5" ' +
     'viewBox="0 0 24 24" fill="none" color="currentColor">' +
@@ -885,37 +897,40 @@ void main(){
     '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
     'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
-  // ── Text class string (shared by all <p> elements) ────────
+  // ── Text class string (shared by all card <p> elements) ───
   var P_BASE = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 " +
                "c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 " +
                "c-iLbGmI-cOWITQ-color-gray12 ";
 
-  // ── Build one card's inner HTML ────────────────────────────
-  // item = { _type, title, publishedAt, slug, url, imageUrl, imageRatio }
-  // hasLink = true  → wraps in <a>, shows button
-  // hasLink = false → wraps in <div>, no button
-  function buildCard(item, hasLink) {
-    var ratio   = (item.imageRatio || 1.4).toFixed(5);
-    var title   = escapeHtml(item.title || "Untitled");
-    var date    = escapeHtml(formatDate(item.publishedAt));
-    var imgSrc  = item.imageUrl || "";
-    var imgAlt  = title;
+  // ── Build one card ─────────────────────────────────────────
+  // item._type is "Post" or "Project" (Hygraph __typename)
+  function buildCard(item) {
+    var isPost     = item._type === "Post";
+    var imgUrl     = item.coverImage ? item.coverImage.url + "?w=800&auto=format" : "";
+    var imgW       = item.coverImage ? item.coverImage.width  : 800;
+    var imgH       = item.coverImage ? item.coverImage.height : 600;
+    var ratio      = item.aspectRation
+      ? parseFloat(item.aspectRation).toFixed(5)
+      : imgW && imgH ? (imgW / imgH).toFixed(5) : "1.40000";
+    var title      = escapeHtml(item.title || "Untitled");
+    var date       = escapeHtml(formatDate(item.postDate));
 
-    // Determine link href and button label
-    var href, btnLabel, isExternal;
-    if (item._type === "post") {
-      href       = "/blog/" + (item.slug || "#");
+    // Posts → internal blog post page
+    // Projects with url → external link
+    // Projects without url → display only card (no button)
+    var href, btnLabel, isExternal, hasLink;
+    if (isPost) {
+      href       = "/blog/post/?slug=" + encodeURIComponent(item.slug || "");
       btnLabel   = "Read Post";
       isExternal = false;
+      hasLink    = true;
     } else {
       href       = item.url || "#";
       btnLabel   = "View Project";
       isExternal = !!item.url;
+      hasLink    = !!item.url;
     }
 
-    // Inner media + overlay row — same for both card types
-    // linked cards use iekRYXs-css (has gradient overlay ::after)
-    // display cards use ikgVxhC-css (same gradient, no border-radius)
     var mediaClass = hasLink
       ? "c-lesPJm c-lesPJm-iekRYXs-css"
       : "c-lesPJm c-lesPJm-ikgVxhC-css";
@@ -923,9 +938,7 @@ void main(){
     var mediaHtml =
       '<div class="' + mediaClass + '">' +
         '<div class="c-kjYPsQ" style="aspect-ratio:' + ratio + '/1">' +
-          (imgSrc
-            ? '<img src="' + imgSrc + '" alt="' + imgAlt + '" loading="lazy" />'
-            : "") +
+          (imgUrl ? '<img src="' + imgUrl + '" alt="' + title + '" loading="lazy" />' : "") +
         "</div>" +
         '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center ' +
              'c-gqwkJN-knmidH-justify-between c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-iiIbqbF-css">' +
@@ -938,29 +951,28 @@ void main(){
       var targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
       var btnArrow   = isExternal ? ARROW_SVG_EXT : ARROW_SVG;
       return (
-        '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' + href + '"' + targetAttr + ">" +
+        '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' +
+        href + '"' + targetAttr + ">" +
           mediaHtml +
           '<div data-fake-button>' + btnLabel + btnArrow + "</div>" +
         "</a>"
       );
-    } else {
-      return '<div class="c-dcJSMY">' + mediaHtml + "</div>";
     }
+    return '<div class="c-dcJSMY">' + mediaHtml + "</div>";
   }
 
-  // ── HTML escape ────────────────────────────────────────────
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+  // ── Merge + sort posts and projects by date ────────────────
+  function mergeAndSort(posts, projects) {
+    var all = [];
+    (posts || []).forEach(function (p) { all.push(p); });
+    (projects || []).forEach(function (p) { all.push(p); });
+    all.sort(function (a, b) {
+      return new Date(b.postDate || 0) - new Date(a.postDate || 0);
+    });
+    return all;
   }
 
-  // ── Distribute items across 3 columns ─────────────────────
-  // Round-robin by index so items are spread evenly.
-  // Posts get a button; projects get a button only if they have a url,
-  // otherwise they show as display-only cards.
+  // ── Distribute items across 3 columns (round-robin) ───────
   function distributeToColumns(items) {
     var cols = [[], [], []];
     items.forEach(function (item, i) {
@@ -975,35 +987,29 @@ void main(){
     ["col-1-inner", "col-2-inner", "col-3-inner"].forEach(function (id, ci) {
       var inner = document.getElementById(id);
       if (!inner) return;
-
       var colItems = cols[ci];
       if (!colItems.length) return;
-
-      // Build original cards HTML
-      var cardsHtml = colItems.map(function (item) {
-        // Posts always get a button.
-        // Projects get a button only if they have a live url.
-        var hasLink = item._type === "post" || !!item.url;
-        return buildCard(item, hasLink);
-      }).join("");
-
-      // Duplicate for seamless infinite loop (original + clone)
+      var cardsHtml = colItems.map(buildCard).join("");
+      // Duplicate for seamless infinite scroll loop
       inner.innerHTML = cardsHtml + cardsHtml;
     });
   }
 
   // ── Fetch & render ─────────────────────────────────────────
-  sanityFetch(QUERY)
+  hygraphFetch(QUERY)
     .then(function (data) {
-      var items = (data && data.result) ? data.result : [];
-      if (!items.length) {
-        // Nothing in Sanity yet — grid stays empty, no visual change
+      if (data.errors) {
+        console.warn("[blog grid] Hygraph errors:", data.errors);
         return;
       }
+      var posts    = (data.data && data.data.posts)    || [];
+      var projects = (data.data && data.data.projects) || [];
+      var items    = mergeAndSort(posts, projects);
+      if (!items.length) return;
       renderColumns(items);
     })
     .catch(function (err) {
-      console.warn("[blog grid] Sanity fetch error:", err);
+      console.warn("[blog grid] Hygraph fetch error:", err);
     });
 
 })();

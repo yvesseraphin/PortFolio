@@ -1,5 +1,5 @@
 /* ============================================================
-   POST.JS — Fetches a single blog post from Sanity and renders
+   POST.JS — Fetches a single blog post from Hygraph and renders
    it into the existing UI shell of blog/post/index.html.
 
    URL format:  /blog/post/?slug=my-post-slug
@@ -7,17 +7,15 @@
 (function () {
   "use strict";
 
-  /* ── Sanity config ─────────────────────────────────────── */
-  var PROJECT_ID = "bvxz357b";
-  var DATASET    = "production";
-  var API_VER    = "2024-01-01";
+  /* ── Hygraph config ────────────────────────────────────── */
+  var HYGRAPH_ENDPOINT = "https://eu-west-2.cdn.hygraph.com/content/cms96wuqa009e07uugpyxsqs7/master";
+  var HYGRAPH_TOKEN    = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE3ODU5NzY3ODgsImF1ZCI6WyJodHRwczovL2FwaS1ldS13ZXN0LTIuaHlncmFwaC5jb20vdjIvY21zOTZ3dXFhMDA5ZTA3dXVncHl4c3FzNy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC1ldS13ZXN0LTIuaHlncmFwaC5jb20vIiwic3ViIjoiMGE4MWZiZTEtNWQ2OS00NTlhLWI1OWEtOWE0NjVlZDMxZTFkIiwianRpIjoiY21zZ3NndHB6MG84dzA3bW9kc2ZlZDQyMiJ9.QfZ5aFKj3rE-m77VOd_EZ0X54CW74yizyS7e2G30HSfXOlSrfs86CWPpMpzIyGu0af_HHPaJ8gSx7o31RLU66ldZNakjFEuqPKiKgRnnj1hu8m6iWq724rfCKJPfuakOhD1_KS2Dj2h2bL4h7T6p9Bqc98mr856jjaWFVtahkpTVMvL98SJfeuR1ZzlZyEiuczmxeS_g1H0iEk-cMgI7knXF2uj7G_Eizclgh4HrBph-uMdJOycZOfYWY3klCxGPHVGusSfkJfvc3Z2FFjbbw1t23NgWGGHtW4ckXwqJZNyxcfjZiq4RRU4X0MU-rC_BjLqfO9b1fgMVfiZpPRVnrGSbOOU491CQHwEFgagcabc9MmEkOYqg6ofrg3J0NTfsV2KHThZWKyv8K4yiBKf5ayjbDXpIpQVeE_Domr9MHyblyFEh1nlmZGqJgb5n9CgPzRFbBDgehfa61b_Jnc2eeA18AMaxzO_RpX4vdc8ud96VfGiVqmxfpYzDngFo5X4Z0OsI-p_-j3-huWeX24AcDjF3PegERCILhPkv0DHUnJLWXDWAL0RZBH4UjyXixaWawMDUzVGqqLTTRYQLYiJafFmbyshmdGIDOsMH4w_AIMOYZQbceviGYjEL0-CfuJ0MC46O-lmcL9mYgc-2J6lsbdjetu7lZPkvQzSDPPMuORM";
 
   /* ── DOM targets ───────────────────────────────────────── */
   var titleEl   = document.getElementById("post-title");
   var dateEl    = document.getElementById("post-date");
   var bodyEl    = document.getElementById("post-body");
   var navEl     = document.getElementById("post-nav");
-  var loadingEl = document.getElementById("post-loading");
 
   /* ── Slug from URL ─────────────────────────────────────── */
   function getSlug() {
@@ -25,20 +23,17 @@
     return params.get("slug") || "";
   }
 
-  /* ── Sanity CDN fetch ──────────────────────────────────── */
-  function sanityFetch(query) {
-    var encoded = encodeURIComponent(query);
-    var url =
-      "https://" +
-      PROJECT_ID +
-      ".apicdn.sanity.io/v" +
-      API_VER +
-      "/data/query/" +
-      DATASET +
-      "?query=" +
-      encoded;
-    return fetch(url).then(function (r) {
-      if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
+  /* ── Hygraph GraphQL fetch ─────────────────────────────── */
+  function hygraphFetch(query, variables) {
+    return fetch(HYGRAPH_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + HYGRAPH_TOKEN
+      },
+      body: JSON.stringify({ query: query, variables: variables || {} })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Hygraph fetch failed: " + r.status);
       return r.json();
     });
   }
@@ -48,110 +43,8 @@
     if (!iso) return "";
     return new Date(iso).toLocaleDateString("en-US", {
       month: "long",
-      year: "numeric",
+      year: "numeric"
     });
-  }
-
-  /* ── Portable Text → HTML ──────────────────────────────── */
-  // Minimal renderer for Sanity's block content (portable text).
-  function blockToHtml(block) {
-    if (!block || !block._type) return "";
-
-    // ── Regular paragraph / heading block ──
-    if (block._type === "block") {
-      var tag = block.style === "h2" ? "h2"
-              : block.style === "h3" ? "h3"
-              : block.style === "h4" ? "h4"
-              : block.style === "blockquote" ? "blockquote"
-              : "p";
-
-      var pClass = tag === "p"
-        ? 'class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12"'
-        : 'data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css"';
-
-      var inner = (block.children || []).map(function (span) {
-        if (span._type !== "span") return "";
-        var text = escHtml(span.text || "");
-        var marks = span.marks || [];
-
-        marks.forEach(function (mark) {
-          if (mark === "strong") text = "<strong>" + text + "</strong>";
-          else if (mark === "em") text = "<em>" + text + "</em>";
-          else if (mark === "code") {
-            text =
-              '<code class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-gGEEru-size-12 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11 c-iLbGmI-ibeaVNb-css">' +
-              text +
-              "</code>";
-          } else if (mark === "underline") {
-            text = '<span style="text-decoration:underline">' + text + "</span>";
-          }
-        });
-
-        // Resolve link marks (markDefs)
-        if (block.markDefs) {
-          block.markDefs.forEach(function (def) {
-            if (marks.indexOf(def._key) !== -1 && def._type === "link") {
-              text =
-                '<a href="' +
-                escHtml(def.href) +
-                '" target="_blank" rel="noopener noreferrer" ' +
-                'class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ikkecHh-css">' +
-                text +
-                "</a>";
-            }
-          });
-        }
-
-        return text;
-      }).join("");
-
-      return "<" + tag + " " + pClass + ">" + inner + "</" + tag + ">";
-    }
-
-    // ── Image ──
-    if (block._type === "postImage") {
-      var imgUrl = block.asset && block.asset.url ? block.asset.url + "?w=1200&auto=format" : "";
-      var alt    = escHtml(block.alt || "");
-      var cap    = block.caption ? '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-gGEEru-size-12 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11" style="margin-top:8px;text-align:center">' + escHtml(block.caption) + "</p>" : "";
-      return (
-        '<div class="c-gtuqhG"><img src="' +
-        imgUrl +
-        '" alt="' +
-        alt +
-        '" loading="lazy" /></div>' +
-        cap
-      );
-    }
-
-    // ── Video ──
-    if (block._type === "postVideo") {
-      var vUrl = block.url || "";
-      var cap2 = block.caption ? '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-gGEEru-size-12 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11" style="margin-top:8px;text-align:center">' + escHtml(block.caption) + "</p>" : "";
-      var autoAttrs = block.autoplay !== false ? 'autoplay muted loop playsinline' : 'controls';
-      // If it's a direct mp4 link
-      if (vUrl.match(/\.mp4/i)) {
-        return (
-          '<div class="c-gtuqhG"><video ' +
-          autoAttrs +
-          ' src="' + escHtml(vUrl) + '"></video></div>' +
-          cap2
-        );
-      }
-      // Fallback: iframe for YouTube/Vimeo
-      return (
-        '<div class="c-gtuqhG" style="aspect-ratio:16/9"><iframe src="' +
-        escHtml(vUrl) +
-        '" frameborder="0" allowfullscreen style="width:100%;height:100%;border-radius:inherit"></iframe></div>' +
-        cap2
-      );
-    }
-
-    // ── Divider ──
-    if (block._type === "divider") {
-      return '<hr class="c-kgqVMd" style="margin-top:24px;margin-bottom:24px" />';
-    }
-
-    return "";
   }
 
   /* ── Escape HTML helper ────────────────────────────────── */
@@ -168,17 +61,49 @@
     return str.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
   }
 
+  /* ── Style rich text HTML to match existing design ─────── */
+  // Hygraph returns clean HTML from the rich text field.
+  // We inject inline styles to match the existing CSS classes.
+  function styleRichHtml(html) {
+    if (!html) return "";
+
+    return html
+      // Paragraphs
+      .replace(/<p>/g, '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">')
+      // Headings
+      .replace(/<h2>/g, '<h2 data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">')
+      .replace(/<h3>/g, '<h3 data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">')
+      .replace(/<h4>/g, '<h4 data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">')
+      // Blockquote
+      .replace(/<blockquote>/g, '<blockquote class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11" style="border-left:3px solid var(--colors-gray6);padding-left:16px;margin:8px 0">')
+      // Code inline
+      .replace(/<code>/g, '<code class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-gGEEru-size-12 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11 c-iLbGmI-ibeaVNb-css">')
+      // Links
+      .replace(/<a /g, '<a class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ikkecHh-css" target="_blank" rel="noopener noreferrer" ')
+      // Images — wrap in the card container
+      .replace(/<img /g, '<div class="c-gtuqhG"><img loading="lazy" ')
+      .replace(/(<div class="c-gtuqhG"><img[^>]+>)/g, "$1</div>")
+      // iframes — wrap for aspect ratio
+      .replace(/<iframe /g, '<div class="c-gtuqhG" style="aspect-ratio:16/9"><iframe style="width:100%;height:100%;border:0;border-radius:inherit" ')
+      .replace(/(<div class="c-gtuqhG"[^>]*><iframe[^>]+><\/iframe>)/g, "$1</div>")
+      // HR / divider
+      .replace(/<hr>/g, '<hr class="c-kgqVMd" style="margin-top:24px;margin-bottom:24px" />')
+      .replace(/<hr\/>/g, '<hr class="c-kgqVMd" style="margin-top:24px;margin-bottom:24px" />');
+  }
+
   /* ── Render post ───────────────────────────────────────── */
   function renderPost(post) {
-    /* ── Meta tags ── */
-    var title = post.title || "Blog Post";
-    var dateStr = formatDate(post.publishedAt);
-    var slug = post.slug || "";
+    var title   = post.title || "Blog Post";
+    var dateStr = formatDate(post.postDate);
+    var slug    = post.slug || "";
     var canonical = "https://www.yvesseraphin.xyz/blog/post/?slug=" + slug;
-    var ogImg = post.coverImageUrl || "https://www.yvesseraphin.xyz/assets/images/og.jpg";
+    var ogImg   = (post.coverImage && post.coverImage.url)
+      ? post.coverImage.url
+      : "https://www.yvesseraphin.xyz/assets/images/og.jpg";
 
+    /* ── Meta ── */
     document.getElementById("page-title").textContent = title + " · Seraphin";
-    setMeta("meta-description", "content", dateStr);
+    setMeta("meta-description", "content", post.excerpt || dateStr);
     setMeta("og-title", "content", title);
     setMeta("og-description", "content", post.excerpt || dateStr);
     setMeta("og-url", "content", canonical);
@@ -191,7 +116,7 @@
     if (titleEl) titleEl.textContent = title;
     if (dateEl)  dateEl.textContent  = dateStr;
 
-    /* ── Body ── */
+    /* ── Body: iterate sections ── */
     var sections = post.sections || [];
     var html = "";
     var tocItems = [];
@@ -204,31 +129,28 @@
         var id = slugify(section.heading);
         tocItems.push({ id: id, label: section.heading });
         html +=
-          '<h3 data-heading="true" id="' +
-          id +
-          '" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">' +
-          escHtml(section.heading) +
-          "</h3>";
+          '<h3 data-heading="true" id="' + escHtml(id) + '" ' +
+          'class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 ' +
+          'c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 ' +
+          'c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">' +
+          escHtml(section.heading) + "</h3>";
       }
 
-      // Content blocks
-      var content = section.content || [];
-      content.forEach(function (block) {
-        html += blockToHtml(block);
-      });
+      // Rich text content — Hygraph returns html directly
+      if (section.content && section.content.html) {
+        html += styleRichHtml(section.content.html);
+      }
     });
 
-    // Wrap in the column container that matches the original UI
     var wrapper =
-      '<div class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1">' +
-      html +
-      "</div>";
+      '<div class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column ' +
+      'c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start ' +
+      'c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1">' +
+      html + "</div>";
 
-    if (bodyEl) {
-      bodyEl.innerHTML = wrapper;
-    }
+    if (bodyEl) bodyEl.innerHTML = wrapper;
 
-    /* ── TOC (sidebar nav) ── */
+    /* ── TOC ── */
     buildToc(tocItems);
 
     /* ── Prev / Next ── */
@@ -237,8 +159,6 @@
 
   /* ── Build table of contents ───────────────────────────── */
   function buildToc(items) {
-    // Find the ihxHQzT sidebar container — it holds the "← Blog" back link
-    // and optionally a <nav> for TOC. We only add TOC if there are entries.
     var sidebar = document.querySelector(".c-lesPJm-ihxHQzT-css");
     if (!sidebar || !items.length) return;
 
@@ -257,7 +177,6 @@
 
     sidebar.appendChild(nav);
 
-    // Highlight active TOC entry on scroll
     var headings = Array.from(document.querySelectorAll("[data-heading]"));
     var links    = Array.from(nav.querySelectorAll("a"));
 
@@ -287,24 +206,23 @@
 
     if (prev) {
       html +=
-        '<a class="c-bInnJf" href="?slug=' +
-        escHtml(prev.slug) +
-        '">' +
-        '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ilhikBv-css">Previous</div>' +
-        '<span class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">' +
-        escHtml(prev.title) +
-        "</span></a>";
+        '<a class="c-bInnJf" href="?slug=' + escHtml(prev.slug) + '">' +
+        '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center ' +
+        'c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ilhikBv-css">Previous</div>' +
+        '<span class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 ' +
+        'c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">' +
+        escHtml(prev.title) + "</span></a>";
     }
 
     if (next) {
       html +=
-        '<a class="c-bInnJf" style="margin-left:auto" href="?slug=' +
-        escHtml(next.slug) +
-        '">' +
-        '<div style="margin-left:auto" class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ilhikBv-css">Next</div>' +
-        '<span class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">' +
-        escHtml(next.title) +
-        "</span></a>";
+        '<a class="c-bInnJf" style="margin-left:auto" href="?slug=' + escHtml(next.slug) + '">' +
+        '<div style="margin-left:auto" class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row ' +
+        'c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start ' +
+        'c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ilhikBv-css">Next</div>' +
+        '<span class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 ' +
+        'c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">' +
+        escHtml(next.title) + "</span></a>";
     }
 
     navEl.innerHTML = html;
@@ -320,14 +238,16 @@
   function showError(msg) {
     if (bodyEl) {
       bodyEl.innerHTML =
-        '<div class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1">' +
-        '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11">' +
-        escHtml(msg) +
-        "</p></div>";
+        '<div class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column ' +
+        'c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start ' +
+        'c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1">' +
+        '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 ' +
+        'c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11">' +
+        escHtml(msg) + "</p></div>";
     }
   }
 
-  /* ── Main fetch ────────────────────────────────────────── */
+  /* ── GraphQL query ─────────────────────────────────────── */
   var slug = getSlug();
 
   if (!slug) {
@@ -336,59 +256,68 @@
     return;
   }
 
-  // Fetch the post + its immediate neighbours (for prev/next) in one request
-  var QUERY =
-    '*[_type == "post" && slug.current == $slug][0]{' +
-    '  title,' +
-    '  publishedAt,' +
-    '  excerpt,' +
-    '  "slug": slug.current,' +
-    '  "coverImageUrl": coverImage.asset->url,' +
-    '  sections[]{' +
-    '    heading,' +
-    '    content[]{' +
-    '      ...,' +
-    '      _type == "postImage" => {' +
-    '        ..., "asset": asset->{url}' +
-    '      }' +
-    '    }' +
-    '  },' +
-    '  "prev": *[_type == "post" && publishedAt < ^.publishedAt] | order(publishedAt desc)[0]{"slug": slug.current, title},' +
-    '  "next": *[_type == "post" && publishedAt > ^.publishedAt] | order(publishedAt asc)[0]{"slug": slug.current, title}' +
-    '}';
+  var QUERY = `
+    query GetPost($slug: String!) {
+      post(where: { slug: $slug }) {
+        title
+        slug
+        postDate
+        excerpt
+        coverImage { url }
+        sections {
+          heading
+          content { html }
+        }
+      }
+      # Prev post (older)
+      prevPosts: posts(
+        where: { slug_not: $slug }
+        orderBy: postDate_DESC
+        first: 1
+      ) {
+        title
+        slug
+        postDate
+      }
+      # Next post (newer)
+      nextPosts: posts(
+        where: { slug_not: $slug }
+        orderBy: postDate_ASC
+        first: 1
+      ) {
+        title
+        slug
+        postDate
+      }
+    }
+  `;
 
-  // Replace $slug param — Sanity CDN supports GROQ params via ?$slug="value"
-  var encoded =
-    encodeURIComponent(QUERY) +
-    "&%24slug=" +
-    encodeURIComponent('"' + slug + '"');
-
-  var url =
-    "https://" +
-    PROJECT_ID +
-    ".apicdn.sanity.io/v" +
-    API_VER +
-    "/data/query/" +
-    DATASET +
-    "?query=" +
-    encoded;
-
-  fetch(url)
-    .then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    })
+  hygraphFetch(QUERY, { slug: slug })
     .then(function (data) {
-      var post = data.result;
+      if (data.errors) {
+        console.error("Hygraph errors:", data.errors);
+        showError("Could not load post. Please try again later.");
+        return;
+      }
+
+      var post = data.data && data.data.post;
       if (!post) {
-        showError('Post "' + slug + '" not found in Sanity.');
+        showError('Post "' + slug + '" not found.');
         if (titleEl) titleEl.textContent = "Post not found";
         return;
       }
+
+      // Attach prev/next — simple approach: adjacent by date
+      var allPrev = data.data.prevPosts || [];
+      var allNext = data.data.nextPosts || [];
+      post.prev = allPrev.length ? allPrev[0] : null;
+      post.next = allNext.length ? allNext[0] : null;
+
       renderPost(post);
     })
     .catch(function (err) {
       console.error("post.js fetch error:", err);
       showError("Could not load post. Please try again later.");
     });
+
 })();
