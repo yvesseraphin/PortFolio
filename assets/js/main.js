@@ -983,12 +983,33 @@ void main(){
     return all;
   }
 
-  // ── Distribute items across 3 columns (round-robin) ───────
+  // ── Distribute items across 3 columns (shortest-column first) ──
+  // Tracks estimated height per column so cards go to the
+  // shortest column — produces a balanced masonry layout.
   function distributeToColumns(items) {
-    var cols = [[], [], []];
-    items.forEach(function (item, i) {
-      cols[i % 3].push(item);
+    var cols      = [[], [], []];
+    var heights   = [0, 0, 0];
+    var colW      = window.innerWidth / 3; // approximate column width
+
+    items.forEach(function (item) {
+      // Estimate card height from aspect ratio + fixed overhead (button + gap)
+      var cover  = item.coverImage || null;
+      var imgW   = cover ? cover.width  : 0;
+      var imgH   = cover ? cover.height : 0;
+      var ratio  = item.aspectRation
+        ? parseFloat(item.aspectRation)
+        : imgW && imgH ? imgW / imgH : 1.4;
+      var cardH  = colW / ratio + 56; // image height + button + padding
+
+      // Find shortest column
+      var minIdx = 0;
+      if (heights[1] < heights[minIdx]) minIdx = 1;
+      if (heights[2] < heights[minIdx]) minIdx = 2;
+
+      cols[minIdx].push(item);
+      heights[minIdx] += cardH;
     });
+
     return cols;
   }
 

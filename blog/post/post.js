@@ -11,32 +11,27 @@
   var HYGRAPH_ENDPOINT = "https://eu-west-2.cdn.hygraph.com/content/cms96wuqa009e07uugpyxsqs7/master";
   var HYGRAPH_TOKEN    = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE3ODU5NzY3ODgsImF1ZCI6WyJodHRwczovL2FwaS1ldS13ZXN0LTIuaHlncmFwaC5jb20vdjIvY21zOTZ3dXFhMDA5ZTA3dXVncHl4c3FzNy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC1ldS13ZXN0LTIuaHlncmFwaC5jb20vIiwic3ViIjoiMGE4MWZiZTEtNWQ2OS00NTlhLWI1OWEtOWE0NjVlZDMxZTFkIiwianRpIjoiY21zZ3NndHB6MG84dzA3bW9kc2ZlZDQyMiJ9.QfZ5aFKj3rE-m77VOd_EZ0X54CW74yizyS7e2G30HSfXOlSrfs86CWPpMpzIyGu0af_HHPaJ8gSx7o31RLU66ldZNakjFEuqPKiKgRnnj1hu8m6iWq724rfCKJPfuakOhD1_KS2Dj2h2bL4h7T6p9Bqc98mr856jjaWFVtahkpTVMvL98SJfeuR1ZzlZyEiuczmxeS_g1H0iEk-cMgI7knXF2uj7G_Eizclgh4HrBph-uMdJOycZOfYWY3klCxGPHVGusSfkJfvc3Z2FFjbbw1t23NgWGGHtW4ckXwqJZNyxcfjZiq4RRU4X0MU-rC_BjLqfO9b1fgMVfiZpPRVnrGSbOOU491CQHwEFgagcabc9MmEkOYqg6ofrg3J0NTfsV2KHThZWKyv8K4yiBKf5ayjbDXpIpQVeE_Domr9MHyblyFEh1nlmZGqJgb5n9CgPzRFbBDgehfa61b_Jnc2eeA18AMaxzO_RpX4vdc8ud96VfGiVqmxfpYzDngFo5X4Z0OsI-p_-j3-huWeX24AcDjF3PegERCILhPkv0DHUnJLWXDWAL0RZBH4UjyXixaWawMDUzVGqqLTTRYQLYiJafFmbyshmdGIDOsMH4w_AIMOYZQbceviGYjEL0-CfuJ0MC46O-lmcL9mYgc-2J6lsbdjetu7lZPkvQzSDPPMuORM";
 
-  /* ── DOM targets ───────────────────────────────────────── */
-  var titleEl   = document.getElementById("post-title");
-  var dateEl    = document.getElementById("post-date");
-  var bodyEl    = document.getElementById("post-body");
-  var navEl     = document.getElementById("post-nav");
-
-  /* ── Slug from URL ─────────────────────────────────────── */
+  /* ── Slug from URL — read immediately, before DOM ready ── */
   function getSlug() {
     var params = new URLSearchParams(window.location.search);
     return params.get("slug") || "";
   }
 
-  /* ── Hygraph GraphQL fetch ─────────────────────────────── */
-  function hygraphFetch(query, variables) {
-    return fetch(HYGRAPH_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + HYGRAPH_TOKEN
-      },
-      body: JSON.stringify({ query: query, variables: variables || {} })
-    }).then(function (r) {
-      if (!r.ok) throw new Error("Hygraph fetch failed: " + r.status);
-      return r.json();
-    });
-  }
+  var slug = getSlug();
+
+  /* ── Start fetch IMMEDIATELY — don't wait for DOMContentLoaded ── */
+  // This fires as soon as the script tag is parsed, in parallel
+  // with the rest of the HTML parsing, so the data arrives sooner.
+  var QUERY = "query GetPost($slug:String!){post(where:{slug:$slug}){title slug postDate excerpt coverImage{url}sections{heading content{html}}}prevPosts:posts(where:{slug_not:$slug}orderBy:postDate_DESC first:1){title slug}nextPosts:posts(where:{slug_not:$slug}orderBy:postDate_ASC first:1){title slug}}";
+
+  var fetchPromise = slug ? fetch(HYGRAPH_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + HYGRAPH_TOKEN
+    },
+    body: JSON.stringify({ query: QUERY, variables: { slug: slug } })
+  }).then(function(r) { return r.json(); }) : Promise.resolve(null);
 
   /* ── Date formatter ────────────────────────────────────── */
   function formatDate(iso) {
@@ -246,92 +241,49 @@
     if (el) el.setAttribute(attr, val);
   }
 
-  /* ── Show error state ──────────────────────────────────── */
-  function showError(msg) {
-    if (bodyEl) {
-      bodyEl.innerHTML =
-        '<div class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column ' +
-        'c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start ' +
-        'c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1">' +
-        '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 ' +
-        'c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11">' +
-        escHtml(msg) + "</p></div>";
-    }
+  /* ── DOM refs — resolved after DOM is ready ────────────── */
+  var titleEl, dateEl, bodyEl, navEl;
+
+  function getDomRefs() {
+    titleEl = document.getElementById("post-title");
+    dateEl  = document.getElementById("post-date");
+    bodyEl  = document.getElementById("post-body");
+    navEl   = document.getElementById("post-nav");
   }
 
-  /* ── GraphQL query ─────────────────────────────────────── */
-  var slug = getSlug();
+  /* ── Render when both DOM and data are ready ───────────── */
+  function onReady(data) {
+    getDomRefs();
 
-  if (!slug) {
-    showError("No post slug provided. Add ?slug=your-post-slug to the URL.");
-    if (titleEl) titleEl.textContent = "Post not found";
-    return;
+    if (!slug) {
+      if (bodyEl) bodyEl.innerHTML = "";
+      if (titleEl) titleEl.textContent = "Post not found";
+      return;
+    }
+
+    if (!data || data.errors || !data.data || !data.data.post) {
+      if (bodyEl) bodyEl.innerHTML = "";
+      if (titleEl) titleEl.textContent = "Post not found";
+      return;
+    }
+
+    var post    = data.data.post;
+    var allPrev = data.data.prevPosts || [];
+    var allNext = data.data.nextPosts || [];
+    post.prev   = allPrev.length ? allPrev[0] : null;
+    post.next   = allNext.length ? allNext[0] : null;
+
+    renderPost(post);
   }
 
-  var QUERY = `
-    query GetPost($slug: String!) {
-      post(where: { slug: $slug }) {
-        title
-        slug
-        postDate
-        excerpt
-        coverImage { url }
-        sections {
-          heading
-          content {
-            html
-          }
-        }
-      }
-      # Prev post (older)
-      prevPosts: posts(
-        where: { slug_not: $slug }
-        orderBy: postDate_DESC
-        first: 1
-      ) {
-        title
-        slug
-        postDate
-      }
-      # Next post (newer)
-      nextPosts: posts(
-        where: { slug_not: $slug }
-        orderBy: postDate_ASC
-        first: 1
-      ) {
-        title
-        slug
-        postDate
-      }
-    }
-  `;
-
-  hygraphFetch(QUERY, { slug: slug })
-    .then(function (data) {
-      if (data.errors) {
-        console.error("Hygraph errors:", data.errors);
-        showError("Could not load post. Please try again later.");
-        return;
-      }
-
-      var post = data.data && data.data.post;
-      if (!post) {
-        showError('Post "' + slug + '" not found.');
-        if (titleEl) titleEl.textContent = "Post not found";
-        return;
-      }
-
-      // Attach prev/next — simple approach: adjacent by date
-      var allPrev = data.data.prevPosts || [];
-      var allNext = data.data.nextPosts || [];
-      post.prev = allPrev.length ? allPrev[0] : null;
-      post.next = allNext.length ? allNext[0] : null;
-
-      renderPost(post);
-    })
-    .catch(function (err) {
-      console.error("post.js fetch error:", err);
-      showError("Could not load post. Please try again later.");
+  // Wait for DOM then immediately resolve against already-in-flight fetch
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchPromise.then(onReady).catch(function () { getDomRefs(); });
     });
+  } else {
+    // DOM already ready (script deferred or at bottom of body)
+    fetchPromise.then(onReady).catch(function () { getDomRefs(); });
+  }
 
 })();
