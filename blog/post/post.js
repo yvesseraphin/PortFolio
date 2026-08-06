@@ -62,33 +62,30 @@
   }
 
   /* ── Style rich text HTML to match existing design ─────── */
-  // Hygraph returns clean HTML from the rich text field.
-  // We inject inline styles to match the existing CSS classes.
   function styleRichHtml(html) {
     if (!html) return "";
 
+    // Fix videos: Hygraph renders <video controls> — replace with autoplay muted loop
+    html = html.replace(
+      /<video[^>]*>/g,
+      '<video autoplay muted loop playsinline preload="auto" style="width:100%;display:block;border-radius:inherit">'
+    );
+
     return html
-      // Paragraphs
       .replace(/<p>/g, '<p class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">')
-      // Headings
       .replace(/<h2>/g, '<h2 data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">')
       .replace(/<h3>/g, '<h3 data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">')
       .replace(/<h4>/g, '<h4 data-heading="true" class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css">')
-      // Blockquote
       .replace(/<blockquote>/g, '<blockquote class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11" style="border-left:3px solid var(--colors-gray6);padding-left:16px;margin:8px 0">')
-      // Code inline
       .replace(/<code>/g, '<code class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-gGEEru-size-12 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11 c-iLbGmI-ibeaVNb-css">')
-      // Links
       .replace(/<a /g, '<a class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ikkecHh-css" target="_blank" rel="noopener noreferrer" ')
-      // Images — wrap in the card container
-      .replace(/<img /g, '<div class="c-gtuqhG"><img loading="lazy" ')
-      .replace(/(<div class="c-gtuqhG"><img[^>]+>)/g, "$1</div>")
-      // iframes — wrap for aspect ratio
-      .replace(/<iframe /g, '<div class="c-gtuqhG" style="aspect-ratio:16/9"><iframe style="width:100%;height:100%;border:0;border-radius:inherit" ')
-      .replace(/(<div class="c-gtuqhG"[^>]*><iframe[^>]+><\/iframe>)/g, "$1</div>")
-      // HR / divider
-      .replace(/<hr>/g, '<hr class="c-kgqVMd" style="margin-top:24px;margin-bottom:24px" />')
-      .replace(/<hr\/>/g, '<hr class="c-kgqVMd" style="margin-top:24px;margin-bottom:24px" />');
+      // Wrap images in card container
+      .replace(/<img ([^>]+)>/g, '<div class="c-gtuqhG"><img $1 loading="lazy"></div>')
+      // Wrap videos in card container (already styled above)
+      .replace(/(<video[^>]*>[\s\S]*?<\/video>)/g, '<div class="c-gtuqhG">$1</div>')
+      // Wrap iframes for aspect ratio
+      .replace(/<iframe ([^>]+)><\/iframe>/g, '<div class="c-gtuqhG" style="aspect-ratio:16/9"><iframe $1 style="width:100%;height:100%;border:0;border-radius:inherit"></iframe></div>')
+      .replace(/<hr\s*\/?>/g, '<hr class="c-kgqVMd" style="margin-top:24px;margin-bottom:24px" />');
   }
 
   /* ── Render post ───────────────────────────────────────── */
@@ -117,12 +114,15 @@
     if (dateEl)  dateEl.textContent  = dateStr;
 
     /* ── Body: iterate sections ── */
-    // Hygraph returns sections as array if multiple values enabled,
-    // or as a single object if only one section. Normalise to array.
+    // Hygraph returns sections as a single object (not array) when
+    // "Allow multiple values" is not enabled on the field.
+    // Normalise to array either way.
     var rawSections = post.sections || [];
     var sections = Array.isArray(rawSections) ? rawSections : [rawSections];
     var html = "";
     var tocItems = [];
+    // Track rendered content to avoid duplicates from overlapping blocks
+    var renderedHtml = {};
 
     sections.forEach(function (section) {
       if (!section) return;
@@ -139,15 +139,19 @@
           escHtml(section.heading) + "</h3>";
       }
 
-      // Rich text content — content is an array of rich text blocks, join all html
-      if (section.content) {
-        var contentBlocks = Array.isArray(section.content) ? section.content : [section.content];
-        contentBlocks.forEach(function (block) {
-          if (block && block.html) {
-            html += styleRichHtml(block.html);
-          }
-        });
-      }
+      // content is an array of rich text blocks — render each once
+      var contentBlocks = Array.isArray(section.content)
+        ? section.content
+        : (section.content ? [section.content] : []);
+
+      contentBlocks.forEach(function (block) {
+        if (!block || !block.html) return;
+        // Deduplicate — skip if exact same HTML already rendered
+        var key = block.html.slice(0, 60);
+        if (renderedHtml[key]) return;
+        renderedHtml[key] = true;
+        html += styleRichHtml(block.html);
+      });
     });
 
     var wrapper =
