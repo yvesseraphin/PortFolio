@@ -856,7 +856,7 @@ void main(){
         title
         slug
         postDate
-        coverImage { url width height }
+        coverImage { url width height mimeType }
         aspectRation
       }
     }
@@ -899,9 +899,16 @@ void main(){
   // item._type is "Post" or "Project" (Hygraph __typename)
   function buildCard(item) {
     var isPost     = item._type === "Post";
-    var imgUrl     = item.coverImage ? item.coverImage.url + "?w=800&auto=format" : "";
-    var imgW       = item.coverImage ? item.coverImage.width  : 800;
-    var imgH       = item.coverImage ? item.coverImage.height : 600;
+    var cover      = item.coverImage || null;
+    var mimeType   = cover ? (cover.mimeType || "") : "";
+    var isVideo    = mimeType.indexOf("video") === 0;
+    var imgUrl     = cover ? cover.url : "";
+    // Append format param only for images, not videos
+    var mediaSrc   = cover
+      ? (isVideo ? cover.url : cover.url + "?w=800&auto=format")
+      : "";
+    var imgW       = cover ? cover.width  : 800;
+    var imgH       = cover ? cover.height : 600;
     var ratio      = item.aspectRation
       ? parseFloat(item.aspectRation).toFixed(5)
       : imgW && imgH ? (imgW / imgH).toFixed(5) : "1.40000";
@@ -928,10 +935,21 @@ void main(){
       ? "c-lesPJm c-lesPJm-iekRYXs-css"
       : "c-lesPJm c-lesPJm-ikgVxhC-css";
 
+    // Render video or image depending on asset mimeType
+    var mediaEl = "";
+    if (mediaSrc) {
+      if (isVideo) {
+        mediaEl = '<video src="' + mediaSrc + '" autoplay muted loop playsinline ' +
+                  'style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit"></video>';
+      } else {
+        mediaEl = '<img src="' + mediaSrc + '" alt="' + title + '" loading="lazy" />';
+      }
+    }
+
     var mediaHtml =
       '<div class="' + mediaClass + '">' +
         '<div class="c-kjYPsQ" style="aspect-ratio:' + ratio + '/1">' +
-          (imgUrl ? '<img src="' + imgUrl + '" alt="' + title + '" loading="lazy" />' : "") +
+          mediaEl +
         "</div>" +
         '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center ' +
              'c-gqwkJN-knmidH-justify-between c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-iiIbqbF-css">' +
@@ -983,8 +1001,23 @@ void main(){
       var colItems = cols[ci];
       if (!colItems.length) return;
       var cardsHtml = colItems.map(buildCard).join("");
-      // Duplicate for seamless infinite scroll loop
-      inner.innerHTML = cardsHtml + cardsHtml;
+      // Only duplicate for seamless infinite loop when content is
+      // tall enough to fill the viewport — avoids visible duplicates
+      // when there are only a few cards
+      inner.innerHTML = cardsHtml;
+      // Measure after paint, duplicate only if content shorter than viewport
+      requestAnimationFrame(function () {
+        if (inner.scrollHeight < window.innerHeight * 1.5) {
+          // Not enough content to scroll — repeat until it fills 2x viewport
+          var repeated = cardsHtml;
+          while (inner.scrollHeight < window.innerHeight * 2) {
+            repeated += cardsHtml;
+            inner.innerHTML = repeated;
+          }
+        }
+        // Final duplication for the seamless CSS animation loop
+        inner.innerHTML += inner.innerHTML;
+      });
     });
   }
 
