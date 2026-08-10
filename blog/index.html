@@ -45,6 +45,13 @@
 
     <link rel="canonical" href="https://www.yvesseraphin.xyz/blog" />
 
+    <!-- Preconnect to Hygraph so the fetch has zero DNS/TCP delay -->
+    <link rel="preconnect" href="https://eu-west-2.cdn.hygraph.com" crossorigin />
+    <link rel="dns-prefetch" href="https://eu-west-2.cdn.hygraph.com" />
+    <!-- Also preconnect to the image CDN -->
+    <link rel="preconnect" href="https://eu-west-2.graphassets.com" crossorigin />
+    <link rel="dns-prefetch" href="https://eu-west-2.graphassets.com" />
+
     <!-- Theme detection: runs before paint to avoid flash -->
     <script>
       !(function () {
@@ -79,6 +86,8 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../assets/css/styles.css" />
+    <!-- defer: downloads in parallel with HTML, executes after DOM is ready -->
+    <script defer src="../assets/js/main.js"></script>
 
     <!-- Design tokens & utility classes (generated) -->
     <style id="stitches">
@@ -849,6 +858,11 @@
         }
       }
 
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.4; }
+      }
+
       @media (max-width: 960px) {
         .grid {
           opacity: 0;
@@ -1163,7 +1177,5 @@
       </main>
     </div>
     <!-- /#__next -->
-
-    <script src="../assets/js/main.js"></script>
   </body>
 </html>

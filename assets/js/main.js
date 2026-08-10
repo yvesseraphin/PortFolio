@@ -239,8 +239,8 @@
   const headerBar = document.getElementById("header-bar");
   const locationEl = document.querySelector(".header-meta span:last-child");
 
-  // Use the visitor's local timezone detected by the browser
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // Start with the browser's detected timezone; updated once geo resolves
+  let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   function formatTime() {
     return new Date().toLocaleTimeString([], {
@@ -263,8 +263,24 @@
     }, 1000);
   }
 
-  // Location is hardcoded — no IP fetch needed
-  // locationEl stays as the default "Kigali, Rwanda" set in HTML
+  // Fetch city + country from IP geolocation (no API key required)
+  // Falls back silently to the hardcoded HTML value on any error
+  fetch("https://ipapi.co/json/")
+    .then((r) => r.json())
+    .then((data) => {
+      const city    = data.city;
+      const country = data.country_name;
+      if (city && country && locationEl) {
+        locationEl.textContent = city + ", " + country;
+      }
+      // Also sync the clock timezone to the detected one if available
+      if (data.timezone) {
+        userTimeZone = data.timezone;
+      }
+    })
+    .catch(() => {
+      // Silently keep the default HTML value ("Kigali, Rwanda")
+    });
 
   // Fade header bar in after a short delay
   if (headerBar) {
@@ -829,26 +845,9 @@ void main(){
 
   var HYGRAPH_ENDPOINT = "https://eu-west-2.cdn.hygraph.com/content/cms96wuqa009e07uugpyxsqs7/master";
   var HYGRAPH_TOKEN    = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE3ODU5NzY3ODgsImF1ZCI6WyJodHRwczovL2FwaS1ldS13ZXN0LTIuaHlncmFwaC5jb20vdjIvY21zOTZ3dXFhMDA5ZTA3dXVncHl4c3FzNy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC1ldS13ZXN0LTIuaHlncmFwaC5jb20vIiwic3ViIjoiMGE4MWZiZTEtNWQ2OS00NTlhLWI1OWEtOWE0NjVlZDMxZTFkIiwianRpIjoiY21zZ3NndHB6MG84dzA3bW9kc2ZlZDQyMiJ9.QfZ5aFKj3rE-m77VOd_EZ0X54CW74yizyS7e2G30HSfXOlSrfs86CWPpMpzIyGu0af_HHPaJ8gSx7o31RLU66ldZNakjFEuqPKiKgRnnj1hu8m6iWq724rfCKJPfuakOhD1_KS2Dj2h2bL4h7T6p9Bqc98mr856jjaWFVtahkpTVMvL98SJfeuR1ZzlZyEiuczmxeS_g1H0iEk-cMgI7knXF2uj7G_Eizclgh4HrBph-uMdJOycZOfYWY3klCxGPHVGusSfkJfvc3Z2FFjbbw1t23NgWGGHtW4ckXwqJZNyxcfjZiq4RRU4X0MU-rC_BjLqfO9b1fgMVfiZpPRVnrGSbOOU491CQHwEFgagcabc9MmEkOYqg6ofrg3J0NTfsV2KHThZWKyv8K4yiBKf5ayjbDXpIpQVeE_Domr9MHyblyFEh1nlmZGqJgb5n9CgPzRFbBDgehfa61b_Jnc2eeA18AMaxzO_RpX4vdc8ud96VfGiVqmxfpYzDngFo5X4Z0OsI-p_-j3-huWeX24AcDjF3PegERCILhPkv0DHUnJLWXDWAL0RZBH4UjyXixaWawMDUzVGqqLTTRYQLYiJafFmbyshmdGIDOsMH4w_AIMOYZQbceviGYjEL0-CfuJ0MC46O-lmcL9mYgc-2J6lsbdjetu7lZPkvQzSDPPMuORM";
+  var CACHE_KEY = "blog_grid_cache";
+  var CACHE_TTL = 30 * 60 * 1000; // 30 minutes — survives tab closes
 
-  // ── Hygraph GraphQL fetch ──────────────────────────────────
-  function hygraphFetch(query) {
-    return fetch(HYGRAPH_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + HYGRAPH_TOKEN
-      },
-      body: JSON.stringify({ query: query })
-    }).then(function (r) {
-      if (!r.ok) throw new Error("Hygraph fetch failed: " + r.status);
-      return r.json();
-    });
-  }
-
-  // ── GraphQL query — posts only for now ────────────────────
-  // Projects query will be added once the Project model is
-  // created in Hygraph. Adding it before causes the entire
-  // query to return null (GraphQL fails on unknown fields).
   var QUERY = `
     {
       posts(orderBy: postDate_DESC) {
@@ -856,11 +855,42 @@ void main(){
         title
         slug
         postDate
-        coverImage { url width height mimeType }
+        coverImage { url mimeType }
         aspectRation
       }
     }
   `;
+
+  // ── Kick off fetch IMMEDIATELY at script-parse time ───────
+  // Fires before DOMContentLoaded so the response arrives sooner.
+  var fetchPromise = fetch(HYGRAPH_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + HYGRAPH_TOKEN
+    },
+    body: JSON.stringify({ query: QUERY })
+  }).then(function (r) {
+    if (!r.ok) throw new Error("Hygraph fetch failed: " + r.status);
+    return r.json();
+  });
+
+  // ── Cache helpers (localStorage — survives tab closes) ────
+  function readCache() {
+    try {
+      var raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      var cached = JSON.parse(raw);
+      if (Date.now() - cached.ts > CACHE_TTL) return null;
+      return cached.items;
+    } catch (e) { return null; }
+  }
+
+  function writeCache(items) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), items: items }));
+    } catch (e) {}
+  }
 
   // ── Date formatter ─────────────────────────────────────────
   function formatDate(iso) {
@@ -902,16 +932,12 @@ void main(){
     var cover      = item.coverImage || null;
     var mimeType   = cover ? (cover.mimeType || "") : "";
     var isVideo    = mimeType.indexOf("video") === 0;
-    var imgUrl     = cover ? cover.url : "";
-    // Append format param only for images, not videos
     var mediaSrc   = cover
       ? (isVideo ? cover.url : cover.url + "?w=800&auto=format")
       : "";
-    var imgW       = cover ? cover.width  : 800;
-    var imgH       = cover ? cover.height : 600;
     var ratio      = item.aspectRation
       ? parseFloat(item.aspectRation).toFixed(5)
-      : imgW && imgH ? (imgW / imgH).toFixed(5) : "1.40000";
+      : "1.40000";
     var title      = escapeHtml(item.title || "Untitled");
     var date       = escapeHtml(formatDate(item.postDate));
 
@@ -942,7 +968,7 @@ void main(){
         mediaEl = '<video src="' + mediaSrc + '" autoplay muted loop playsinline ' +
                   'style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit"></video>';
       } else {
-        mediaEl = '<img src="' + mediaSrc + '" alt="' + title + '" loading="lazy" />';
+        mediaEl = '<img src="' + mediaSrc + '" alt="' + title + '" loading="eager" decoding="async" />';
       }
     }
 
@@ -992,14 +1018,9 @@ void main(){
     var colW      = window.innerWidth / 3; // approximate column width
 
     items.forEach(function (item) {
-      // Estimate card height from aspect ratio + fixed overhead (button + gap)
       var cover  = item.coverImage || null;
-      var imgW   = cover ? cover.width  : 0;
-      var imgH   = cover ? cover.height : 0;
-      var ratio  = item.aspectRation
-        ? parseFloat(item.aspectRation)
-        : imgW && imgH ? imgW / imgH : 1.4;
-      var cardH  = colW / ratio + 56; // image height + button + padding
+      var ratio  = item.aspectRation ? parseFloat(item.aspectRation) : 1.4;
+      var cardH  = colW / ratio + 56;
 
       // Find shortest column
       var minIdx = 0;
@@ -1020,30 +1041,31 @@ void main(){
       var inner = document.getElementById(id);
       if (!inner) return;
       var colItems = cols[ci];
-      if (!colItems.length) return;
-      var cardsHtml = colItems.map(buildCard).join("");
-      // Only duplicate for seamless infinite loop when content is
-      // tall enough to fill the viewport — avoids visible duplicates
-      // when there are only a few cards
-      inner.innerHTML = cardsHtml;
-      // Measure after paint, duplicate only if content shorter than viewport
+      if (!colItems.length) {
+        inner.innerHTML = "";
+        inner.style.animation = "none";
+        return;
+      }
+
+      // Render real cards
+      inner.innerHTML = colItems.map(buildCard).join("");
+
+      // Disable scroll animation if not enough content to fill viewport
       requestAnimationFrame(function () {
-        if (inner.scrollHeight < window.innerHeight * 1.5) {
-          // Not enough content to scroll — repeat until it fills 2x viewport
-          var repeated = cardsHtml;
-          while (inner.scrollHeight < window.innerHeight * 2) {
-            repeated += cardsHtml;
-            inner.innerHTML = repeated;
-          }
+        if (inner.scrollHeight <= window.innerHeight) {
+          inner.style.animation = "none";
         }
-        // Final duplication for the seamless CSS animation loop
-        inner.innerHTML += inner.innerHTML;
       });
     });
   }
 
-  // ── Fetch & render ─────────────────────────────────────────
-  hygraphFetch(QUERY)
+  // ── Boot ───────────────────────────────────────────────────
+  // 1. Render from cache immediately if available (zero network wait)
+  var cached = readCache();
+  if (cached) renderColumns(cached);
+
+  // 2. Resolve the in-flight fetch (started at script-parse time)
+  fetchPromise
     .then(function (data) {
       if (data.errors) {
         console.warn("[blog grid] Hygraph errors:", data.errors);
@@ -1053,6 +1075,8 @@ void main(){
       var projects = (data.data && data.data.projects) || [];
       var items    = mergeAndSort(posts, projects);
       if (!items.length) return;
+      writeCache(items);
+      // Only re-render if data changed vs what was cached
       renderColumns(items);
     })
     .catch(function (err) {
