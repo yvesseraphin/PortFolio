@@ -18,14 +18,15 @@
       !(function () {
         try {
           var d = document.documentElement.classList;
-          d.remove("dark");
+          d.remove("dark", "light");
           var e = localStorage.getItem("theme");
-          if ("system" === e || (!e && true)) {
+          if ("system" === e || !e) {
             var t = "(prefers-color-scheme: dark)",
               m = window.matchMedia(t);
             m.media !== t || m.matches ? d.add("dark") : d.add("light");
-          } else if (e) var x = { dark: "dark" };
-          d.add(x[e]);
+          } else if (e) {
+            d.add(e);
+          }
         } catch (e) {}
       })();
     </script>
@@ -1777,6 +1778,91 @@
           background: var(--colors-grayA3);
           transition: backdrop-filter 500ms ease;
         }
+
+        /* ── References / Resources section ── */
+        .post-references-heading {
+          display: block;
+          margin: 0;
+          margin-top: 24px;
+          font-family: var(--fonts-body);
+          font-size: var(--fontSizes-16);
+          line-height: var(--lineHeights-20);
+          font-weight: 500;
+          color: var(--colors-gray12);
+        }
+        .post-references-list {
+          box-sizing: border-box;
+          padding-left: 27px;
+          margin: 0;
+        }
+        .post-references-list li {
+          margin: 0;
+          line-height: 28px;
+        }
+        .post-references-list li a {
+          font-family: var(--fonts-body);
+          font-size: var(--fontSizes-14);
+          line-height: 28px;
+          font-weight: 400;
+          color: var(--colors-gray12);
+          text-decoration: underline;
+          text-decoration-color: var(--colors-gray11);
+          text-decoration-thickness: 1px;
+          text-underline-offset: 3px;
+          border-radius: 3px;
+          display: inline;
+        }
+        .post-references-list li a:focus-visible {
+          outline: 0;
+          box-shadow: 0 0 0 2px var(--colors-gray1), 0 0 0 4px var(--colors-amber9);
+          text-decoration: none;
+        }
+
+        /* ── Code block container ── */
+        :root {
+          --code-bg: var(--colors-gray2);
+          --code-fg: var(--colors-gray12);
+          --code-keyword: hsl(230, 60%, 55%);
+          --code-tag: hsl(195, 60%, 40%);
+          --code-string: hsl(110, 40%, 40%);
+        }
+        .dark {
+          --code-bg: var(--colors-gray2);
+          --code-fg: var(--colors-gray12);
+          --code-keyword: hsl(220, 80%, 70%);
+          --code-tag: hsl(195, 70%, 65%);
+          --code-string: hsl(110, 50%, 60%);
+        }
+        .codeblock_root__pf0C4 {
+          margin-top: 12px;
+          margin-bottom: 12px;
+          border-radius: 8px;
+          border: 1px solid var(--colors-gray4);
+          overflow: hidden;
+          background: var(--code-bg);
+        }
+        .codeblock_editor__Hq7SO {
+          padding: 16px;
+          overflow-x: auto;
+          color: var(--code-fg);
+          background: var(--code-bg);
+          font-family: var(--fonts-mono);
+          font-size: 13px;
+          line-height: 20px;
+        }
+        .codeblock_line__5uT_I {
+          display: block;
+          color: var(--code-fg);
+          background: var(--code-bg);
+          font-family: var(--fonts-mono);
+          font-size: 13px;
+          white-space: pre;
+          min-height: 20px;
+        }
+        .codeblock_line__5uT_I[data-highlighted="true"] {
+          background: var(--colors-blueA2);
+          border-radius: 2px;
+        }
       }
     </style>
     <link
@@ -1794,6 +1880,9 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <!-- Both scripts deferred in <head> so fetch fires while HTML still parses -->
+    <script defer src="/assets/js/main.js"></script>
+    <script defer src="/blog/post/post.js"></script>
   </head>
   <body>
     <div id="__next">
@@ -1906,7 +1995,7 @@
         <div
           class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-iPJLV-css"
         >
-          <div class="c-lesPJm c-lesPJm-ihxHQzT-css">
+          <div class="c-lesPJm c-lesPJm-ihxHQzT-css" id="post-toc">
             <a class="c-gRVIZe" href="/blog">
               <svg width="18px" height="18px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" color="currentColor">
                 <path d="M10.25 4.75l-3.5 3.5 3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1916,7 +2005,9 @@
             </a>
           </div>
           <div
+            id="post-header"
             class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ibJYOuh-css"
+            style="visibility:hidden"
           >
             <div
               class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1"
@@ -1973,18 +2064,17 @@
           <div data-stage="" id="post-body">
             <!-- Content loaded by post.js -->
           </div>
-          <hr class="c-kgqVMd c-kgqVMd-iewCDuj-css" />
+          <hr id="post-divider" class="c-kgqVMd c-kgqVMd-iewCDuj-css" style="visibility:hidden" />
           <footer
             id="post-nav"
             class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-irEjuD-align-stretch c-gqwkJN-knmidH-justify-between c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ifGHEql-css"
+            style="visibility:hidden"
           >
             <!-- Prev/Next filled by post.js -->
           </footer>
         </div>
       </main>
     </div>
-    <script src="/assets/js/main.js"></script>
-    <script src="/blog/post/post.js"></script>
   </body>
   
 </html>
