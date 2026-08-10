@@ -834,7 +834,7 @@ void main(){
 })();
 
 /* ============================================================
-   8. HYGRAPH BLOG GRID — fetch posts + projects, render cards
+   8. SANITY BLOG GRID — fetch posts, render cards
    ============================================================ */
 (function () {
   "use strict";
@@ -843,35 +843,37 @@ void main(){
   var grid = document.getElementById("blog-grid");
   if (!grid) return;
 
-  var HYGRAPH_ENDPOINT = "https://eu-west-2.cdn.hygraph.com/content/cms96wuqa009e07uugpyxsqs7/master";
-  var HYGRAPH_TOKEN    = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE3ODU5NzY3ODgsImF1ZCI6WyJodHRwczovL2FwaS1ldS13ZXN0LTIuaHlncmFwaC5jb20vdjIvY21zOTZ3dXFhMDA5ZTA3dXVncHl4c3FzNy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC1ldS13ZXN0LTIuaHlncmFwaC5jb20vIiwic3ViIjoiMGE4MWZiZTEtNWQ2OS00NTlhLWI1OWEtOWE0NjVlZDMxZTFkIiwianRpIjoiY21zZ3NndHB6MG84dzA3bW9kc2ZlZDQyMiJ9.QfZ5aFKj3rE-m77VOd_EZ0X54CW74yizyS7e2G30HSfXOlSrfs86CWPpMpzIyGu0af_HHPaJ8gSx7o31RLU66ldZNakjFEuqPKiKgRnnj1hu8m6iWq724rfCKJPfuakOhD1_KS2Dj2h2bL4h7T6p9Bqc98mr856jjaWFVtahkpTVMvL98SJfeuR1ZzlZyEiuczmxeS_g1H0iEk-cMgI7knXF2uj7G_Eizclgh4HrBph-uMdJOycZOfYWY3klCxGPHVGusSfkJfvc3Z2FFjbbw1t23NgWGGHtW4ckXwqJZNyxcfjZiq4RRU4X0MU-rC_BjLqfO9b1fgMVfiZpPRVnrGSbOOU491CQHwEFgagcabc9MmEkOYqg6ofrg3J0NTfsV2KHThZWKyv8K4yiBKf5ayjbDXpIpQVeE_Domr9MHyblyFEh1nlmZGqJgb5n9CgPzRFbBDgehfa61b_Jnc2eeA18AMaxzO_RpX4vdc8ud96VfGiVqmxfpYzDngFo5X4Z0OsI-p_-j3-huWeX24AcDjF3PegERCILhPkv0DHUnJLWXDWAL0RZBH4UjyXixaWawMDUzVGqqLTTRYQLYiJafFmbyshmdGIDOsMH4w_AIMOYZQbceviGYjEL0-CfuJ0MC46O-lmcL9mYgc-2J6lsbdjetu7lZPkvQzSDPPMuORM";
-  var CACHE_KEY = "blog_grid_cache";
+  // Sanity project config (same project as sanity.config.ts)
+  var PROJECT_ID  = "m77bsvm1";
+  var DATASET     = "production";
+  var API_VERSION = "2024-01-01";
+
+  var CACHE_KEY = "blog_grid_cache_v2";
   var CACHE_TTL = 30 * 60 * 1000; // 30 minutes — survives tab closes
 
-  var QUERY = `
-    {
-      posts(orderBy: postDate_DESC) {
-        _type: __typename
-        title
-        slug
-        postDate
-        coverImage { url mimeType }
-        aspectRation
-      }
-    }
-  `;
+  // GROQ query — fetches posts ordered newest first.
+  // Uses Sanity CDN (api.sanity.io with cdn=true) for fast global edge caching.
+  var GROQ = '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
+
+  // ── Build Sanity CDN image URL from an asset reference ────
+  function sanityImgUrl(ref, width) {
+    if (!ref) return "";
+    // ref format: "image-<id>-<WxH>-<ext>"
+    var parts = ref.split("-");
+    var ext   = parts[parts.length - 1];
+    var dims  = parts[parts.length - 2];
+    var id    = parts.slice(1, parts.length - 2).join("-");
+    var base  = "https://cdn.sanity.io/images/" + PROJECT_ID + "/" + DATASET + "/" + id + "-" + dims + "." + ext;
+    return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
+  }
 
   // ── Kick off fetch IMMEDIATELY at script-parse time ───────
-  // Fires before DOMContentLoaded so the response arrives sooner.
-  var fetchPromise = fetch(HYGRAPH_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + HYGRAPH_TOKEN
-    },
-    body: JSON.stringify({ query: QUERY })
-  }).then(function (r) {
-    if (!r.ok) throw new Error("Hygraph fetch failed: " + r.status);
+  // Uses Sanity CDN endpoint (cdn.sanity.io) — globally cached, no auth needed.
+  var sanityUrl = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
+                  "/data/query/" + DATASET + "?query=" + encodeURIComponent(GROQ);
+
+  var fetchPromise = fetch(sanityUrl).then(function (r) {
+    if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
     return r.json();
   });
 
@@ -907,16 +909,10 @@ void main(){
       .replace(/"/g, "&quot;");
   }
 
-  // ── Arrow SVGs ────────────────────────────────────────────
+  // ── Arrow SVG ─────────────────────────────────────────────
   var ARROW_SVG =
     '<svg data-arrow width="16px" height="16px" stroke-width="1.5" ' +
     'viewBox="0 0 24 24" fill="none" color="currentColor">' +
-    '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
-    'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
-
-  var ARROW_SVG_EXT =
-    '<svg data-arrow width="16px" height="16px" stroke-width="1.5" ' +
-    'viewBox="0 0 24 24" fill="none" color="currentColor" style="transform:rotate(-45deg)">' +
     '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
     'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
@@ -926,54 +922,22 @@ void main(){
                "c-iLbGmI-cOWITQ-color-gray12 ";
 
   // ── Build one card ─────────────────────────────────────────
-  // item._type is "Post" or "Project" (Hygraph __typename)
   function buildCard(item) {
-    var isPost     = item._type === "Post";
-    var cover      = item.coverImage || null;
-    var mimeType   = cover ? (cover.mimeType || "") : "";
-    var isVideo    = mimeType.indexOf("video") === 0;
-    var mediaSrc   = cover
-      ? (isVideo ? cover.url : cover.url + "?w=800&auto=format")
+    var cover    = item.coverImage || null;
+    var assetRef = cover && cover.asset ? cover.asset._ref : null;
+    var mediaSrc = assetRef ? sanityImgUrl(assetRef, 800) : "";
+    var ratio    = item.aspectRatio ? parseFloat(item.aspectRatio).toFixed(5) : "1.40000";
+    var title    = escapeHtml(item.title || "Untitled");
+    var date     = escapeHtml(formatDate(item.postDate));
+    var slug     = item.slug || "";
+    var href     = "/blog/post/?slug=" + encodeURIComponent(slug);
+
+    var mediaEl = mediaSrc
+      ? '<img src="' + mediaSrc + '" alt="' + title + '" loading="eager" decoding="async" />'
       : "";
-    var ratio      = item.aspectRation
-      ? parseFloat(item.aspectRation).toFixed(5)
-      : "1.40000";
-    var title      = escapeHtml(item.title || "Untitled");
-    var date       = escapeHtml(formatDate(item.postDate));
-
-    // Posts → internal blog post page
-    // Projects with url → external link
-    // Projects without url → display only card (no button)
-    var href, btnLabel, isExternal, hasLink;
-    if (isPost) {
-      href       = "/blog/post/?slug=" + encodeURIComponent(item.slug || "");
-      btnLabel   = "Read Post";
-      isExternal = false;
-      hasLink    = true;
-    } else {
-      href       = item.url || "#";
-      btnLabel   = "View Project";
-      isExternal = !!item.url;
-      hasLink    = !!item.url;
-    }
-
-    var mediaClass = hasLink
-      ? "c-lesPJm c-lesPJm-iekRYXs-css"
-      : "c-lesPJm c-lesPJm-ikgVxhC-css";
-
-    // Render video or image depending on asset mimeType
-    var mediaEl = "";
-    if (mediaSrc) {
-      if (isVideo) {
-        mediaEl = '<video src="' + mediaSrc + '" autoplay muted loop playsinline ' +
-                  'style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit"></video>';
-      } else {
-        mediaEl = '<img src="' + mediaSrc + '" alt="' + title + '" loading="eager" decoding="async" />';
-      }
-    }
 
     var mediaHtml =
-      '<div class="' + mediaClass + '">' +
+      '<div class="c-lesPJm c-lesPJm-iekRYXs-css">' +
         '<div class="c-kjYPsQ" style="aspect-ratio:' + ratio + '/1">' +
           mediaEl +
         "</div>" +
@@ -984,49 +948,26 @@ void main(){
         "</div>" +
       "</div>";
 
-    if (hasLink) {
-      var targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
-      var btnArrow   = isExternal ? ARROW_SVG_EXT : ARROW_SVG;
-      return (
-        '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' +
-        href + '"' + targetAttr + ">" +
-          mediaHtml +
-          '<div data-fake-button>' + btnLabel + btnArrow + "</div>" +
-        "</a>"
-      );
-    }
-    return '<div class="c-dcJSMY">' + mediaHtml + "</div>";
-  }
-
-  // ── Merge + sort posts and projects by date ────────────────
-  function mergeAndSort(posts, projects) {
-    var all = [];
-    (posts || []).forEach(function (p) { all.push(p); });
-    (projects || []).forEach(function (p) { all.push(p); });
-    all.sort(function (a, b) {
-      return new Date(b.postDate || 0) - new Date(a.postDate || 0);
-    });
-    return all;
+    return (
+      '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' + href + '">' +
+        mediaHtml +
+        '<div data-fake-button>Read Post ' + ARROW_SVG + "</div>" +
+      "</a>"
+    );
   }
 
   // ── Distribute items across 3 columns (shortest-column first) ──
-  // Tracks estimated height per column so cards go to the
-  // shortest column — produces a balanced masonry layout.
   function distributeToColumns(items) {
-    var cols      = [[], [], []];
-    var heights   = [0, 0, 0];
-    var colW      = window.innerWidth / 3; // approximate column width
+    var cols    = [[], [], []];
+    var heights = [0, 0, 0];
+    var colW    = window.innerWidth / 3;
 
     items.forEach(function (item) {
-      var cover  = item.coverImage || null;
-      var ratio  = item.aspectRation ? parseFloat(item.aspectRation) : 1.4;
-      var cardH  = colW / ratio + 56;
-
-      // Find shortest column
+      var ratio = item.aspectRatio ? parseFloat(item.aspectRatio) : 1.4;
+      var cardH = colW / ratio + 56;
       var minIdx = 0;
       if (heights[1] < heights[minIdx]) minIdx = 1;
       if (heights[2] < heights[minIdx]) minIdx = 2;
-
       cols[minIdx].push(item);
       heights[minIdx] += cardH;
     });
@@ -1046,11 +987,7 @@ void main(){
         inner.style.animation = "none";
         return;
       }
-
-      // Render real cards
       inner.innerHTML = colItems.map(buildCard).join("");
-
-      // Disable scroll animation if not enough content to fill viewport
       requestAnimationFrame(function () {
         if (inner.scrollHeight <= window.innerHeight) {
           inner.style.animation = "none";
@@ -1060,27 +997,20 @@ void main(){
   }
 
   // ── Boot ───────────────────────────────────────────────────
-  // 1. Render from cache immediately if available (zero network wait)
+  // 1. Render from cache immediately (zero network wait)
   var cached = readCache();
   if (cached) renderColumns(cached);
 
-  // 2. Resolve the in-flight fetch (started at script-parse time)
+  // 2. Resolve the in-flight Sanity CDN fetch
   fetchPromise
     .then(function (data) {
-      if (data.errors) {
-        console.warn("[blog grid] Hygraph errors:", data.errors);
-        return;
-      }
-      var posts    = (data.data && data.data.posts)    || [];
-      var projects = (data.data && data.data.projects) || [];
-      var items    = mergeAndSort(posts, projects);
+      var items = (data && data.result) || [];
       if (!items.length) return;
       writeCache(items);
-      // Only re-render if data changed vs what was cached
       renderColumns(items);
     })
     .catch(function (err) {
-      console.warn("[blog grid] Hygraph fetch error:", err);
+      console.warn("[blog grid] Sanity fetch error:", err);
     });
 
 })();
