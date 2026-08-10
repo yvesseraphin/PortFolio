@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Sanity Studio build output & runtime
+dist/
+.sanity/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+*.local
+
+# Old Sanity folder (moved to studio-portfolio/)
+portfolio/
