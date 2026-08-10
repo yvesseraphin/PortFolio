@@ -1863,6 +1863,75 @@
           background: var(--colors-blueA2);
           border-radius: 2px;
         }
+
+        /* ── Back link wrapper ── */
+        .c-gRVIZe {
+          display: inline-flex; align-items: center; gap: 4px;
+          font-size: 14px; color: var(--colors-gray11);
+          line-height: 20px; text-decoration: none;
+          border-radius: 6px; margin: -3px; padding: 3px;
+          transition: color 150ms ease;
+        }
+        .c-gRVIZe svg { transform: translateY(-1px); }
+        .c-gRVIZe:hover, .c-gRVIZe:active { color: var(--colors-gray12); }
+
+        /* ── TOC sidebar (fixed left, collapses on narrow viewports) ── */
+        .c-lesPJm-ihxHQzT-css {
+          position: fixed;
+          top: 0;
+          transform: translate(-260px, 121px);
+          width: fit-content;
+        }
+        @media (max-width: 1200px) {
+          .c-lesPJm-ihxHQzT-css {
+            transform: translateY(120px);
+            position: absolute;
+            left: -120px;
+          }
+          .c-lesPJm-ihxHQzT-css nav { display: none; }
+        }
+        @media (max-width: 980px) {
+          .c-lesPJm-ihxHQzT-css {
+            top: 0; position: relative;
+            transform: none; left: -4px;
+            margin-bottom: 32px;
+          }
+        }
+
+        /* ── Main content column ── */
+        .c-lesPJm-ikDXmTe-css {
+          display: flex; flex-direction: column; position: relative;
+          min-height: 100vh;
+          padding: 120px var(--space-3) 120px;
+          margin: 0 auto; max-width: 720px;
+        }
+        @media (max-width: 720px) {
+          .c-lesPJm-ikDXmTe-css { padding-top: 40px; }
+        }
+
+        /* ── Header row ── */
+        .c-gqwkJN-ibJYOuh-css { margin-bottom: 32px; }
+        .c-gqwkJN-icKSZB-css  { margin-left: auto; }
+
+        /* ── Copy button circle ── */
+        .c-bYlhjp {
+          width: 36px; height: 36px;
+          display: flex; align-items: center; justify-content: center;
+          background: var(--colors-gray3); border-radius: 9999px;
+          color: var(--colors-gray11); border: 0; cursor: pointer;
+          transition: background 150ms ease; flex-shrink: 0;
+        }
+        .c-bYlhjp svg { width: 20px; height: 20px; pointer-events: none; }
+        .c-bYlhjp:hover  { background: var(--colors-gray4); }
+        .c-bYlhjp:active { background: var(--colors-gray5); }
+
+        /* ── Prev/next nav ── */
+        .c-gqwkJN-ifGHEql-css { width: 100%; }
+        .c-gqwkJN-ilhikBv-css {
+          gap: 4px; color: var(--colors-gray11);
+          font-size: 14px; line-height: 20px;
+        }
+        .c-kgqVMd-iewCDuj-css { margin-top: 40px; margin-bottom: 40px; }
       }
     </style>
     <link
@@ -2007,7 +2076,6 @@
           <div
             id="post-header"
             class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ibJYOuh-css"
-            style="visibility:hidden"
           >
             <div
               class="c-gqwkJN c-gqwkJN-iTKOFX-direction-column c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1"
@@ -2015,15 +2083,11 @@
               <h1
                 id="post-title"
                 class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12"
-              >
-                <!-- filled by post.js -->
-              </h1>
+              ></h1>
               <p
                 id="post-date"
                 class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11"
-              >
-                <!-- filled by post.js -->
-              </p>
+              ></p>
             </div>
             <div
               class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-irEjuD-align-stretch c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-llVfQI-gap-1 c-gqwkJN-icKSZB-css"
@@ -2061,9 +2125,7 @@
               </button>
             </div>
           </div>
-          <div data-stage="" id="post-body">
-            <!-- Content loaded by post.js -->
-          </div>
+          <div data-stage="" id="post-body"></div>
           <hr id="post-divider" class="c-kgqVMd c-kgqVMd-iewCDuj-css" style="visibility:hidden" />
           <footer
             id="post-nav"
