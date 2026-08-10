@@ -177,7 +177,9 @@
   function buildToc(items) {
     var sidebar = document.getElementById("post-toc");
     if (!sidebar) return;
-    sidebar.innerHTML = "";
+    // Remove only previously-built nav, never touch the back arrow link
+    var oldNav = sidebar.querySelector("nav");
+    if (oldNav) oldNav.remove();
     if (!items.length) return;
     var nav = document.createElement("nav");
     nav.setAttribute("aria-label", "Table of contents");

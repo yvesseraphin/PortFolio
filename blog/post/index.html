@@ -30,7 +30,7 @@
         } catch (e) {}
       })();
     </script>
-    <title id="page-title">Loading&hellip;</title>
+    <title id="page-title">Seraphin · Blog</title>
     <meta name="robots" content="index,follow" />
     <meta id="meta-description" name="description" content="" />
     <meta id="og-title" property="og:title" content="" />
@@ -1875,26 +1875,25 @@
         .c-gRVIZe svg { transform: translateY(-1px); }
         .c-gRVIZe:hover, .c-gRVIZe:active { color: var(--colors-gray12); }
 
-        /* ── TOC sidebar (fixed left, collapses on narrow viewports) ── */
+        /* ── Back link + TOC sidebar ── */
+        /* Always visible back arrow at top of content.
+           On wide screens (>1200px) it also floats left as a fixed sidebar.
+           On all other screens it sits inline above the title. */
         .c-lesPJm-ihxHQzT-css {
-          position: fixed;
+          position: relative;
           top: 0;
-          transform: translate(-260px, 121px);
+          left: 0;
+          transform: none;
           width: fit-content;
+          margin-bottom: 32px;
         }
-        @media (max-width: 1200px) {
+        @media (min-width: 1201px) {
           .c-lesPJm-ihxHQzT-css {
-            transform: translateY(120px);
-            position: absolute;
-            left: -120px;
-          }
-          .c-lesPJm-ihxHQzT-css nav { display: none; }
-        }
-        @media (max-width: 980px) {
-          .c-lesPJm-ihxHQzT-css {
-            top: 0; position: relative;
-            transform: none; left: -4px;
-            margin-bottom: 32px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(calc(50vw - 360px - 180px), 121px);
+            margin-bottom: 0;
           }
         }
 
