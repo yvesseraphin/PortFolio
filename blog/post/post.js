@@ -29,15 +29,6 @@
       "}"
     : null;
 
-  var cached = readCache();
-  var fetchPromise = (GROQ && !cached)
-    ? fetch(
-        "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
-        "/data/query/" + DATASET + "?query=" + encodeURIComponent(GROQ) +
-        "&$slug=" + encodeURIComponent(JSON.stringify(slug))
-      ).then(function (r) { return r.json(); })
-    : Promise.resolve(cached ? { result: cached } : null);
-
   function esc(str) {
     return String(str || "")
       .replace(/&/g, "&amp;").replace(/</g, "&lt;")
@@ -216,7 +207,8 @@
 
   function initCopyButton() {
     var btn = document.querySelector('[aria-label="Copy URL"]');
-    if (!btn) return;
+    if (!btn || btn.dataset.init) return;
+    btn.dataset.init = "true";
     btn.addEventListener("click", function () {
       var url = window.location.href;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -249,6 +241,7 @@
   }
 
   function renderPost(post) {
+    if (!post) return;
     var title     = post.title || "Blog Post";
     var dateStr   = formatDate(post.postDate);
     var canonical = "https://www.yvesseraphin.xyz/blog/post/?slug=" + (post.slug || "");
@@ -278,7 +271,7 @@
 
     if (coverRef) {
       bodyHtml += '<div class="c-gtuqhG" style="margin-bottom:24px">' +
-        '<img src="' + esc(sanityImgUrl(coverRef, 1200)) + '" loading="eager" decoding="async" ' +
+        '<img src="' + esc(sanityImgUrl(coverRef, 1200)) + '" fetchpriority="high" loading="eager" decoding="async" ' +
         'alt="Cover image" style="width:100%;height:auto;display:block;border-radius:inherit"></div>';
     }
 
@@ -315,31 +308,54 @@
     if (el) el.setAttribute("content", val || "");
   }
 
-  function onReady(data) {
-    function doRender() {
-      initCopyButton();
-      if (!slug || !data || !data.result) {
-        var titleEl = document.getElementById("post-title");
-        if (titleEl) titleEl.textContent = "Post not found";
-        return;
-      }
-      if (!cached) writeCache(data.result);
-      renderPost(data.result);
+  function executeSWR() {
+    initCopyButton();
+    if (!slug) {
+      var titleEl = document.getElementById("post-title");
+      if (titleEl) titleEl.textContent = "Post not found";
+      return;
     }
 
-    if (document.getElementById("post-body")) {
-      doRender();
-    } else {
-      document.addEventListener("DOMContentLoaded", doRender);
+    var currentCached = readCache();
+    if (currentCached) {
+      renderPost(currentCached);
     }
+
+    if (!GROQ) return;
+
+    var url = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
+      "/data/query/" + DATASET + "?query=" + encodeURIComponent(GROQ) +
+      "&$slug=" + encodeURIComponent(JSON.stringify(slug));
+
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var fresh = data && data.result;
+        if (!fresh) {
+          if (!currentCached) {
+            var titleEl = document.getElementById("post-title");
+            if (titleEl) titleEl.textContent = "Post not found";
+          }
+          return;
+        }
+
+        var cachedStr = currentCached ? JSON.stringify(currentCached) : "";
+        var freshStr  = JSON.stringify(fresh);
+
+        if (cachedStr !== freshStr) {
+          writeCache(fresh);
+          renderPost(fresh);
+        }
+      })
+      .catch(function (err) {
+        console.warn("[post] Sanity fetch error:", err);
+      });
   }
 
-  fetchPromise.then(onReady).catch(function () {
-    if (document.getElementById("post-title")) {
-      initCopyButton();
-    } else {
-      document.addEventListener("DOMContentLoaded", initCopyButton);
-    }
-  });
+  if (document.getElementById("post-body")) {
+    executeSWR();
+  } else {
+    document.addEventListener("DOMContentLoaded", executeSWR);
+  }
 
 })();

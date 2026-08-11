@@ -761,7 +761,7 @@ void main(){
   var API_VERSION = "2024-01-01";
 
   var GRID_CACHE_KEY = "blog_grid_cache_v2";
-  var GRID_CACHE_TTL = 30 * 60 * 1000;
+  var GRID_CACHE_TTL = 2 * 60 * 1000;
 
   var GRID_GROQ = '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
 
@@ -797,9 +797,8 @@ void main(){
     var cached = readBlogGridCache();
     if (cached) {
       preloadGridImages(cached);
-      return Promise.resolve(cached);
     }
-    if (gridFetchPromise) return gridFetchPromise;
+    if (gridFetchPromise) return gridFetchPromise || Promise.resolve(cached);
 
     var sanityUrl = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
                     "/data/query/" + DATASET + "?query=" + encodeURIComponent(GRID_GROQ);
@@ -822,10 +821,10 @@ void main(){
       .catch(function (err) {
         gridFetchPromise = null;
         console.warn("[blog grid] Sanity fetch error:", err);
-        return [];
+        return cached || [];
       });
 
-    return gridFetchPromise;
+    return cached ? Promise.resolve(cached) : gridFetchPromise;
   }
 
   function preloadGridImages(items) {
@@ -851,13 +850,12 @@ void main(){
   function fetchSinglePost(slug) {
     if (!slug) return Promise.resolve(null);
     var key = "post_cache_" + slug;
+    var cachedObj = null;
 
     try {
       var raw = sessionStorage.getItem(key) || localStorage.getItem(key);
-      if (raw) return Promise.resolve(JSON.parse(raw));
+      if (raw) cachedObj = JSON.parse(raw);
     } catch (e) {}
-
-    if (postFetchPromises[slug]) return postFetchPromises[slug];
 
     var groq = '*[_type == "post" && slug.current == $slug][0]{' +
       'title, "slug": slug.current, postDate, excerpt, coverImage, aspectRatio, body, references, referencesHeading,' +
@@ -869,30 +867,32 @@ void main(){
       "/data/query/" + DATASET + "?query=" + encodeURIComponent(groq) +
       "&$slug=" + encodeURIComponent(JSON.stringify(slug));
 
-    postFetchPromises[slug] = fetch(url)
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        var res = data && data.result;
-        if (res) {
-          try {
-            sessionStorage.setItem(key, JSON.stringify(res));
-            localStorage.setItem(key, JSON.stringify(res));
-          } catch (e) {}
-          if (res.coverImage && res.coverImage.asset && res.coverImage.asset._ref) {
-            var img = new Image();
-            img.src = sanityImgUrl(res.coverImage.asset._ref, 1200);
+    if (!postFetchPromises[slug]) {
+      postFetchPromises[slug] = fetch(url)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var res = data && data.result;
+          if (res) {
+            try {
+              sessionStorage.setItem(key, JSON.stringify(res));
+              localStorage.setItem(key, JSON.stringify(res));
+            } catch (e) {}
+            if (res.coverImage && res.coverImage.asset && res.coverImage.asset._ref) {
+              var img = new Image();
+              img.src = sanityImgUrl(res.coverImage.asset._ref, 1200);
+            }
           }
-        }
-        delete postFetchPromises[slug];
-        return res;
-      })
-      .catch(function (err) {
-        delete postFetchPromises[slug];
-        console.warn("[single post] Sanity fetch error:", err);
-        return null;
-      });
+          delete postFetchPromises[slug];
+          return res;
+        })
+        .catch(function (err) {
+          delete postFetchPromises[slug];
+          console.warn("[single post] Sanity fetch error:", err);
+          return cachedObj;
+        });
+    }
 
-    return postFetchPromises[slug];
+    return cachedObj ? Promise.resolve(cachedObj) : postFetchPromises[slug];
   }
 
   function prefetchAllPostsInBackground(items) {
