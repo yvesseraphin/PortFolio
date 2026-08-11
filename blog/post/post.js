@@ -1,11 +1,3 @@
-/* ============================================================
-   POST.JS — Fetches a single blog post from Sanity and renders
-   it into the existing UI shell of blog/post/index.html.
-   Speed strategy:
-     1. Fetch fires at script-parse time (before DOM ready)
-     2. sessionStorage cache — same-session revisits are instant
-     3. No skeleton, no loading state — content paints in one shot
-   ============================================================ */
 (function () {
   "use strict";
 
@@ -15,7 +7,6 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  /* ── sessionStorage & localStorage cache (instant navigation) ── */
   var CACHE_KEY = "post_cache_" + slug;
   function readCache() {
     try {
@@ -30,7 +21,6 @@
     } catch (e) {}
   }
 
-  /* ── GROQ query ── */
   var GROQ = slug
     ? '*[_type == "post" && slug.current == $slug][0]{' +
         'title, "slug": slug.current, postDate, excerpt, coverImage, aspectRatio, body, references, referencesHeading,' +
@@ -39,7 +29,6 @@
       "}"
     : null;
 
-  /* ── Fire network fetch IMMEDIATELY at parse time ── */
   var cached = readCache();
   var fetchPromise = (GROQ && !cached)
     ? fetch(
@@ -49,7 +38,6 @@
       ).then(function (r) { return r.json(); })
     : Promise.resolve(cached ? { result: cached } : null);
 
-  /* ── Helpers ── */
   function esc(str) {
     return String(str || "")
       .replace(/&/g, "&amp;").replace(/</g, "&lt;")
@@ -72,12 +60,10 @@
     return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
   }
 
-  /* ── CSS class strings ── */
   var P = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12";
   var H = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12";
   var S = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11";
 
-  /* ── Code block ── */
   function escHtml(str) {
     return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   }
@@ -89,7 +75,6 @@
     return '<div class="codeblock_root__pf0C4"><div class="' + language + ' codeblock_editor__Hq7SO">' + linesHtml + '</div></div>';
   }
 
-  /* ── Portable Text renderer ── */
   function renderBody(blocks, tocItems) {
     if (!Array.isArray(blocks)) return "";
     var html = "";
@@ -160,7 +145,6 @@
 
   function stripTags(html) { return html.replace(/<[^>]+>/g, ""); }
 
-  /* ── References ── */
   function renderReferences(heading, items) {
     if (!items || !items.length) return "";
     var id   = slugify(heading || "references");
@@ -179,11 +163,9 @@
     return html;
   }
 
-  /* ── TOC sidebar ── */
   function buildToc(items) {
     var sidebar = document.getElementById("post-toc");
     if (!sidebar) return;
-    // Remove only previously-built nav, never touch the back arrow link
     var oldNav = sidebar.querySelector("nav");
     if (oldNav) oldNav.remove();
     if (!items.length) return;
@@ -215,7 +197,6 @@
     updateActive();
   }
 
-  /* ── Prev / Next nav ── */
   function buildNav(prev, next) {
     var navEl = document.getElementById("post-nav");
     if (!navEl) return;
@@ -233,7 +214,6 @@
     navEl.innerHTML = html;
   }
 
-  /* ── Copy URL button ── */
   function initCopyButton() {
     var btn = document.querySelector('[aria-label="Copy URL"]');
     if (!btn) return;
@@ -268,7 +248,6 @@
     }
   }
 
-  /* ── Main render ── */
   function renderPost(post) {
     var title     = post.title || "Blog Post";
     var dateStr   = formatDate(post.postDate);
@@ -276,7 +255,6 @@
     var coverRef  = post.coverImage && post.coverImage.asset ? post.coverImage.asset._ref : null;
     var ogImg     = coverRef ? sanityImgUrl(coverRef, 1200) : "https://www.yvesseraphin.xyz/assets/images/og.jpg";
 
-    /* Meta */
     document.getElementById("page-title").textContent = title + " · Seraphin";
     setMeta("meta-description", post.excerpt || title);
     setMeta("og-title",        title);
@@ -287,13 +265,11 @@
     var canonEl = document.getElementById("canonical");
     if (canonEl) canonEl.setAttribute("href", canonical);
 
-    /* Header */
     var titleEl = document.getElementById("post-title");
     var dateEl  = document.getElementById("post-date");
     if (titleEl) titleEl.textContent = title;
     if (dateEl)  dateEl.textContent  = dateStr;
 
-    /* Body — single innerHTML write = one reflow */
     var bodyEl = document.getElementById("post-body");
     if (!bodyEl) return;
 
@@ -339,7 +315,6 @@
     if (el) el.setAttribute("content", val || "");
   }
 
-  /* ── Boot ── */
   function onReady(data) {
     initCopyButton();
     if (!slug || !data || !data.result) {

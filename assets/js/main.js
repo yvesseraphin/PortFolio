@@ -1,11 +1,7 @@
-/* ============================================================
-   1. THEME TOGGLE
-   ============================================================ */
 (function () {
   "use strict";
 
   const html = document.documentElement;
-
   const btn = document.getElementById("btn-theme");
   if (!btn) return;
 
@@ -19,15 +15,13 @@
   });
 })();
 
-/* ============================================================
-   2. DOCK
-   ============================================================ */
 (function () {
   "use strict";
 
   const footer = document.getElementById("footer");
   const buttons = Array.from(document.querySelectorAll(".dock-btn"));
   if (!footer || !buttons.length) return;
+
   class Spring {
     constructor(target, { stiffness = 170, damping = 26, mass = 1 } = {}) {
       this.stiffness = stiffness;
@@ -134,7 +128,6 @@
     });
   }
 
-  // ── Tooltip ────────────────────────────────────────────────
   const tooltip = document.createElement("div");
   tooltip.className = "dock-tooltip-popup";
   tooltip.style.cssText = `
@@ -156,7 +149,6 @@
   `;
   document.body.appendChild(tooltip);
 
-  // Dark mode: swap tooltip bg
   function updateTooltipTheme() {
     const isDark = document.documentElement.classList.contains("dark");
     tooltip.style.background = isDark ? "hsl(0 0% 11%)" : "white";
@@ -218,7 +210,6 @@
       if (href.startsWith("http") || href.startsWith("mailto")) {
         window.open(href, "_blank", "noopener,noreferrer");
       } else if (href === "#") {
-        // no-op
       } else if (window.__navigateWithPreload && href.includes("/blog")) {
         window.__navigateWithPreload(href, e);
       } else {
@@ -246,7 +237,6 @@
   const headerBar = document.getElementById("header-bar");
   const locationEl = document.querySelector(".header-meta span:last-child");
 
-  // Start with the browser's detected timezone; updated once geo resolves
   let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   function formatTime() {
@@ -270,8 +260,6 @@
     }, 1000);
   }
 
-  // Fetch city + country from IP geolocation (no API key required)
-  // Falls back silently to the hardcoded HTML value on any error
   fetch("https://ipapi.co/json/")
     .then((r) => r.json())
     .then((data) => {
@@ -280,28 +268,20 @@
       if (city && country && locationEl) {
         locationEl.textContent = city + ", " + country;
       }
-      // Also sync the clock timezone to the detected one if available
       if (data.timezone) {
         userTimeZone = data.timezone;
       }
     })
-    .catch(() => {
-      // Silently keep the default HTML value ("Kigali, Rwanda")
-    });
+    .catch(() => {});
 
-  // Fade header bar in after a short delay
   if (headerBar) {
     setTimeout(() => headerBar.classList.add("visible"), 300);
   }
 })();
 
-/* ============================================================
-   4. CAROUSEL 
-   ============================================================ */
 (function () {
   "use strict";
 
-  // ── uZ = clamp (mirrors original E.uZ) ───────────────────
   function uZ(v, lo, hi) {
     return Math.min(Math.max(v, lo), hi);
   }
@@ -309,18 +289,13 @@
   const track = document.querySelector("[data-carousel]");
   if (!track) return;
 
-  // 8 primary cards, same as original L[] array
   const N_CARDS = 8;
   const CARD_W = 340;
   const CARD_G = 12;
-  const TOTAL_W = (CARD_W + CARD_G) * N_CARDS; // 2816
-
-  // ── Shared scroll state — mirrors original [n] useState(0) ──
+  const TOTAL_W = (CARD_W + CARD_G) * N_CARDS;
 
   const MAX_SCROLL = 5000;
   let scrollN = 0;
-
-  // ── Derived values — exact formulas from original source ──
 
   function getDerived() {
     const i = scrollN < -250 ? -1 * scrollN - 250 : scrollN;
@@ -330,25 +305,20 @@
     return { i, a, l, s };
   }
 
-  // ── Carousel track offset — exact original logic ──────────
   let trackOffset = 0;
 
   function setTrackOffset(v) {
-    // Smooth infinite loop: modulo wrap (no jump)
     trackOffset = ((v % TOTAL_W) + TOTAL_W) % TOTAL_W;
     track.style.transform = `translate3d(${-trackOffset}px, 0, 0) translateZ(0)`;
   }
 
-  // ── Main update — called on every scroll/key event ────────
   const noiseWrap = document.querySelector(".noise-canvas-wrap");
 
   function onScroll() {
     const { i, a, l, s } = getDerived();
 
-    // 1. Letter parallax
     updateLetterParallax(i, a);
 
-    // 2. Track opacity — light mode only (dark handled by CSS)
     const isDark = document.documentElement.classList.contains("dark");
     if (!isDark) {
       if (i > 0) {
@@ -360,26 +330,17 @@
       track.style.removeProperty("opacity");
     }
 
-    // 3. Arrow buttons
     document.querySelectorAll("[data-fake-button]").forEach((btn) => {
       if (s) btn.style.removeProperty("opacity");
       else btn.style.setProperty("opacity", "0");
     });
 
-    // 4. Noise canvas — JS fully controls opacity AND blend-mode
-    // (no CSS animation, so inline styles are never blocked)
-    // l = 1 at rest → fluid fully visible
-    // l → 0 as you scroll far → fluid fades out
-    // Light mode: color-dodge (brightening shimmer over images)
-    // Dark mode:  color-burn  (dark liquid effect over images)
     if (noiseWrap) {
       noiseWrap.style.opacity = String(l);
       noiseWrap.style.mixBlendMode = isDark ? "color-burn" : "color-dodge";
     }
   }
 
-  // ── Wheel — preventDefault stops browser page scroll/navigation ──
-  // Cannot be passive since we call preventDefault
   window.addEventListener(
     "wheel",
     (e) => {
@@ -393,9 +354,6 @@
     { passive: false },
   );
 
-  // ── Keyboard ──────────────────────────────────────────────
-  // Original keyboard speed for parallax: 10 (default), 500 (shift)
-  // Track keyboard speed: 250 (hardcoded in carousel callback)
   document.addEventListener("keydown", (e) => {
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     const dir = e.key === "ArrowRight" ? 1 : -1;
@@ -406,7 +364,6 @@
     onScroll();
   });
 
-  // ── Pointer drag on track ─────────────────────────────────
   let isDragging = false,
     dragStartX = 0,
     dragStartO = 0,
@@ -454,7 +411,7 @@
   track.addEventListener("pointerup", endDrag);
   track.addEventListener("pointercancel", endDrag);
 
-  track.querySelectorAll("a[carousel-item]").forEach((a) => {
+  track.querySelectorAll("a[carousel-item], a[data-carousel-item]").forEach((a) => {
     let sx = 0;
     a.addEventListener("mousedown", (e) => {
       sx = e.clientX;
@@ -464,15 +421,12 @@
     });
   });
 
-  // ── Video hover ───────────────────────────────────────────
-  // Original: onClick + onPointerEnter both call play + blur siblings
-  // onPointerLeave: pause, reset blur (currentTime=0 when focus lost via useEffect)
-  document.querySelectorAll("[carousel-item]").forEach((card) => {
+  document.querySelectorAll("[carousel-item], [data-carousel-item]").forEach((card) => {
     const video = card.querySelector("video");
 
     function activate() {
       if (video) video.play().catch(() => {});
-      document.querySelectorAll("[carousel-item]").forEach((c) => {
+      document.querySelectorAll("[carousel-item], [data-carousel-item]").forEach((c) => {
         if (c !== card) c.style.setProperty("--blur", "2px");
       });
     }
@@ -485,32 +439,28 @@
         video.pause();
         video.currentTime = 0;
       }
-      document.querySelectorAll("[carousel-item]").forEach((c) => {
+      document.querySelectorAll("[carousel-item], [data-carousel-item]").forEach((c) => {
         c.style.setProperty("--blur", "0px");
       });
     });
   });
 
-  // ── Fade carousel-inner in (Framer Motion initial:0, animate:1, delay:0.15) ─
   const inner = document.getElementById("carousel-inner");
   if (inner)
     setTimeout(() => {
       inner.style.opacity = "1";
     }, 150);
 
-  // ── SERAPHIN letter parallax — exact original per-letter math extended to 8 ──
-  // Original RAUNO: R=+i, A=-i/4, U=+i/5, N=-i/6, O=+i/7
-  // Mapped to SERAPHIN: same stagger pattern, 8 letters
   function updateLetterParallax(i, a) {
     const letters = [
-      { id: "L1", ySign: +1, yDiv: 1, ds: 0.003 }, // S → R
-      { id: "L2", ySign: -1, yDiv: 4, ds: 0.004 }, // E → A
-      { id: "L3", ySign: +1, yDiv: 5, ds: 0.005 }, // R → U
-      { id: "L4", ySign: -1, yDiv: 6, ds: 0.006 }, // A → N
-      { id: "L5", ySign: +1, yDiv: 7, ds: 0.007 }, // P → O
-      { id: "L6", ySign: -1, yDiv: 5, ds: 0.004 }, // H
-      { id: "L7", ySign: +1, yDiv: 6, ds: 0.005 }, // I
-      { id: "L8", ySign: -1, yDiv: 8, ds: 0.003 }, // N
+      { id: "L1", ySign: +1, yDiv: 1, ds: 0.003 },
+      { id: "L2", ySign: -1, yDiv: 4, ds: 0.004 },
+      { id: "L3", ySign: +1, yDiv: 5, ds: 0.005 },
+      { id: "L4", ySign: -1, yDiv: 6, ds: 0.006 },
+      { id: "L5", ySign: +1, yDiv: 7, ds: 0.007 },
+      { id: "L6", ySign: -1, yDiv: 5, ds: 0.004 },
+      { id: "L7", ySign: +1, yDiv: 6, ds: 0.005 },
+      { id: "L8", ySign: -1, yDiv: 8, ds: 0.003 },
     ];
     letters.forEach(({ id, ySign, yDiv, ds }) => {
       const el = document.getElementById(id);
@@ -527,19 +477,13 @@
     });
   }
 
-  // Observe theme changes to re-apply opacity correctly
   new MutationObserver(() => onScroll()).observe(document.documentElement, {
     attributeFilter: ["class"],
   });
 
-  // Fire once on load so noise canvas gets correct initial opacity
-  // and arrow buttons get their initial state
   onScroll();
 })();
 
-/* ============================================================
-   5. WEBGL NOISE CANVAS — fixed viewport, exact original shader
-   ============================================================ */
 (function () {
   "use strict";
 
@@ -605,8 +549,6 @@ void main(){
   vec2 vUv=gl_FragCoord.xy/res.xy;
   vec2 uv=vUv*6.0;
   float t=time*2.0;
-  float n=cnoise(vec3(uv.x-t*2.0,uv.y+sin(uv.x+120.0+t)*3.0,t)*0.4);
-  vec3 color=palette(n,vec3(0.5,0.29,0.45),vec3(0.5,0.3,0.1),vec3(1.0,1.1,1.1),vec3(0.35,0.25,1.1));
   vec2 st=gl_FragCoord.xy/res.xy;
   float noise=random(st);
   fragColor=vec4(blendOverlay(
@@ -616,7 +558,6 @@ void main(){
 }`;
 
   try {
-    // Canvas fills the full viewport — matches original exactly
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -681,12 +622,8 @@ void main(){
   } catch (e) {}
 })();
 
-/* ============================================================
-   6. BODY SCROLL LOCK  (home page only)
-   ============================================================ */
 (function () {
   "use strict";
-  // Only lock scroll on the home page — blog/projects need free scroll
   const isBlog    = window.location.pathname.includes("/blog");
   const isProject = window.location.pathname.includes("/projects");
   if (isBlog || isProject) return;
@@ -697,24 +634,16 @@ void main(){
   document.documentElement.style.overflow = "hidden";
 })();
 
-/* ============================================================
-   7. BLOG COLUMN SCROLL
-   Each column auto-scrolls upward via CSS animation.
-   Wheel / touch input nudges a JS offset on top of the animation
-   so the user can scroll manually while the auto-scroll continues.
-   ============================================================ */
 (function () {
   "use strict";
 
   const columns = Array.from(document.querySelectorAll(".column"));
   if (!columns.length) return;
 
-  // Per-column state
   const state = columns.map((col) => {
     const inner = col.querySelector(".column-inner");
     if (!inner) return null;
 
-    // Read the CSS animation duration so we can match the auto-scroll speed
     const dur = parseFloat(
       getComputedStyle(col).getPropertyValue("--scroll-duration") || "30"
     );
@@ -722,32 +651,24 @@ void main(){
     return {
       col,
       inner,
-      dur,           // animation duration in seconds
-      offset: 0,     // manual px offset applied via translateY
-      velocity: 0,   // momentum after flick
+      dur,
+      offset: 0,
+      velocity: 0,
       raf: null,
     };
   }).filter(Boolean);
 
   if (!state.length) return;
 
-  // ── Helpers ────────────────────────────────────────────────
-
   function getInnerHeight(s) {
-    // column-inner contains original + clone, so half = one full set
     return s.inner.scrollHeight / 2;
   }
 
   function applyOffset(s) {
-    // Clamp to one full set height for seamless wrap
     const h = getInnerHeight(s);
     if (h > 0) s.offset = ((s.offset % h) + h) % h;
-    // Stack on top of the CSS keyframe animation via a second transform
-    // CSS animation handles the base upward movement; we add manual delta
     s.inner.style.transform = `translateY(${-s.offset}px)`;
   }
-
-  // ── Momentum glide ─────────────────────────────────────────
 
   function glide(s) {
     if (Math.abs(s.velocity) < 0.2) {
@@ -761,24 +682,18 @@ void main(){
     s.raf = requestAnimationFrame(() => glide(s));
   }
 
-  // ── Wheel ──────────────────────────────────────────────────
-  // Find which column is under the pointer and scroll that one,
-  // or scroll all equally if pointer is over the grid area.
-
   function getTargetStates(clientX) {
-    // Find the column under the cursor
     for (const s of state) {
       const rect = s.col.getBoundingClientRect();
       if (clientX >= rect.left && clientX <= rect.right) return [s];
     }
-    return state; // fallback: scroll all
+    return state;
   }
 
   window.addEventListener("wheel", (e) => {
     const grid = document.querySelector(".grid");
     if (!grid) return;
     const rect = grid.getBoundingClientRect();
-    // Only intercept wheel when over the grid
     if (
       e.clientY < rect.top || e.clientY > rect.bottom ||
       e.clientX < rect.left || e.clientX > rect.right
@@ -796,8 +711,6 @@ void main(){
       applyOffset(s);
     });
   }, { passive: false });
-
-  // ── Touch ──────────────────────────────────────────────────
 
   let touchY = null;
   let touchTargets = state;
@@ -840,9 +753,6 @@ void main(){
 
 })();
 
-/* ============================================================
-   8. SANITY BLOG & POST PREFETCH & NAVIGATION ENGINE
-   ============================================================ */
 (function () {
   "use strict";
 
@@ -851,7 +761,7 @@ void main(){
   var API_VERSION = "2024-01-01";
 
   var GRID_CACHE_KEY = "blog_grid_cache_v2";
-  var GRID_CACHE_TTL = 30 * 60 * 1000; // 30 mins
+  var GRID_CACHE_TTL = 30 * 60 * 1000;
 
   var GRID_GROQ = '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
 
@@ -865,7 +775,6 @@ void main(){
     return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
   }
 
-  // ── Grid Cache Helpers ──
   function readBlogGridCache() {
     try {
       var raw = localStorage.getItem(GRID_CACHE_KEY);
@@ -882,7 +791,6 @@ void main(){
     } catch (e) {}
   }
 
-  // ── In-flight promise deduplication ──
   var gridFetchPromise = null;
 
   function fetchBlogGrid() {
@@ -930,7 +838,6 @@ void main(){
     });
   }
 
-  // ── Single Post Caching & Prefetching ──
   var postFetchPromises = {};
 
   function isPostCached(slug) {
@@ -1009,13 +916,11 @@ void main(){
     }
   }
 
-  // ── Smart Navigator — Holds navigation on current page until target data is cached ──
   function navigateWithPreload(targetUrl, e) {
     if (!targetUrl) return;
     var norm = targetUrl.replace(/\/$/, "") || "/";
     var currentNorm = window.location.pathname.replace(/\/$/, "") || "/";
 
-    // 1. Target is /blog
     if (norm === "/blog" || norm.endsWith("/blog")) {
       if (currentNorm === "/blog") return;
       if (readBlogGridCache()) {
@@ -1036,7 +941,6 @@ void main(){
       return;
     }
 
-    // 2. Target is post detail /blog/post/?slug=...
     if (targetUrl.includes("/blog/post")) {
       var match = targetUrl.match(/slug=([^&]+)/);
       var slug = match ? decodeURIComponent(match[1]) : "";
@@ -1062,18 +966,15 @@ void main(){
       return;
     }
 
-    // Default
     window.location.href = targetUrl;
   }
 
-  // Global Exports
   window.__readBlogGridCache   = readBlogGridCache;
   window.__fetchBlogGrid       = fetchBlogGrid;
   window.__fetchSinglePost     = fetchSinglePost;
   window.__isPostCached       = isPostCached;
   window.__navigateWithPreload = navigateWithPreload;
 
-  // ── Render Blog Grid UI (if grid element is present on page) ──
   function formatDate(iso) {
     if (!iso) return "";
     return new Date(iso).toLocaleDateString("en-US", { month: "long", year: "numeric" });
@@ -1167,7 +1068,6 @@ void main(){
     });
   }
 
-  // ── Global Event Delegation for Blog & Post Links ──
   document.addEventListener("click", function (e) {
     var anchor = e.target.closest ? e.target.closest("a") : null;
     if (!anchor) return;
@@ -1193,14 +1093,11 @@ void main(){
     }
   }, { passive: true });
 
-  // ── Boot ──
   var gridEl = document.getElementById("blog-grid");
 
-  // 1. Render immediately if cached and on blog page
   var cached = readBlogGridCache();
   if (gridEl && cached) renderColumns(cached);
 
-  // 2. Trigger fetch on any page load (pre-warms cache & background fetches posts)
   fetchBlogGrid().then(function (items) {
     if (gridEl && items.length) {
       renderColumns(items);
