@@ -6,16 +6,25 @@
     <title>Projects — Seraphin</title>
     <link rel="shortcut icon" href="../favicon.svg" />
     <meta name="author" content="Seraphin" />
-    <meta name="description" content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology." />
+    <meta
+      name="description"
+      content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology."
+    />
     <meta name="robots" content="index,follow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Seraphin" />
     <meta property="og:title" content="Projects — Seraphin" />
-    <meta property="og:description" content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology." />
+    <meta
+      property="og:description"
+      content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology."
+    />
     <meta property="og:url" content="https://www.yvesseraphin.xyz/projects" />
-    <meta property="og:image" content="https://www.yvesseraphin.xyz/assets/images/og.jpg" />
+    <meta
+      property="og:image"
+      content="https://www.yvesseraphin.xyz/assets/images/og.jpg"
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Projects — Seraphin" />
@@ -25,8 +34,14 @@
     <meta name="twitter:site" content="@0x_serap_hin" />
     <meta name="twitter:creator" content="@0x_serap_hin" />
     <meta name="twitter:title" content="Projects — Seraphin" />
-    <meta name="twitter:description" content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology." />
-    <meta name="twitter:image" content="https://www.yvesseraphin.xyz/assets/images/og.jpg" />
+    <meta
+      name="twitter:description"
+      content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology."
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.yvesseraphin.xyz/assets/images/og.jpg"
+    />
 
     <link rel="canonical" href="https://www.yvesseraphin.xyz/projects" />
     <script>
@@ -36,19 +51,38 @@
           d.remove("dark", "light");
           var e = localStorage.getItem("theme");
           if ("system" === e || !e) {
-            var t = "(prefers-color-scheme: dark)", m = window.matchMedia(t);
+            var t = "(prefers-color-scheme: dark)",
+              m = window.matchMedia(t);
             m.media !== t || m.matches ? d.add("dark") : d.add("light");
-          } else if (e) { d.add(e); }
+          } else if (e) {
+            d.add(e);
+          }
         } catch (e) {}
       })();
     </script>
     <!-- Preconnect to Sanity CDN for instant fetch -->
-    <link rel="preconnect" href="https://bps9n75q.apicdn.sanity.io" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://bps9n75q.apicdn.sanity.io"
+      crossorigin
+    />
     <link rel="dns-prefetch" href="https://bps9n75q.apicdn.sanity.io" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
-    <link rel="preload" href="../X-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
-    <link rel="preload" href="../X-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link
+      rel="preload"
+      href="../X-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="../X-Medium.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="../assets/css/styles.css" />
     <style>
       .projects-grid {
@@ -72,7 +106,9 @@
         overflow: hidden;
       }
 
-      .project-card:hover { background: var(--gray2); }
+      .project-card:hover {
+        background: var(--gray2);
+      }
 
       .project-cover {
         width: 100%;
@@ -146,7 +182,9 @@
         transition: color 150ms ease;
       }
 
-      .project-link:hover { color: var(--gray12); }
+      .project-link:hover {
+        color: var(--gray12);
+      }
 
       .page-header {
         max-width: 672px;
@@ -172,35 +210,89 @@
   </head>
   <body>
     <!-- DOCK -->
-    <footer id="footer" class="dock" role="navigation" aria-label="Site navigation">
+    <footer
+      id="footer"
+      class="dock"
+      role="navigation"
+      aria-label="Site navigation"
+    >
       <div aria-hidden="true" class="dock-highlight"></div>
       <div class="dock-items">
         <button class="dock-btn" aria-label="Home" data-href="/">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path opacity="0.25" d="M20 18.8V6.63998L13.6514 2.81501C13.0511 2.45333 12.751 2.2725 12.4304 2.20186C12.1469 2.13938 11.8531 2.13938 11.5696 2.20186C11.249 2.2725 10.9489 2.45334 10.3486 2.81501L4 6.64001V18.8C4 19.9201 4 20.4802 4.21799 20.908C4.40973 21.2843 4.71569 21.5903 5.09202 21.782C5.51984 22 6.0799 22 7.2 22H16.8C17.9201 22 18.4802 22 18.908 21.782C19.2843 21.5903 19.5903 21.2843 19.782 20.908C20 20.4802 20 19.9201 20 18.8Z" fill="currentColor"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.14251 9.5145C1.42665 9.98808 2.04091 10.1416 2.51449 9.85749L12 4.16619L21.4855 9.85749C21.9591 10.1416 22.5733 9.98808 22.8575 9.5145C23.1416 9.04092 22.9881 8.42666 22.5145 8.14251L13.029 2.45121C12.3956 2.07119 11.6044 2.07119 10.971 2.45121L1.4855 8.14251C1.01192 8.42666 0.858357 9.04092 1.14251 9.5145Z" fill="currentColor"/>
-            <path d="M9 16C9 14.3431 10.3431 13 12 13C13.6569 13 15 14.3431 15 16V22H9V16Z" fill="currentColor"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              d="M20 18.8V6.63998L13.6514 2.81501C13.0511 2.45333 12.751 2.2725 12.4304 2.20186C12.1469 2.13938 11.8531 2.13938 11.5696 2.20186C11.249 2.2725 10.9489 2.45334 10.3486 2.81501L4 6.64001V18.8C4 19.9201 4 20.4802 4.21799 20.908C4.40973 21.2843 4.71569 21.5903 5.09202 21.782C5.51984 22 6.0799 22 7.2 22H16.8C17.9201 22 18.4802 22 18.908 21.782C19.2843 21.5903 19.5903 21.2843 19.782 20.908C20 20.4802 20 19.9201 20 18.8Z"
+              fill="currentColor"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M1.14251 9.5145C1.42665 9.98808 2.04091 10.1416 2.51449 9.85749L12 4.16619L21.4855 9.85749C21.9591 10.1416 22.5733 9.98808 22.8575 9.5145C23.1416 9.04092 22.9881 8.42666 22.5145 8.14251L13.029 2.45121C12.3956 2.07119 11.6044 2.07119 10.971 2.45121L1.4855 8.14251C1.01192 8.42666 0.858357 9.04092 1.14251 9.5145Z"
+              fill="currentColor"
+            />
+            <path
+              d="M9 16C9 14.3431 10.3431 13 12 13C13.6569 13 15 14.3431 15 16V22H9V16Z"
+              fill="currentColor"
+            />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
         </button>
 
         <button class="dock-btn" aria-label="Blog" data-href="/blog">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path opacity="0.25" d="M4 4C4 2.89543 4.89543 2 6 2H14L20 8V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z" fill="currentColor"/>
-            <path d="M14 2L20 8H14V2Z" fill="currentColor"/>
-            <path d="M8 13H16M8 17H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              opacity="0.25"
+              d="M4 4C4 2.89543 4.89543 2 6 2H14L20 8V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z"
+              fill="currentColor"
+            />
+            <path d="M14 2L20 8H14V2Z" fill="currentColor" />
+            <path
+              d="M8 13H16M8 17H13"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
         </button>
 
         <button class="dock-btn" aria-label="Projects" data-href="/projects">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M8 20C8 19.4477 8.44772 19 9 19H15C15.5523 19 16 19.4477 16 20V21C16 22.6569 14.6569 24 13 24H11C9.34315 24 8 22.6569 8 21V20Z" fill="currentColor"/>
-            <path opacity="0.25" d="M20 8C20 10.5264 18.8289 12.7793 17 14.2454V15C17 16.1046 16.1046 17 15 17H9C7.89543 17 7 16.1046 7 15V14.2454C5.17107 12.7793 4 10.5264 4 8C4 3.58172 7.58172 0 12 0C16.4183 0 20 3.58172 20 8Z" fill="currentColor"/>
-            <path d="M10.7071 8.29289C10.3166 7.90237 9.68342 7.90237 9.29289 8.29289C8.90237 8.68342 8.90237 9.31658 9.29289 9.70711L11 11.4142V17H13V11.4142L14.7071 9.70711C15.0976 9.31658 15.0976 8.68342 14.7071 8.29289C14.3166 7.90237 13.6834 7.90237 13.2929 8.29289L12 9.58579L10.7071 8.29289Z" fill="currentColor"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M8 20C8 19.4477 8.44772 19 9 19H15C15.5523 19 16 19.4477 16 20V21C16 22.6569 14.6569 24 13 24H11C9.34315 24 8 22.6569 8 21V20Z"
+              fill="currentColor"
+            />
+            <path
+              opacity="0.25"
+              d="M20 8C20 10.5264 18.8289 12.7793 17 14.2454V15C17 16.1046 16.1046 17 15 17H9C7.89543 17 7 16.1046 7 15V14.2454C5.17107 12.7793 4 10.5264 4 8C4 3.58172 7.58172 0 12 0C16.4183 0 20 3.58172 20 8Z"
+              fill="currentColor"
+            />
+            <path
+              d="M10.7071 8.29289C10.3166 7.90237 9.68342 7.90237 9.29289 8.29289C8.90237 8.68342 8.90237 9.31658 9.29289 9.70711L11 11.4142V17H13V11.4142L14.7071 9.70711C15.0976 9.31658 15.0976 8.68342 14.7071 8.29289C14.3166 7.90237 13.6834 7.90237 13.2929 8.29289L12 9.58579L10.7071 8.29289Z"
+              fill="currentColor"
+            />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
         </button>
@@ -211,13 +303,30 @@
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <span class="icon-sun" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 3v1M12 20v1M4.22 4.22l.71.71M18.36 18.36l.71.71M3 12h1M20 12h1M4.22 19.78l.71-.71M18.36 5.64l.71-.71" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/>
+              <path
+                d="M12 3v1M12 20v1M4.22 4.22l.71.71M18.36 18.36l.71.71M3 12h1M20 12h1M4.22 19.78l.71-.71M18.36 5.64l.71-.71"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="4"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
             </svg>
           </span>
           <span class="icon-moon" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </span>
           <div class="dock-indicator" aria-hidden="true"></div>
@@ -237,39 +346,61 @@
     <script src="../assets/js/main.js"></script>
     <script>
       (function () {
-        'use strict';
+        "use strict";
 
-        var PROJECT_ID  = 'bps9n75q';
-        var DATASET     = 'production';
-        var API_VERSION = '2024-01-01';
-        var CACHE_KEY   = 'projects_v2';
+        var PROJECT_ID = "bps9n75q";
+        var DATASET = "production";
+        var API_VERSION = "2024-01-01";
+        var CACHE_KEY = "projects_v2";
 
         /* ── Sanity CDN image URL ── */
         function sanityImageUrl(ref, w) {
           if (!ref) return null;
-          var parts = ref.split('-');
-          var fmt  = parts[parts.length - 1];
+          var parts = ref.split("-");
+          var fmt = parts[parts.length - 1];
           var dims = parts[parts.length - 2];
-          var id   = parts.slice(1, parts.length - 2).join('-');
-          return 'https://cdn.sanity.io/images/' + PROJECT_ID + '/' + DATASET + '/' +
-                 id + '-' + dims + '.' + fmt + (w ? '?w=' + w + '&auto=format&fit=crop' : '');
+          var id = parts.slice(1, parts.length - 2).join("-");
+          return (
+            "https://cdn.sanity.io/images/" +
+            PROJECT_ID +
+            "/" +
+            DATASET +
+            "/" +
+            id +
+            "-" +
+            dims +
+            "." +
+            fmt +
+            (w ? "?w=" + w + "&auto=format&fit=crop" : "")
+          );
         }
 
         /* ── sessionStorage cache ── */
         function readCache() {
-          try { return JSON.parse(sessionStorage.getItem(CACHE_KEY)); } catch(e) { return null; }
+          try {
+            return JSON.parse(sessionStorage.getItem(CACHE_KEY));
+          } catch (e) {
+            return null;
+          }
         }
         function writeCache(items) {
-          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(items)); } catch(e) {}
+          try {
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify(items));
+          } catch (e) {}
         }
 
         /* ── HTML escape ── */
         function esc(s) {
-          return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
         }
 
         /* ── GROQ — fire IMMEDIATELY at parse time ── */
-        var GROQ = '*[_type == "project"] | order(publishedAt desc) { _id, title, description, url, github, coverImage, tags }';
+        var GROQ =
+          '*[_type == "project"] | order(publishedAt desc) { _id, title, description, url, github, coverImage, tags }';
 
         /* Cache-first: if session cache exists render instantly, skip network.
            Otherwise fetch starts right now, before DOMContentLoaded. */
@@ -277,68 +408,117 @@
         var fetchPromise = cached
           ? Promise.resolve(cached)
           : fetch(
-              'https://' + PROJECT_ID + '.apicdn.sanity.io/v' + API_VERSION +
-              '/data/query/' + DATASET + '?query=' + encodeURIComponent(GROQ)
-            ).then(function (r) { return r.json(); })
-              .then(function (d) { var items = (d && d.result) || []; writeCache(items); return items; });
+              "https://" +
+                PROJECT_ID +
+                ".apicdn.sanity.io/v" +
+                API_VERSION +
+                "/data/query/" +
+                DATASET +
+                "?query=" +
+                encodeURIComponent(GROQ),
+            )
+              .then(function (r) {
+                return r.json();
+              })
+              .then(function (d) {
+                var items = (d && d.result) || [];
+                writeCache(items);
+                return items;
+              });
 
         /* ── Render one card ── */
         function renderCard(p) {
-          var imgHtml = (p.coverImage && p.coverImage.asset)
-            ? '<img class="project-cover" src="' + esc(sanityImageUrl(p.coverImage.asset._ref, 560)) + '" alt="' + esc(p.title) + '" loading="lazy" decoding="async" />'
-            : '<div class="project-cover-placeholder"></div>';
+          var imgHtml =
+            p.coverImage && p.coverImage.asset
+              ? '<img class="project-cover" src="' +
+                esc(sanityImageUrl(p.coverImage.asset._ref, 560)) +
+                '" alt="' +
+                esc(p.title) +
+                '" loading="lazy" decoding="async" />'
+              : '<div class="project-cover-placeholder"></div>';
 
-          var tagsHtml = (p.tags && p.tags.length)
-            ? '<div class="project-tags">' + p.tags.map(function(t){ return '<span class="project-tag">' + esc(t) + '</span>'; }).join('') + '</div>'
-            : '';
+          var tagsHtml =
+            p.tags && p.tags.length
+              ? '<div class="project-tags">' +
+                p.tags
+                  .map(function (t) {
+                    return '<span class="project-tag">' + esc(t) + "</span>";
+                  })
+                  .join("") +
+                "</div>"
+              : "";
 
-          var links = '';
-          if (p.url)    links += '<a href="' + esc(p.url)    + '" target="_blank" rel="noopener noreferrer" class="project-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>live</a>';
-          if (p.github) links += '<a href="' + esc(p.github) + '" target="_blank" rel="noopener noreferrer" class="project-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.475 2 2 6.475 2 12a9.994 9.994 0 006.838 9.488c.5.087.687-.213.687-.476 0-.237-.013-1.024-.013-1.862-2.512.463-3.162-.612-3.362-1.175-.113-.288-.6-1.175-1.025-1.413-.35-.187-.85-.65-.013-.662.788-.013 1.35.725 1.538 1.025.9 1.512 2.338 1.087 2.912.825.088-.65.35-1.087.638-1.337-2.225-.25-4.55-1.113-4.55-4.938 0-1.088.387-1.987 1.025-2.688-.1-.25-.45-1.275.1-2.65 0 0 .837-.262 2.75 1.026a9.28 9.28 0 012.5-.338c.85 0 1.7.112 2.5.337 1.912-1.3 2.75-1.024 2.75-1.024.55 1.375.2 2.4.1 2.65.637.7 1.025 1.587 1.025 2.687 0 3.838-2.337 4.688-4.562 4.938.362.312.675.912.675 1.85 0 1.337-.013 2.412-.013 2.75 0 .262.188.574.688.474A10.016 10.016 0 0022 12c0-5.525-4.475-10-10-10z"/></svg>github</a>';
+          var links = "";
+          if (p.url)
+            links +=
+              '<a href="' +
+              esc(p.url) +
+              '" target="_blank" rel="noopener noreferrer" class="project-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>live</a>';
+          if (p.github)
+            links +=
+              '<a href="' +
+              esc(p.github) +
+              '" target="_blank" rel="noopener noreferrer" class="project-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.475 2 2 6.475 2 12a9.994 9.994 0 006.838 9.488c.5.087.687-.213.687-.476 0-.237-.013-1.024-.013-1.862-2.512.463-3.162-.612-3.362-1.175-.113-.288-.6-1.175-1.025-1.413-.35-.187-.85-.65-.013-.662.788-.013 1.35.725 1.538 1.025.9 1.512 2.338 1.087 2.912.825.088-.65.35-1.087.638-1.337-2.225-.25-4.55-1.113-4.55-4.938 0-1.088.387-1.987 1.025-2.688-.1-.25-.45-1.275.1-2.65 0 0 .837-.262 2.75 1.026a9.28 9.28 0 012.5-.338c.85 0 1.7.112 2.5.337 1.912-1.3 2.75-1.024 2.75-1.024.55 1.375.2 2.4.1 2.65.637.7 1.025 1.587 1.025 2.687 0 3.838-2.337 4.688-4.562 4.938.362.312.675.912.675 1.85 0 1.337-.013 2.412-.013 2.75 0 .262.188.574.688.474A10.016 10.016 0 0022 12c0-5.525-4.475-10-10-10z"/></svg>github</a>';
 
-          return '<div class="project-card">' +
+          return (
+            '<div class="project-card">' +
             imgHtml +
             '<div class="project-body">' +
-              '<div class="project-title">' + esc(p.title) + '</div>' +
-              (p.description ? '<div class="project-desc">' + esc(p.description) + '</div>' : '') +
-              tagsHtml +
-              (links ? '<div class="project-links">' + links + '</div>' : '') +
-            '</div></div>';
+            '<div class="project-title">' +
+            esc(p.title) +
+            "</div>" +
+            (p.description
+              ? '<div class="project-desc">' + esc(p.description) + "</div>"
+              : "") +
+            tagsHtml +
+            (links ? '<div class="project-links">' + links + "</div>" : "") +
+            "</div></div>"
+          );
         }
 
         /* ── Render list ── */
         function render(items) {
-          var el = document.getElementById('projects-container');
+          var el = document.getElementById("projects-container");
           if (!el) return;
           if (!items || !items.length) {
             el.innerHTML = '<p class="empty-state">no projects yet.</p>';
             return;
           }
-          el.innerHTML = '<div class="projects-grid">' + items.map(renderCard).join('') + '</div>';
+          el.innerHTML =
+            '<div class="projects-grid">' +
+            items.map(renderCard).join("") +
+            "</div>";
         }
 
         /* ── Boot ── */
         if (cached) {
           /* Instant paint from session cache — no network wait */
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function () { render(cached); });
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function () {
+              render(cached);
+            });
           } else {
             render(cached);
           }
         } else {
           /* Fresh load — resolve when fetch + DOM both ready */
-          fetchPromise.then(function (items) {
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', function () { render(items); });
-            } else {
-              render(items);
-            }
-          }).catch(function () {
-            var el = document.getElementById('projects-container');
-            if (el) el.innerHTML = '<p class="empty-state">failed to load projects.</p>';
-          });
+          fetchPromise
+            .then(function (items) {
+              if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", function () {
+                  render(items);
+                });
+              } else {
+                render(items);
+              }
+            })
+            .catch(function () {
+              var el = document.getElementById("projects-container");
+              if (el)
+                el.innerHTML =
+                  '<p class="empty-state">failed to load projects.</p>';
+            });
         }
-
       })();
     </script>
   </body>
