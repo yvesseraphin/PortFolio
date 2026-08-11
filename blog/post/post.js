@@ -316,22 +316,30 @@
   }
 
   function onReady(data) {
-    initCopyButton();
-    if (!slug || !data || !data.result) {
-      var titleEl = document.getElementById("post-title");
-      if (titleEl) titleEl.textContent = "Post not found";
-      return;
+    function doRender() {
+      initCopyButton();
+      if (!slug || !data || !data.result) {
+        var titleEl = document.getElementById("post-title");
+        if (titleEl) titleEl.textContent = "Post not found";
+        return;
+      }
+      if (!cached) writeCache(data.result);
+      renderPost(data.result);
     }
-    if (!cached) writeCache(data.result);
-    renderPost(data.result);
+
+    if (document.getElementById("post-body")) {
+      doRender();
+    } else {
+      document.addEventListener("DOMContentLoaded", doRender);
+    }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      fetchPromise.then(onReady).catch(function () { initCopyButton(); });
-    });
-  } else {
-    fetchPromise.then(onReady).catch(function () { initCopyButton(); });
-  }
+  fetchPromise.then(onReady).catch(function () {
+    if (document.getElementById("post-title")) {
+      initCopyButton();
+    } else {
+      document.addEventListener("DOMContentLoaded", initCopyButton);
+    }
+  });
 
 })();
