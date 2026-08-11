@@ -211,7 +211,7 @@ export const postType = defineType({
       date: 'postDate',
       media: 'coverImage',
     },
-    prepare({title, date, media}: {title?: string; date?: string; media?: unknown}) {
+    prepare({title, date, media}: {title?: string; date?: string; media?: any}) {
       return {
         title: title || 'Untitled',
         subtitle: date || '',
