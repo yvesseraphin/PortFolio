@@ -1,6 +1,5 @@
 import {defineType, defineField, defineArrayMember} from 'sanity'
 
-// ─── Reference item (used in the References/Resources section) ───
 export const referenceItemType = defineType({
   name: 'referenceItem',
   title: 'Reference',
@@ -25,13 +24,11 @@ export const referenceItemType = defineType({
   },
 })
 
-// ─── Post ────────────────────────────────────────────────────────
 export const postType = defineType({
   name: 'post',
   title: 'Post',
   type: 'document',
   fields: [
-    // ── Identity ──────────────────────────────────────────────
     defineField({
       name: 'title',
       title: 'Title',
@@ -60,7 +57,6 @@ export const postType = defineType({
       description: 'Used for meta description and post list cards',
     }),
 
-    // ── Media ──────────────────────────────────────────────────
     defineField({
       name: 'coverImage',
       title: 'Cover image',
@@ -82,13 +78,11 @@ export const postType = defineType({
       initialValue: 1.4,
     }),
 
-    // ── Body ───────────────────────────────────────────────────
     defineField({
       name: 'body',
       title: 'Body',
       type: 'array',
       of: [
-        // ── Paragraph / inline content ──
         defineArrayMember({
           type: 'block',
           styles: [
@@ -121,7 +115,6 @@ export const postType = defineType({
             ],
           },
         }),
-        // ── Images ──
         defineArrayMember({
           type: 'image',
           title: 'Image',
@@ -139,7 +132,6 @@ export const postType = defineType({
             }),
           ],
         }),
-        // ── Code blocks ──
         defineArrayMember({
           type: 'object',
           name: 'codeBlock',
@@ -188,7 +180,6 @@ export const postType = defineType({
       ],
     }),
 
-    // ── References / Resources ─────────────────────────────────
     defineField({
       name: 'referencesHeading',
       title: 'References section heading',
