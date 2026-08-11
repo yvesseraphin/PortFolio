@@ -15,13 +15,19 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  /* ── sessionStorage cache (instant on back-navigation) ── */
+  /* ── sessionStorage & localStorage cache (instant navigation) ── */
   var CACHE_KEY = "post_cache_" + slug;
   function readCache() {
-    try { return JSON.parse(sessionStorage.getItem(CACHE_KEY)); } catch(e) { return null; }
+    try {
+      var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
   }
   function writeCache(data) {
-    try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+    try {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    } catch (e) {}
   }
 
   /* ── GROQ query ── */
@@ -215,12 +221,12 @@
     if (!navEl) return;
     var html = "";
     if (prev) {
-      html += '<a class="c-bInnJf" href="?slug=' + esc(prev.slug) + '">' +
+      html += '<a class="c-bInnJf" href="/blog/post/?slug=' + esc(prev.slug) + '">' +
         '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ilhikBv-css">Previous</div>' +
         '<span class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">' + esc(prev.title) + '</span></a>';
     }
     if (next) {
-      html += '<a class="c-bInnJf" style="margin-left:auto" href="?slug=' + esc(next.slug) + '">' +
+      html += '<a class="c-bInnJf" style="margin-left:auto" href="/blog/post/?slug=' + esc(next.slug) + '">' +
         '<div style="margin-left:auto" class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center c-gqwkJN-awKDG-justify-start c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-ilhikBv-css">Next</div>' +
         '<span class="c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12">' + esc(next.title) + '</span></a>';
     }
@@ -319,6 +325,13 @@
     if (postNav) postNav.style.visibility = "";
 
     buildNav(post.prev || null, post.next || null);
+
+    if (post.prev && post.prev.slug && window.__fetchSinglePost) {
+      window.__fetchSinglePost(post.prev.slug);
+    }
+    if (post.next && post.next.slug && window.__fetchSinglePost) {
+      window.__fetchSinglePost(post.next.slug);
+    }
   }
 
   function setMeta(id, val) {

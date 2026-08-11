@@ -209,11 +209,18 @@
   buttons.forEach((btn) => {
     const href = btn.dataset.href;
     if (!href) return;
-    btn.addEventListener("click", () => {
+    btn.addEventListener("mouseenter", () => {
+      if (href.includes("/blog") && window.__fetchBlogGrid) {
+        window.__fetchBlogGrid();
+      }
+    });
+    btn.addEventListener("click", (e) => {
       if (href.startsWith("http") || href.startsWith("mailto")) {
         window.open(href, "_blank", "noopener,noreferrer");
       } else if (href === "#") {
         // no-op
+      } else if (window.__navigateWithPreload && href.includes("/blog")) {
+        window.__navigateWithPreload(href, e);
       } else {
         window.location.href = href;
       }
@@ -834,31 +841,22 @@ void main(){
 })();
 
 /* ============================================================
-   8. SANITY BLOG GRID — fetch posts, render cards
+   8. SANITY BLOG & POST PREFETCH & NAVIGATION ENGINE
    ============================================================ */
 (function () {
   "use strict";
 
-  // Only runs on the blog page
-  var grid = document.getElementById("blog-grid");
-  if (!grid) return;
-
-  // Sanity project config (same project as sanity.config.ts)
   var PROJECT_ID  = "m77bsvm1";
   var DATASET     = "production";
   var API_VERSION = "2024-01-01";
 
-  var CACHE_KEY = "blog_grid_cache_v2";
-  var CACHE_TTL = 30 * 60 * 1000; // 30 minutes — survives tab closes
+  var GRID_CACHE_KEY = "blog_grid_cache_v2";
+  var GRID_CACHE_TTL = 30 * 60 * 1000; // 30 mins
 
-  // GROQ query — fetches posts ordered newest first.
-  // Uses Sanity CDN (api.sanity.io with cdn=true) for fast global edge caching.
-  var GROQ = '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
+  var GRID_GROQ = '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
 
-  // ── Build Sanity CDN image URL from an asset reference ────
   function sanityImgUrl(ref, width) {
     if (!ref) return "";
-    // ref format: "image-<id>-<WxH>-<ext>"
     var parts = ref.split("-");
     var ext   = parts[parts.length - 1];
     var dims  = parts[parts.length - 2];
@@ -867,61 +865,236 @@ void main(){
     return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
   }
 
-  // ── Kick off fetch IMMEDIATELY at script-parse time ───────
-  // Uses Sanity CDN endpoint (cdn.sanity.io) — globally cached, no auth needed.
-  var sanityUrl = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
-                  "/data/query/" + DATASET + "?query=" + encodeURIComponent(GROQ);
-
-  var fetchPromise = fetch(sanityUrl).then(function (r) {
-    if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
-    return r.json();
-  });
-
-  // ── Cache helpers (localStorage — survives tab closes) ────
-  function readCache() {
+  // ── Grid Cache Helpers ──
+  function readBlogGridCache() {
     try {
-      var raw = localStorage.getItem(CACHE_KEY);
+      var raw = localStorage.getItem(GRID_CACHE_KEY);
       if (!raw) return null;
       var cached = JSON.parse(raw);
-      if (Date.now() - cached.ts > CACHE_TTL) return null;
+      if (Date.now() - cached.ts > GRID_CACHE_TTL) return null;
       return cached.items;
     } catch (e) { return null; }
   }
 
-  function writeCache(items) {
+  function writeBlogGridCache(items) {
     try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), items: items }));
+      localStorage.setItem(GRID_CACHE_KEY, JSON.stringify({ ts: Date.now(), items: items }));
     } catch (e) {}
   }
 
-  // ── Date formatter ─────────────────────────────────────────
+  // ── In-flight promise deduplication ──
+  var gridFetchPromise = null;
+
+  function fetchBlogGrid() {
+    var cached = readBlogGridCache();
+    if (cached) {
+      preloadGridImages(cached);
+      return Promise.resolve(cached);
+    }
+    if (gridFetchPromise) return gridFetchPromise;
+
+    var sanityUrl = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
+                    "/data/query/" + DATASET + "?query=" + encodeURIComponent(GRID_GROQ);
+
+    gridFetchPromise = fetch(sanityUrl)
+      .then(function (r) {
+        if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        var items = (data && data.result) || [];
+        if (items.length) {
+          writeBlogGridCache(items);
+          preloadGridImages(items);
+          prefetchAllPostsInBackground(items);
+        }
+        gridFetchPromise = null;
+        return items;
+      })
+      .catch(function (err) {
+        gridFetchPromise = null;
+        console.warn("[blog grid] Sanity fetch error:", err);
+        return [];
+      });
+
+    return gridFetchPromise;
+  }
+
+  function preloadGridImages(items) {
+    if (!Array.isArray(items)) return;
+    items.forEach(function (item) {
+      if (item.coverImage && item.coverImage.asset && item.coverImage.asset._ref) {
+        var img = new Image();
+        img.src = sanityImgUrl(item.coverImage.asset._ref, 800);
+      }
+    });
+  }
+
+  // ── Single Post Caching & Prefetching ──
+  var postFetchPromises = {};
+
+  function isPostCached(slug) {
+    if (!slug) return false;
+    var key = "post_cache_" + slug;
+    try {
+      return !!(sessionStorage.getItem(key) || localStorage.getItem(key));
+    } catch (e) { return false; }
+  }
+
+  function fetchSinglePost(slug) {
+    if (!slug) return Promise.resolve(null);
+    var key = "post_cache_" + slug;
+
+    try {
+      var raw = sessionStorage.getItem(key) || localStorage.getItem(key);
+      if (raw) return Promise.resolve(JSON.parse(raw));
+    } catch (e) {}
+
+    if (postFetchPromises[slug]) return postFetchPromises[slug];
+
+    var groq = '*[_type == "post" && slug.current == $slug][0]{' +
+      'title, "slug": slug.current, postDate, excerpt, coverImage, aspectRatio, body, references, referencesHeading,' +
+      '"prev": *[_type == "post" && postDate < ^.postDate] | order(postDate desc)[0]{ title, "slug": slug.current },' +
+      '"next": *[_type == "post" && postDate > ^.postDate] | order(postDate asc)[0]{ title, "slug": slug.current }' +
+    '}';
+
+    var url = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
+      "/data/query/" + DATASET + "?query=" + encodeURIComponent(groq) +
+      "&$slug=" + encodeURIComponent(JSON.stringify(slug));
+
+    postFetchPromises[slug] = fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var res = data && data.result;
+        if (res) {
+          try {
+            sessionStorage.setItem(key, JSON.stringify(res));
+            localStorage.setItem(key, JSON.stringify(res));
+          } catch (e) {}
+          if (res.coverImage && res.coverImage.asset && res.coverImage.asset._ref) {
+            var img = new Image();
+            img.src = sanityImgUrl(res.coverImage.asset._ref, 1200);
+          }
+        }
+        delete postFetchPromises[slug];
+        return res;
+      })
+      .catch(function (err) {
+        delete postFetchPromises[slug];
+        console.warn("[single post] Sanity fetch error:", err);
+        return null;
+      });
+
+    return postFetchPromises[slug];
+  }
+
+  function prefetchAllPostsInBackground(items) {
+    if (!Array.isArray(items)) return;
+    var index = 0;
+    function next() {
+      if (index >= items.length) return;
+      var item = items[index++];
+      if (item && item.slug && !isPostCached(item.slug)) {
+        fetchSinglePost(item.slug).then(function () {
+          setTimeout(next, 50);
+        });
+      } else {
+        next();
+      }
+    }
+    if (window.requestIdleCallback) {
+      requestIdleCallback(function () { next(); });
+    } else {
+      setTimeout(next, 200);
+    }
+  }
+
+  // ── Smart Navigator — Holds navigation on current page until target data is cached ──
+  function navigateWithPreload(targetUrl, e) {
+    if (!targetUrl) return;
+    var norm = targetUrl.replace(/\/$/, "") || "/";
+    var currentNorm = window.location.pathname.replace(/\/$/, "") || "/";
+
+    // 1. Target is /blog
+    if (norm === "/blog" || norm.endsWith("/blog")) {
+      if (currentNorm === "/blog") return;
+      if (readBlogGridCache()) {
+        window.location.href = targetUrl;
+        return;
+      }
+      if (e && e.preventDefault) e.preventDefault();
+      var done = false;
+      var timer = setTimeout(function () {
+        if (!done) { done = true; window.location.href = targetUrl; }
+      }, 2500);
+
+      fetchBlogGrid().then(function () {
+        if (!done) { done = true; clearTimeout(timer); window.location.href = targetUrl; }
+      }).catch(function () {
+        if (!done) { done = true; clearTimeout(timer); window.location.href = targetUrl; }
+      });
+      return;
+    }
+
+    // 2. Target is post detail /blog/post/?slug=...
+    if (targetUrl.includes("/blog/post")) {
+      var match = targetUrl.match(/slug=([^&]+)/);
+      var slug = match ? decodeURIComponent(match[1]) : "";
+      if (!slug) {
+        window.location.href = targetUrl;
+        return;
+      }
+      if (isPostCached(slug)) {
+        window.location.href = targetUrl;
+        return;
+      }
+      if (e && e.preventDefault) e.preventDefault();
+      var donePost = false;
+      var timerPost = setTimeout(function () {
+        if (!donePost) { donePost = true; window.location.href = targetUrl; }
+      }, 2500);
+
+      fetchSinglePost(slug).then(function () {
+        if (!donePost) { donePost = true; clearTimeout(timerPost); window.location.href = targetUrl; }
+      }).catch(function () {
+        if (!donePost) { donePost = true; clearTimeout(timerPost); window.location.href = targetUrl; }
+      });
+      return;
+    }
+
+    // Default
+    window.location.href = targetUrl;
+  }
+
+  // Global Exports
+  window.__readBlogGridCache   = readBlogGridCache;
+  window.__fetchBlogGrid       = fetchBlogGrid;
+  window.__fetchSinglePost     = fetchSinglePost;
+  window.__isPostCached       = isPostCached;
+  window.__navigateWithPreload = navigateWithPreload;
+
+  // ── Render Blog Grid UI (if grid element is present on page) ──
   function formatDate(iso) {
     if (!iso) return "";
     return new Date(iso).toLocaleDateString("en-US", { month: "long", year: "numeric" });
   }
 
-  // ── HTML escape ────────────────────────────────────────────
   function escapeHtml(str) {
     return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
-  // ── Arrow SVG ─────────────────────────────────────────────
   var ARROW_SVG =
     '<svg data-arrow width="16px" height="16px" stroke-width="1.5" ' +
     'viewBox="0 0 24 24" fill="none" color="currentColor">' +
     '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
     'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
-  // ── Text class string (shared by all card <p> elements) ───
   var P_BASE = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 " +
                "c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 " +
                "c-iLbGmI-cOWITQ-color-gray12 ";
 
-  // ── Build one card ─────────────────────────────────────────
   function buildCard(item) {
     var cover    = item.coverImage || null;
     var assetRef = cover && cover.asset ? cover.asset._ref : null;
@@ -956,7 +1129,6 @@ void main(){
     );
   }
 
-  // ── Distribute items across 3 columns (shortest-column first) ──
   function distributeToColumns(items) {
     var cols    = [[], [], []];
     var heights = [0, 0, 0];
@@ -975,7 +1147,6 @@ void main(){
     return cols;
   }
 
-  // ── Render columns ─────────────────────────────────────────
   function renderColumns(items) {
     var cols = distributeToColumns(items);
     ["col-1-inner", "col-2-inner", "col-3-inner"].forEach(function (id, ci) {
@@ -996,21 +1167,44 @@ void main(){
     });
   }
 
-  // ── Boot ───────────────────────────────────────────────────
-  // 1. Render from cache immediately (zero network wait)
-  var cached = readCache();
-  if (cached) renderColumns(cached);
+  // ── Global Event Delegation for Blog & Post Links ──
+  document.addEventListener("click", function (e) {
+    var anchor = e.target.closest ? e.target.closest("a") : null;
+    if (!anchor) return;
+    var href = anchor.getAttribute("href");
+    if (!href) return;
+    if (href.includes("/blog/post")) {
+      navigateWithPreload(href, e);
+    } else if (href === "/blog" || href === "/blog/") {
+      navigateWithPreload(href, e);
+    }
+  });
 
-  // 2. Resolve the in-flight Sanity CDN fetch
-  fetchPromise
-    .then(function (data) {
-      var items = (data && data.result) || [];
-      if (!items.length) return;
-      writeCache(items);
+  document.addEventListener("mouseover", function (e) {
+    var anchor = e.target.closest ? e.target.closest("a") : null;
+    if (!anchor) return;
+    var href = anchor.getAttribute("href");
+    if (!href) return;
+    if (href.includes("/blog/post")) {
+      var match = href.match(/slug=([^&]+)/);
+      if (match) fetchSinglePost(decodeURIComponent(match[1]));
+    } else if (href === "/blog" || href === "/blog/") {
+      fetchBlogGrid();
+    }
+  }, { passive: true });
+
+  // ── Boot ──
+  var gridEl = document.getElementById("blog-grid");
+
+  // 1. Render immediately if cached and on blog page
+  var cached = readBlogGridCache();
+  if (gridEl && cached) renderColumns(cached);
+
+  // 2. Trigger fetch on any page load (pre-warms cache & background fetches posts)
+  fetchBlogGrid().then(function (items) {
+    if (gridEl && items.length) {
       renderColumns(items);
-    })
-    .catch(function (err) {
-      console.warn("[blog grid] Sanity fetch error:", err);
-    });
+    }
+  });
 
 })();
