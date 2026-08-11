@@ -149,9 +149,9 @@
     if (!items || !items.length) return "";
     var id   = slugify(heading || "references");
     var html = '<h3 data-heading="true" id="' + esc(id) + '" class="post-references-heading">' + esc(heading || "References") + '</h3>';
-    html += '<ol class="post-references-list">';
+    html += '<ol class="post-references-list" style="color:var(--colors-gray12)">';
     items.forEach(function (item) {
-      html += "<li>";
+      html += '<li style="color:var(--colors-gray12)">';
       if (item && item.url) {
         html += '<a href="' + esc(item.url) + '" target="_blank" rel="noopener noreferrer">' + esc(item.text || item.url) + '</a>';
       } else {
