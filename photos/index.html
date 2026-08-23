@@ -1,43 +1,34 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Projects — Seraphin</title>
+    <title>Photos — Seraphin</title>
     <link rel="shortcut icon" href="../favicon.svg" />
     <meta name="author" content="Manzi Shimwa Yves Seraphin" />
-    <meta
-      name="description"
-      content="Projects by Seraphin — Software Engineer & ML Engineer building AI-powered applications, secure software, and full-stack web solutions."
-    />
+    <meta name="description" content="Photos by Seraphin." />
     <meta name="robots" content="index,follow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Seraphin" />
-    <meta property="og:title" content="Projects — Seraphin" />
-    <meta
-      property="og:description"
-      content="Projects by Seraphin — Software Engineer & ML Engineer building AI-powered applications, secure software, and full-stack web solutions."
-    />
-    <meta property="og:url" content="https://www.yvesseraphin.xyz/projects" />
+    <meta property="og:title" content="Photos — Seraphin" />
+    <meta property="og:description" content="Photos by Seraphin." />
+    <meta property="og:url" content="https://www.yvesseraphin.xyz/photos" />
     <meta property="og:image" content="https://www.yvesseraphin.xyz/assets/images/og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Projects — Seraphin" />
+    <meta property="og:image:alt" content="Photos — Seraphin" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@0x_serap_hin" />
     <meta name="twitter:creator" content="@0x_serap_hin" />
-    <meta name="twitter:title" content="Projects — Seraphin" />
-    <meta
-      name="twitter:description"
-      content="Projects by Seraphin — Software Engineer & ML Engineer building AI-powered applications, secure software, and full-stack web solutions."
-    />
+    <meta name="twitter:title" content="Photos — Seraphin" />
+    <meta name="twitter:description" content="Photos by Seraphin." />
     <meta name="twitter:image" content="https://www.yvesseraphin.xyz/assets/images/og.jpg" />
 
-    <link rel="canonical" href="https://www.yvesseraphin.xyz/projects" />
+    <link rel="canonical" href="https://www.yvesseraphin.xyz/photos" />
 
     <!-- Theme detection: runs before paint to avoid flash -->
     <script>
@@ -57,24 +48,11 @@
       })();
     </script>
 
-    <link
-      rel="preload"
-      href="../X-Regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="preload"
-      href="../X-Medium.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-    />
+    <link rel="preload" href="../X-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="../X-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="stylesheet" href="../assets/css/styles.css" />
 
     <style>
-      /* ── Font faces ── */
       @font-face {
         font-family: X;
         font-weight: 400;
@@ -86,7 +64,7 @@
         src: url(../X-Medium.woff2) format("woff2");
       }
 
-      /* ── Design tokens (light) ── */
+      /* ── Design tokens ── */
       :root {
         --colors-gray1: hsl(0 0% 99%);
         --colors-gray2: hsl(0 0% 97.3%);
@@ -108,14 +86,8 @@
           "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
           "Helvetica Neue", sans-serif;
         --space-3: 24px;
-        --space-4: 32px;
-        --fontSizes-14: 14px;
-        --fontWeights-500: 500;
-        --lineHeights-28: 28px;
         --radii-round: 9999px;
       }
-
-      /* ── Design tokens (dark) ── */
       .dark {
         --colors-gray1: hsl(0 0% 8.5%);
         --colors-gray2: hsl(0 0% 11%);
@@ -133,184 +105,34 @@
         --colors-grayA6: hsl(0 0% 100% / 0.129);
       }
 
-      /* ── Base reset ── */
+      /* ── Reset ── */
       *, *::before, *::after {
         box-sizing: border-box;
         margin: 0;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-
       body {
         font-family: var(--fonts-body);
         background: var(--colors-gray1);
       }
-
-      ::selection {
-        background: #fff9a8;
-        color: black;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
+      ::selection { background: #fff9a8; color: black; }
+      a { color: inherit; text-decoration: none; }
       button {
-        margin: 0;
-        padding: 0;
+        margin: 0; padding: 0;
         background: transparent;
         font-family: var(--fonts-body);
-        border: 0;
-        cursor: pointer;
+        border: 0; cursor: pointer;
       }
+      ul { list-style: none; padding: 0; margin: 0; }
 
-      /* ── Keyframes ── */
+      /* ── Dock animation ── */
       @keyframes k-PnvVd {
         0%   { opacity: 0; transform: translate(-50%, -50%) translateY(80px); }
         100% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
       }
 
-      /* Underline sweep — exact match to reference k-bHvlyS / k-iAsmag */
-      @keyframes sweep {
-        0%   { background: transparent; }
-        50%  { background: var(--colors-gray10); }
-        100% { width: 100%; background: var(--colors-gray5); }
-      }
-      @keyframes sweepFade {
-        0%   { background: transparent; }
-        50%  { background: var(--colors-gray10); }
-        100% { width: 100%; background: transparent; }
-      }
-
-      /* ── Page layout ── */
-      .page-wrapper {
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        min-height: 100vh;
-        padding-left: var(--space-3);
-        padding-right: var(--space-3);
-        padding-top: 120px;
-        padding-bottom: 120px;
-        margin: 0 auto;
-        max-width: 720px;
-      }
-
-      @media (max-width: 720px) {
-        .page-wrapper {
-          padding-top: 40px;
-        }
-      }
-
-      /* ── Projects list ── */
-      .projects-list {
-        margin-top: var(--space-4);
-        display: flex;
-        flex-direction: column;
-        gap: 28px;
-      }
-
-      /* ── Project row ── */
-      .project-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        width: calc(100% + 32px);
-        position: relative;
-        overflow: hidden;
-        padding: 12px;
-        margin: -12px;
-        border-radius: 12px;
-        outline: 0;
-        opacity: 0;
-        transition: opacity 300ms ease, background 120ms ease;
-        ---focusColor: var(--colors-amber9);
-      }
-
-      .project-row:focus-visible {
-        outline: 0;
-        box-shadow:
-          0 0 0 2px var(--colors-gray1),
-          0 0 0 4px var(---focusColor);
-      }
-
-      .project-row:hover {
-        background: var(--colors-gray3);
-      }
-
-      /* Title */
-      .project-title {
-        display: inline-block;
-        font-family: var(--fonts-body);
-        font-size: var(--fontSizes-14);
-        line-height: 28px;
-        font-weight: 500;
-        color: var(--colors-gray12);
-        white-space: nowrap;
-      }
-
-      /* Description — hidden on small screens */
-      .project-desc {
-        display: inline-block;
-        font-family: var(--fonts-body);
-        font-size: var(--fontSizes-14);
-        line-height: 28px;
-        font-weight: 400;
-        color: var(--colors-gray11);
-        margin-left: -8px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      @media (max-width: 720px) {
-        .project-desc {
-          display: none;
-        }
-      }
-
-      /* Animated divider */
-      .project-divider {
-        flex: 1;
-        position: relative;
-        min-width: 0;
-      }
-
-      .project-divider::after {
-        content: "";
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        height: 1px;
-        width: 0;
-        animation: sweep 1s ease forwards;
-      }
-
-      .project-divider::before {
-        content: "";
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        height: 1px;
-        width: 0;
-        z-index: 3;
-        animation: sweepFade 1s ease forwards;
-      }
-
-      /* Year */
-      .project-year {
-        font-family: var(--fonts-body);
-        font-size: var(--fontSizes-14);
-        line-height: 28px;
-        font-weight: 400;
-        color: var(--colors-gray9);
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-
-      /* ── Dock (overrides for projects page) ── */
+      /* ── Dock ── */
       .dock {
         display: flex;
         align-items: flex-end;
@@ -331,11 +153,9 @@
         transform: translate(-50%, -50%) translateY(80px);
         animation: k-PnvVd 500ms ease forwards 200ms;
       }
-
       .dark .dock {
         background: rgba(22, 22, 22, 0.8);
       }
-
       @media (max-width: 430px) {
         .dock {
           width: calc(100% - 69px);
@@ -343,18 +163,97 @@
           bottom: 0;
         }
       }
+
+      /* ── Page wrapper ── */
+      .page-wrapper {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        min-height: 100vh;
+        padding: 8px;
+      }
+
+      /* ── Gallery grid — exact match to reference ── */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+        gap: 8px;
+      }
+      @media (max-width: 720px) {
+        .gallery { padding: 0; }
+      }
+      @media (max-width: 440px) {
+        .gallery {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+      }
+
+      /* ── Photo card — exact match to reference ── */
+      .photo-item {
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        height: 700px;
+        outline: 0;
+        border-radius: 8px;
+      }
+      @media (max-width: 720px) {
+        .photo-item {
+          width: 100%;
+          min-width: unset;
+          pointer-events: none;
+        }
+      }
+      @media (max-width: 440px) {
+        .photo-item { height: 420px; }
+      }
+      .photo-item img {
+        -webkit-user-select: none;
+        user-select: none;
+        object-fit: cover;
+      }
+
+      /* ── Blurred placeholder (absolutely fills the card) ── */
+      .photo-placeholder {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        border-radius: inherit;
+        filter: blur(32px);
+        transform: scale(1.2) translateZ(0);
+        transition: opacity 400ms ease;
+      }
+
+      /* ── Real image (absolutely fills the card) ── */
+      .photo-real {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity 400ms ease;
+      }
+      .photo-real.loaded {
+        opacity: 1;
+      }
+      .photo-real.loaded + .photo-placeholder,
+      .photo-item.loaded .photo-placeholder {
+        opacity: 0;
+      }
     </style>
   </head>
   <body>
     <!-- ── Dock ── -->
-    <footer
-      id="footer"
-      class="dock"
-      role="navigation"
-      aria-label="Site navigation"
-    >
+    <footer id="footer" class="dock" role="navigation" aria-label="Site navigation">
       <div aria-hidden="true" class="dock-highlight"></div>
       <div class="dock-items">
+
         <!-- Home -->
         <button class="dock-btn" aria-label="Home" data-href="/">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
@@ -388,7 +287,7 @@
           <div class="dock-indicator" aria-hidden="true"></div>
         </button>
 
-        <!-- Photos -->
+        <!-- Photos (active) -->
         <button class="dock-btn" aria-label="Photos" data-href="/photos">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -449,154 +348,13 @@
           </span>
           <div class="dock-indicator" aria-hidden="true"></div>
         </button>
+
       </div>
     </footer>
 
-    <!-- ── Main ── -->
+    <!-- ── Gallery ── -->
     <main class="page-wrapper page-wrapper--scroll">
-      <div class="projects-list" id="projects-list">
-
-        <!-- Row 1 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="0"
-        >
-          <span class="project-title">AI-Powered Chatbot</span>
-          <span class="project-desc">Conversational assistant built on transformer models</span>
-          <div class="project-divider" style="--d1:0s;--d2:0s;"></div>
-          <p class="project-year">2025</p>
-        </a>
-
-        <!-- Row 2 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="1"
-        >
-          <span class="project-title">SecureVault</span>
-          <span class="project-desc">End-to-end encrypted password manager with zero-knowledge architecture</span>
-          <div class="project-divider" style="--d1:0.05s;--d2:0.1s;"></div>
-          <p class="project-year">2025</p>
-        </a>
-
-        <!-- Row 3 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="2"
-        >
-          <span class="project-title">RCA Learning Platform</span>
-          <span class="project-desc">Full-stack LMS for Rwanda Coding Academy students</span>
-          <div class="project-divider" style="--d1:0.1s;--d2:0.2s;"></div>
-          <p class="project-year">2024</p>
-        </a>
-
-        <!-- Row 4 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="3"
-        >
-          <span class="project-title">Intrusion Detection System</span>
-          <span class="project-desc">ML-based network anomaly detection for real-time threat analysis</span>
-          <div class="project-divider" style="--d1:0.15s;--d2:0.3s;"></div>
-          <p class="project-year">2024</p>
-        </a>
-
-        <!-- Row 5 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="4"
-        >
-          <span class="project-title">AgriSense</span>
-          <span class="project-desc">IoT + ML crop monitoring system for smallholder farmers</span>
-          <div class="project-divider" style="--d1:0.2s;--d2:0.4s;"></div>
-          <p class="project-year">2024</p>
-        </a>
-
-        <!-- Row 6 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="5"
-        >
-          <span class="project-title">Portfolio v2</span>
-          <span class="project-desc">Personal site with interactive UI, blog, and Sanity CMS</span>
-          <div class="project-divider" style="--d1:0.25s;--d2:0.5s;"></div>
-          <p class="project-year">2024</p>
-        </a>
-
-        <!-- Row 7 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="6"
-        >
-          <span class="project-title">Embedded Morse Decoder</span>
-          <span class="project-desc">Hardware decoder using STM32 microcontroller and UART output</span>
-          <div class="project-divider" style="--d1:0.3s;--d2:0.6s;"></div>
-          <p class="project-year">2023</p>
-        </a>
-
-        <!-- Row 8 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="7"
-        >
-          <span class="project-title">Mini OS Kernel</span>
-          <span class="project-desc">Bare-metal kernel with process scheduling and memory management</span>
-          <div class="project-divider" style="--d1:0.35s;--d2:0.7s;"></div>
-          <p class="project-year">2023</p>
-        </a>
-
-        <!-- Row 9 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="8"
-        >
-          <span class="project-title">Sign Language Translator</span>
-          <span class="project-desc">Computer vision model that recognizes Rwandan Sign Language gestures</span>
-          <div class="project-divider" style="--d1:0.4s;--d2:0.8s;"></div>
-          <p class="project-year">2023</p>
-        </a>
-
-        <!-- Row 10 -->
-        <a
-          href="https://github.com/yvesseraphin"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-row"
-          data-delay="9"
-        >
-          <span class="project-title">DevConnect</span>
-          <span class="project-desc">Developer networking platform with real-time chat and project matching</span>
-          <div class="project-divider" style="--d1:0.45s;--d2:0.9s;"></div>
-          <p class="project-year">2022</p>
-        </a>
-
-      </div>
+      <ul class="gallery" id="gallery" aria-label="Photo gallery"></ul>
     </main>
 
     <script src="../assets/js/main.js"></script>
@@ -604,26 +362,88 @@
       (function () {
         "use strict";
 
-        var rows = document.querySelectorAll(".project-row");
+        /*
+         * Photos sourced from Unsplash (free to use).
+         * Each entry: { id, w, h } — w/h used to set aspect context (all cards
+         * are fixed 700px tall by CSS, matching the reference exactly).
+         * Using Unsplash Source API: https://source.unsplash.com/{id}/{w}x{h}
+         */
+        var PHOTOS = [
+          { id: "photo-1506905925346-21bda4d32df4", desc: "Mountain landscape" },
+          { id: "photo-1469474968028-56623f02e42e", desc: "Forest path" },
+          { id: "photo-1447752875215-b2761acb3c5d", desc: "Autumn forest" },
+          { id: "photo-1500534314209-a25ddb2bd429", desc: "Desert road" },
+          { id: "photo-1493246507139-91e8fad9978e", desc: "Rocky mountains" },
+          { id: "photo-1518173946687-a4c8892bbd9f", desc: "Golden field" },
+          { id: "photo-1414609245224-aea2114de439", desc: "City lights" },
+          { id: "photo-1501854140801-50d01698950b", desc: "Aerial forest" },
+          { id: "photo-1465146344425-f00d5f5c8f07", desc: "Wildflowers" },
+          { id: "photo-1433086966358-54859d0ed716", desc: "Waterfall" },
+          { id: "photo-1448375240586-882707db888b", desc: "Pine forest" },
+          { id: "photo-1546587348-d12660c30c50", desc: "Lake reflection" },
+          { id: "photo-1504893524553-b855bce32c67", desc: "Canyon river" },
+          { id: "photo-1559128010-7c1ad6e1b6a5", desc: "Ocean waves" },
+          { id: "photo-1502635385003-6675ca8cf8b5", desc: "Coastal cliffs" },
+          { id: "photo-1508739773434-c26b3d09e071", desc: "Beach sunset" },
+          { id: "photo-1518020382113-a7e8fc38eac9", desc: "Snow mountains" },
+          { id: "photo-1472214103451-9374bd1c798e", desc: "Green hills" },
+          { id: "photo-1530908295418-a12e326966ba", desc: "Night sky" },
+          { id: "photo-1519681393784-d120267933ba", desc: "Starry mountains" },
+          { id: "photo-1505765050516-f72dcac9c60e", desc: "Lake dock" },
+          { id: "photo-1477346611705-65d1883cee1e", desc: "Mountain lake" },
+          { id: "photo-1534067783941-51c9c23ecefd", desc: "Misty forest" },
+          { id: "photo-1484910292437-025e5d13ce87", desc: "Foggy trees" },
+        ];
 
-        // Inject per-row animation delays for the divider pseudo-elements
-        var style = document.createElement("style");
-        var css = "";
-        rows.forEach(function (row, i) {
-          var d1 = (i * 0.05).toFixed(3);
-          var d2 = (i * 0.10).toFixed(3);
-          css +=
-            ".projects-list .project-row:nth-child(" + (i + 1) + ") .project-divider::after{animation-delay:" + d1 + "s}" +
-            ".projects-list .project-row:nth-child(" + (i + 1) + ") .project-divider::before{animation-delay:" + d2 + "s}";
-        });
-        style.textContent = css;
-        document.head.appendChild(style);
+        var gallery = document.getElementById("gallery");
+        if (!gallery) return;
 
-        // Fade each row in with the same stagger offset as the divider
-        rows.forEach(function (row, i) {
-          setTimeout(function () {
-            row.style.opacity = "1";
-          }, i * 50);
+        function buildItem(photo, index) {
+          var url = "https://images.unsplash.com/" + photo.id + "?auto=format&fit=crop&w=800&q=80";
+          var thumbUrl = "https://images.unsplash.com/" + photo.id + "?auto=format&fit=crop&w=20&q=10&blur=10";
+
+          var li = document.createElement("li");
+          li.className = "photo-item";
+
+          // Blurred placeholder — tiny version shown immediately
+          var placeholder = document.createElement("img");
+          placeholder.className = "photo-placeholder";
+          placeholder.setAttribute("aria-hidden", "true");
+          placeholder.alt = "";
+          placeholder.src = thumbUrl;
+
+          // Real image — fades in once loaded
+          var img = document.createElement("img");
+          img.className = "photo-real";
+          img.alt = photo.desc;
+          if (index === 0) {
+            img.fetchPriority = "high";
+            img.decoding = "async";
+          } else {
+            img.loading = "lazy";
+            img.decoding = "async";
+          }
+          img.src = url;
+
+          img.addEventListener("load", function () {
+            img.classList.add("loaded");
+            placeholder.style.opacity = "0";
+          });
+
+          // If already cached and complete
+          if (img.complete && img.naturalWidth > 0) {
+            img.classList.add("loaded");
+            placeholder.style.opacity = "0";
+          }
+
+          li.appendChild(placeholder);
+          li.appendChild(img);
+          return li;
+        }
+
+        // Render all photos
+        PHOTOS.forEach(function (photo, i) {
+          gallery.appendChild(buildItem(photo, i));
         });
 
       })();

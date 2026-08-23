@@ -237,7 +237,7 @@
   const headerBar = document.getElementById("header-bar");
   const locationEl = document.querySelector(".header-meta span:last-child");
 
-  let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const userTimeZone = "Africa/Kigali";
 
   function formatTime() {
     return new Date().toLocaleTimeString([], {
@@ -259,20 +259,6 @@
       });
     }, 1000);
   }
-
-  fetch("https://ipapi.co/json/")
-    .then((r) => r.json())
-    .then((data) => {
-      const city    = data.city;
-      const country = data.country_name;
-      if (city && country && locationEl) {
-        locationEl.textContent = city + ", " + country;
-      }
-      if (data.timezone) {
-        userTimeZone = data.timezone;
-      }
-    })
-    .catch(() => {});
 
   if (headerBar) {
     setTimeout(() => headerBar.classList.add("visible"), 300);
@@ -626,7 +612,8 @@ void main(){
   "use strict";
   const isBlog    = window.location.pathname.includes("/blog");
   const isProject = window.location.pathname.includes("/projects");
-  if (isBlog || isProject) return;
+  const isPhotos  = window.location.pathname.includes("/photos");
+  if (isBlog || isProject || isPhotos) return;
 
   document.body.style.overflow = "hidden";
   document.body.style.overscrollBehaviorX = "none";
