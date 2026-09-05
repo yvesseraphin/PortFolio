@@ -43,6 +43,68 @@
     return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
   }
 
+  function highlightCode(rawCode, lang) {
+    if (!rawCode) return "";
+    var lines = rawCode.split("\n");
+
+    return lines.map(function (line) {
+      if (!line.trim()) {
+        return '<span class="code-line">&nbsp;</span>';
+      }
+
+      var l = esc(line);
+      var tokens = [];
+
+      // 1. Strings (single, double, backticks)
+      l = l.replace(/(&quot;(?:\\.|[^&]|&(?!quot;))*&quot;|&#39;(?:\\.|[^&]|&(?!#39;))*&#39;|`(?:\\.|[^`])*`)/g, function (m) {
+        var id = "___TOK_STR_" + tokens.length + "___";
+        tokens.push('<span class="tok-str">' + m + '</span>');
+        return id;
+      });
+
+      // 2. Comments (// or # or /* */)
+      l = l.replace(/(\/\/.*$|#.*$|\/\*[\s\S]*?\*\/)/g, function (m) {
+        var id = "___TOK_COM_" + tokens.length + "___";
+        tokens.push('<span class="tok-com">' + m + '</span>');
+        return id;
+      });
+
+      // 3. Keywords (JS/TS, Python, Rust, Go, etc.)
+      l = l.replace(/\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|class|extends|new|this|super|import|export|from|async|await|try|catch|finally|throw|typeof|instanceof|in|of|interface|type|enum|public|private|protected|static|readonly|def|self|elif|lambda|pass|raise|yield|with|is|not|and|or|True|False|None|true|false|null|undefined)\b/g, '<span class="tok-kw">$1</span>');
+
+      // 4. Numbers
+      l = l.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="tok-num">$1</span>');
+
+      // 5. Function calls: foo(...)
+      l = l.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g, '<span class="tok-fn">$1</span>');
+
+      // Restore protected tokens
+      for (var i = 0; i < tokens.length; i++) {
+        l = l.replace("___TOK_STR_" + i + "___", tokens[i]);
+        l = l.replace("___TOK_COM_" + i + "___", tokens[i]);
+      }
+
+      return '<span class="code-line">' + l + '</span>';
+    }).join("");
+  }
+
+  window.copySnippet = function (btn) {
+    var wrap = btn.closest(".codeblock-wrap");
+    if (!wrap) return;
+    var codeEl = wrap.querySelector("code");
+    if (!codeEl) return;
+    var text = codeEl.innerText || codeEl.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        var prev = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(function () {
+          btn.textContent = prev;
+        }, 1800);
+      });
+    }
+  };
+
   function renderSpans(children, markDefs) {
     if (!Array.isArray(children)) return "";
     return children
@@ -51,7 +113,7 @@
         var marks = span.marks || [];
         marks.forEach(function (mark) {
           if (mark === "strong") {
-            text = "<strong>" + text + "</strong>";
+            text = '<strong class="medium-bold">' + text + '</strong>';
           } else if (mark === "em") {
             text = "<em>" + text + "</em>";
           } else if (mark === "code") {
@@ -76,9 +138,15 @@
 
       if (block._type === "codeBlock") {
         var lang = esc(block.language || "code");
-        var code = esc(block.code || "");
-        var caption = block.caption ? '<div class="codeblock-header"><span>' + esc(block.caption) + '</span><span>' + lang + '</span></div>' : '';
-        html += '<div class="codeblock-wrap">' + caption + '<pre class="codeblock-body"><code>' + code + '</code></pre></div>';
+        var rawCode = block.code || "";
+        var highlighted = highlightCode(rawCode, lang);
+        var captionLeft = block.caption ? '<span>' + esc(block.caption) + '</span>' : '<span>' + lang + '</span>';
+        var header =
+          '<div class="codeblock-header">' +
+            captionLeft +
+            '<button type="button" class="codeblock-copy-btn" onclick="copySnippet(this)">Copy</button>' +
+          '</div>';
+        html += '<div class="codeblock-wrap">' + header + '<pre class="codeblock-body"><code>' + highlighted + '</code></pre></div>';
         return;
       }
 
@@ -86,7 +154,7 @@
         var ref = block.asset && block.asset._ref;
         if (!ref) return;
         var cap = block.caption ? '<figcaption class="architecture-figcaption">' + esc(block.caption) + '</figcaption>' : "";
-        html += '<figure style="margin:20px 0;border-radius:10px;overflow:hidden;border:1px solid var(--colors-gray4);background:var(--colors-gray2);">' +
+        html += '<figure style="margin:24px 0;border-radius:10px;overflow:hidden;border:1px solid var(--colors-gray4);background:var(--colors-gray2);">' +
           '<img src="' + esc(sanityImgUrl(ref, 1200)) + '" alt="' + esc(block.alt || "") + '" loading="lazy" style="width:100%;height:auto;display:block;">' +
           cap +
           '</figure>';
@@ -99,17 +167,18 @@
       var text = renderSpans(block.children || [], block.markDefs || []);
 
       if (style === "h2") {
-        html += '<h2 style="font-size:16px;font-weight:500;margin:28px 0 10px;color:var(--colors-gray12);">' + text + '</h2>';
+        html += '<h2 style="font-size:16px;font-weight:500;margin:32px 0 12px;color:var(--colors-gray12);line-height:24px;">' + text + '</h2>';
       } else if (style === "h3") {
-        html += '<h3 style="font-size:14px;font-weight:500;margin:20px 0 8px;color:var(--colors-gray12);">' + text + '</h3>';
+        html += '<h3 style="font-size:14px;font-weight:500;margin:24px 0 10px;color:var(--colors-gray12);">' + text + '</h3>';
       } else if (style === "blockquote") {
-        html += '<blockquote style="border-left:3px solid var(--colors-gray6);padding-left:14px;margin:16px 0;color:var(--colors-gray11);font-style:italic;">' + text + '</blockquote>';
+        html += '<blockquote class="quote-block">' + text + '</blockquote>';
       } else if (text.trim()) {
         html += '<p style="margin-bottom:14px;color:var(--colors-gray12);">' + text + '</p>';
       }
     });
     return html;
   }
+
 
   function updateSeo(p) {
     if (!p) return;

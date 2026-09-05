@@ -89,6 +89,17 @@
       --fonts-mono: Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --space-3: 24px;
       --space-4: 32px;
+
+      /* Code block colors (light) */
+      --code-bg: var(--colors-gray2);
+      --code-border: var(--colors-gray4);
+      --code-header-bg: var(--colors-gray3);
+      --code-text: var(--colors-gray12);
+      --tok-kw: hsl(265, 80%, 52%);
+      --tok-str: hsl(150, 65%, 32%);
+      --tok-num: hsl(30, 95%, 45%);
+      --tok-com: hsl(0, 0%, 55%);
+      --tok-fn: hsl(212, 85%, 46%);
     }
 
     /* ── Design tokens (dark) ── */
@@ -109,6 +120,22 @@
       --colors-grayA3: hsl(0 0% 100% / 0.05);
       --colors-grayA4: hsl(0 0% 100% / 0.077);
       --colors-grayA6: hsl(0 0% 100% / 0.129);
+
+      /* Code block colors (dark) */
+      --code-bg: var(--colors-gray2);
+      --code-border: var(--colors-gray4);
+      --code-header-bg: var(--colors-gray3);
+      --code-text: var(--colors-gray12);
+      --tok-kw: hsl(265, 95%, 76%);
+      --tok-str: hsl(145, 65%, 68%);
+      --tok-num: hsl(38, 95%, 68%);
+      --tok-com: hsl(0, 0%, 52%);
+      --tok-fn: hsl(205, 95%, 72%);
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
     }
 
     *, *::before, *::after {
@@ -126,6 +153,14 @@
       line-height: 1.6;
     }
 
+    /* ── Bold styling matching landing page bio ── */
+    strong, b, .medium-bold {
+      font-family: var(--fonts-body);
+      font-weight: 500 !important;
+      color: var(--colors-gray12) !important;
+      letter-spacing: -0.01em;
+    }
+
     a {
       color: inherit;
       text-decoration: none;
@@ -139,7 +174,11 @@
       min-height: 100vh;
       padding: 120px var(--space-3) 140px;
       margin: 0 auto;
+      width: 100%;
       max-width: 720px;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     @media (max-width: 720px) {
@@ -155,7 +194,9 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 36px;
+      width: 100%;
     }
+
 
     .back-btn {
       display: inline-flex;
@@ -209,8 +250,9 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
+      width: 100%;
     }
 
     .project-h1 {
@@ -219,6 +261,10 @@
       line-height: 32px;
       letter-spacing: -0.015em;
       color: var(--colors-gray12);
+      flex: 1 1 auto;
+      min-width: 0;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .project-year-pill {
@@ -229,6 +275,7 @@
       padding: 2px 8px;
       border-radius: 9999px;
       align-self: center;
+      flex-shrink: 0;
     }
 
     .project-pitch {
@@ -236,6 +283,8 @@
       line-height: 26px;
       color: var(--colors-gray11);
       font-weight: 400;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     /* ── Hero Media ── */
@@ -247,6 +296,8 @@
       background: var(--colors-gray2);
       box-shadow: var(--shadows-small);
       position: relative;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .hero-media-img {
@@ -264,18 +315,22 @@
       background: var(--colors-gray2);
       border-top: 1px solid var(--colors-gray4);
       text-align: center;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     /* ── Section 2: Metadata at a Glance ── */
     .meta-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
       padding: 20px;
       border-radius: 12px;
       background: var(--colors-gray2);
       border: 1px solid var(--colors-gray4);
       margin-bottom: 40px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     @media (max-width: 600px) {
@@ -289,6 +344,9 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .meta-label {
@@ -304,6 +362,8 @@
       font-weight: 500;
       color: var(--colors-gray12);
       line-height: 20px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .meta-item--span-all {
@@ -312,6 +372,7 @@
       padding-top: 14px;
       margin-top: 4px;
     }
+
 
     .tech-pills {
       display: flex;
@@ -418,45 +479,66 @@
 
     /* ── Section 5: Process & Architecture ── */
     .architecture-body {
-      font-size: 14px;
-      line-height: 26px;
+      font-size: 15px;
+      line-height: 28px;
       color: var(--colors-gray11);
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .architecture-body h2 {
       font-size: 16px;
       font-weight: 500;
       color: var(--colors-gray12);
-      margin: 28px 0 10px;
-      line-height: 22px;
+      margin: 32px 0 12px;
+      line-height: 24px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .architecture-body h3 {
       font-size: 14px;
       font-weight: 500;
       color: var(--colors-gray12);
-      margin: 20px 0 8px;
+      margin: 24px 0 10px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
-    .architecture-body p {
+    .architecture-body p,
+    .architecture-body li {
+      font-size: 15px;
+      line-height: 28px;
       margin-bottom: 14px;
       color: var(--colors-gray12);
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
-    .architecture-body blockquote {
-      border-left: 3px solid var(--colors-gray6);
-      padding-left: 14px;
-      margin: 16px 0;
-      color: var(--colors-gray11);
-      font-style: italic;
+    /* Quotes: Full body text size (never shrunk) with clean accent */
+    blockquote,
+    .architecture-body blockquote,
+    .quote-block {
+      font-size: 15px !important;
+      line-height: 28px !important;
+      border-left: 2px solid var(--colors-gray7);
+      padding-left: 18px;
+      margin: 22px 0;
+      color: var(--colors-gray12);
+      font-style: normal;
+      font-weight: 400;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .architecture-body figure {
-      margin: 20px 0;
+      margin: 24px 0;
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--colors-gray4);
       background: var(--colors-gray2);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .architecture-body figure img {
@@ -468,41 +550,84 @@
     .architecture-body figcaption {
       font-size: 12px;
       color: var(--colors-gray10);
-      padding: 6px 12px;
+      padding: 8px 12px;
       text-align: center;
       border-top: 1px solid var(--colors-gray4);
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
-    /* Code snippet styling */
+    /* ── Code snippet styling & colored syntax tokens ── */
     .codeblock-wrap {
-      margin: 18px 0;
+      margin: 22px 0;
       border-radius: 8px;
-      border: 1px solid var(--colors-gray4);
-      background: var(--colors-gray2);
+      border: 1px solid var(--code-border);
+      background: var(--code-bg);
       overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .codeblock-header {
-      padding: 6px 12px;
+      padding: 8px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 12px;
       color: var(--colors-gray10);
-      background: var(--colors-gray3);
-      border-bottom: 1px solid var(--colors-gray4);
+      background: var(--code-header-bg);
+      border-bottom: 1px solid var(--code-border);
       font-family: var(--fonts-mono);
     }
 
+    .codeblock-copy-btn {
+      background: transparent;
+      border: 0;
+      color: var(--colors-gray10);
+      cursor: pointer;
+      font-size: 11px;
+      font-family: var(--fonts-body);
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: color 150ms ease, background 150ms ease;
+    }
+
+    .codeblock-copy-btn:hover {
+      color: var(--colors-gray12);
+      background: var(--colors-gray4);
+    }
+
     .codeblock-body {
-      padding: 14px;
+      padding: 16px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       font-family: var(--fonts-mono);
       font-size: 13px;
-      line-height: 20px;
-      color: var(--colors-gray12);
+      line-height: 22px;
+      color: var(--code-text);
       white-space: pre;
+      word-break: normal;
+      word-wrap: normal;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 0;
     }
+
+    .code-line {
+      display: block;
+      min-height: 22px;
+    }
+
+    /* Syntax Tokens */
+    .tok-kw { color: var(--tok-kw); font-weight: 500; }
+    .tok-str { color: var(--tok-str); }
+    .tok-num { color: var(--tok-num); }
+    .tok-com { color: var(--tok-com); font-style: italic; }
+    .tok-fn { color: var(--tok-fn); }
+    .tok-op { color: var(--colors-gray12); }
+    .tok-tag { color: var(--tok-fn); }
+    .tok-attr { color: var(--tok-kw); }
 
     /* ── Section 6: Key Challenges & Trade-offs ── */
     .challenges-list {
@@ -529,14 +654,16 @@
 
     .challenge-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     @media (max-width: 640px) {
       .challenge-row {
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: 10px;
       }
     }
 
@@ -546,6 +673,9 @@
       gap: 4px;
       font-size: 13px;
       line-height: 20px;
+      min-width: 0;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .challenge-subblock-tag {
@@ -558,6 +688,8 @@
 
     .challenge-subblock-text {
       color: var(--colors-gray11);
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     /* ── Section 7: Results & Impact ── */
