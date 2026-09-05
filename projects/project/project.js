@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "project_detail_cache_" + slug;
+  var CACHE_KEY = "project_detail_cache_v2_" + slug;
 
   function readCache() {
     try {
