@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "post_cache_v3_" + slug;
+  var CACHE_KEY = "post_cache_v4_" + slug;
   function readCache() {
     try {
       var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
@@ -143,7 +143,7 @@
         tocItems.push({ id: id3, label: stripTags(text) });
         html += '<h3 id="' + id3 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:24px;margin-bottom:6px">' + text + '</h3>';
       } else if (style === "blockquote") {
-        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray6);padding-left:16px;margin:16px 0;color:var(--colors-gray11)">' + text + '</blockquote>';
+        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray7);padding-left:18px;margin:24px 0;font-size:18px;line-height:30px;color:var(--colors-gray12)">' + text + '</blockquote>';
       } else if (text.trim()) {
         html += '<p class="' + P + '" style="margin-bottom:16px">' + text + '</p>';
       }
@@ -180,8 +180,8 @@
     if (!items || !items.length) return "";
     var id   = slugify(heading || "references");
     var H3_CLS = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css";
-    var LINK_CLS = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ikkecHh-css";
-    var TEXT_CLS = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-cOWITQ-color-gray12";
+    var LINK_CLS = P + " c-iLbGmI-ikkecHh-css";
+    var TEXT_CLS = P;
 
     var html = '<h3 data-heading="true" id="' + esc(id) + '" class="' + H3_CLS + '">' + esc(heading || "References") + '</h3>';
     html += '<ol class="c-lesPJm c-lesPJm-iilMZTZ-css c-lesPJm-ildRkSF-css" style="color:var(--colors-gray12);padding-left:20px;margin-top:12px">';
@@ -206,13 +206,14 @@
     if (!items.length) return;
     var nav = document.createElement("nav");
     nav.setAttribute("aria-label", "Table of contents");
-    nav.style.cssText = "display:flex;flex-direction:column;gap:8px;margin-top:32px;max-width:200px;";
+    nav.style.cssText = "display:flex;flex-direction:column;gap:12px;margin-top:32px;max-width:230px;";
     items.forEach(function (item) {
       var a = document.createElement("a");
       a.href = "#" + item.id;
       a.textContent = item.label;
+      a.title = item.label;
       a.className = "c-gRVIZe";
-      a.style.cssText = "font-size:13px;color:var(--colors-gray11);line-height:1.4;white-space:normal;word-break:break-word;display:block;";
+      a.style.cssText = "font-size:14px;color:var(--colors-gray11);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:230px;";
       nav.appendChild(a);
     });
     sidebar.appendChild(nav);
