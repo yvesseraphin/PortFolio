@@ -58,9 +58,6 @@
   />
   <link rel="stylesheet" href="../../assets/css/styles.css" />
 
-  <!-- Scripts -->
-  <script defer src="../../assets/js/main.js"></script>
-  <script defer src="./post.js"></script>
   <meta name="next-head-count" content="19" />
   <style id="stitches">
     --sxs {
@@ -2157,12 +2154,138 @@
       }
     }
   </style>
+  <style id="custom-blog-post-fixes">
+    :root, .t-lhZvrk {
+      --code-bg: var(--colors-gray2);
+      --code-border: var(--colors-gray4);
+      --code-header-bg: var(--colors-gray3);
+      --code-text: var(--colors-gray12);
+      --tok-kw: hsl(265, 80%, 52%);
+      --tok-str: hsl(150, 65%, 32%);
+      --tok-num: hsl(30, 95%, 45%);
+      --tok-com: hsl(0, 0%, 55%);
+      --tok-fn: hsl(212, 85%, 46%);
+    }
+
+    .dark {
+      --code-bg: var(--colors-gray2);
+      --code-border: var(--colors-gray4);
+      --code-header-bg: var(--colors-gray3);
+      --code-text: var(--colors-gray12);
+      --tok-kw: hsl(265, 95%, 76%);
+      --tok-str: hsl(145, 65%, 68%);
+      --tok-num: hsl(38, 95%, 68%);
+      --tok-com: hsl(0, 0%, 52%);
+      --tok-fn: hsl(205, 95%, 72%);
+    }
+
+    /* Landing page font-weight 500 matching bio */
+    strong, b, .medium-bold {
+      font-family: var(--fonts-body);
+      font-weight: 500 !important;
+      color: var(--colors-gray12) !important;
+      letter-spacing: -0.01em;
+    }
+
+    /* Quotes: Full body text size (16px) with clean vertical accent */
+    blockquote, .quote-block {
+      font-size: 16px !important;
+      line-height: 28px !important;
+      border-left: 2px solid var(--colors-gray7) !important;
+      padding-left: 18px !important;
+      margin: 24px 0 !important;
+      color: var(--colors-gray12) !important;
+      font-style: normal !important;
+      font-weight: 400 !important;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Code blocks container and syntax highlighting */
+    .codeblock-wrap {
+      margin: 24px 0;
+      border-radius: 8px;
+      border: 1px solid var(--code-border);
+      background: var(--code-bg);
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .codeblock-header {
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--colors-gray10);
+      background: var(--code-header-bg);
+      border-bottom: 1px solid var(--code-border);
+      font-family: var(--fonts-mono, Menlo, monospace);
+    }
+
+    .codeblock-copy-btn {
+      background: transparent;
+      border: 0;
+      color: var(--colors-gray10);
+      cursor: pointer;
+      font-size: 11px;
+      font-family: var(--fonts-body);
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: color 150ms ease, background 150ms ease;
+    }
+
+    .codeblock-copy-btn:hover {
+      color: var(--colors-gray12);
+      background: var(--colors-gray4);
+    }
+
+    .codeblock-body {
+      padding: 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-family: var(--fonts-mono, Menlo, monospace);
+      font-size: 13px;
+      line-height: 22px;
+      color: var(--code-text);
+      white-space: pre;
+      word-break: normal;
+      word-wrap: normal;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    .code-line {
+      display: block;
+      min-height: 22px;
+    }
+
+    /* Syntax Tokens */
+    .tok-kw { color: var(--tok-kw); font-weight: 500; }
+    .tok-str { color: var(--tok-str); }
+    .tok-num { color: var(--tok-num); }
+    .tok-com { color: var(--tok-com); font-style: italic; }
+    .tok-fn { color: var(--tok-fn); }
+    .tok-op { color: var(--colors-gray12); }
+    .tok-tag { color: var(--tok-fn); }
+    .tok-attr { color: var(--tok-kw); }
+
+    /* Wide content overflow containment */
+    article, main, .c-lesPJm-ikDXmTe-css, #post-body, #post-body p, #post-body blockquote, #post-body figure {
+      max-width: 100%;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
   <link rel="preload" href="/X-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
   <link rel="preload" href="/X-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <!-- Both scripts deferred in <head> so fetch fires while HTML still parses -->
   <script defer src="/assets/js/main.js"></script>
-  <script defer src="/blog/post/post.js"></script>
+  <script defer src="./post.js?v=2"></script>
 </head>
 
 <body>

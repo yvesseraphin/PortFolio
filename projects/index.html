@@ -476,6 +476,69 @@
         var listEl = document.getElementById("projects-list");
         if (!listEl) return;
 
+        var DEFAULT_PROJECTS = [
+          {
+            title: "AI-Powered Chatbot",
+            tagline: "Conversational assistant built on transformer models",
+            year: "2025",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "SecureVault",
+            tagline: "End-to-end encrypted password manager with zero-knowledge architecture",
+            year: "2025",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "RCA Learning Platform",
+            tagline: "Full-stack LMS for Rwanda Coding Academy students",
+            year: "2024",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "Intrusion Detection System",
+            tagline: "ML-based network anomaly detection for real-time threat analysis",
+            year: "2024",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "AgriSense",
+            tagline: "IoT + ML crop monitoring system for smallholder farmers",
+            year: "2024",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "Portfolio v2",
+            tagline: "Personal site with interactive UI, blog, and Sanity CMS",
+            year: "2024",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "Embedded Morse Decoder",
+            tagline: "Hardware decoder using STM32 microcontroller and UART output",
+            year: "2023",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "Mini OS Kernel",
+            tagline: "Bare-metal kernel with process scheduling and memory management",
+            year: "2023",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "Sign Language Translator",
+            tagline: "Computer vision model that recognizes Rwandan Sign Language gestures",
+            year: "2023",
+            githubUrl: "https://github.com/yvesseraphin"
+          },
+          {
+            title: "DevConnect",
+            tagline: "Developer networking platform with real-time chat and project matching",
+            year: "2022",
+            githubUrl: "https://github.com/yvesseraphin"
+          }
+        ];
+
         function esc(str) {
           return String(str || "")
             .replace(/&/g, "&amp;")
@@ -485,19 +548,17 @@
         }
 
         function renderProjects(projects) {
-          if (!Array.isArray(projects) || projects.length === 0) {
-            listEl.innerHTML = "";
-            return;
-          }
+          var items = Array.isArray(projects) && projects.length > 0 ? projects : DEFAULT_PROJECTS;
 
           var html = "";
-          projects.forEach(function (p, i) {
+          items.forEach(function (p, i) {
             var slug = p.slug || "";
             var href = slug ? ("/projects/project/?slug=" + encodeURIComponent(slug)) : (p.githubUrl || "#");
             var d1 = (i * 0.05).toFixed(3);
             var d2 = (i * 0.10).toFixed(3);
+            var isExternal = !slug && href.startsWith("http");
             html +=
-              '<a href="' + href + '" class="project-row" data-delay="' + i + '">' +
+              '<a href="' + href + '" ' + (isExternal ? 'target="_blank" rel="noopener noreferrer" ' : '') + 'class="project-row" data-delay="' + i + '">' +
               '  <span class="project-title">' + esc(p.title) + '</span>' +
               '  <span class="project-desc">' + esc(p.tagline || "") + '</span>' +
               '  <div class="project-divider" style="--d1:' + d1 + 's;--d2:' + d2 + 's;"></div>' +
@@ -531,16 +592,18 @@
           });
         }
 
-        // Instant render from cache
+        // Instant render so there's never an empty/blank flash
+        var initialProjects = DEFAULT_PROJECTS;
         try {
           var raw = localStorage.getItem(CACHE_KEY);
           if (raw) {
             var cached = JSON.parse(raw);
             if (Array.isArray(cached) && cached.length > 0) {
-              renderProjects(cached);
+              initialProjects = cached;
             }
           }
         } catch (e) {}
+        renderProjects(initialProjects);
 
         // Fetch real uploaded projects from Sanity
         var groq = '*[_type == "project"] | order(order asc, year desc, _createdAt desc){ title, "slug": slug.current, tagline, year, coverImage, githubUrl }';
@@ -554,10 +617,12 @@
           })
           .then(function (data) {
             var items = (data && data.result) || [];
-            try {
-              localStorage.setItem(CACHE_KEY, JSON.stringify(items));
-            } catch (e) {}
-            renderProjects(items);
+            if (Array.isArray(items) && items.length > 0) {
+              try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify(items));
+              } catch (e) {}
+              renderProjects(items);
+            }
           })
           .catch(function (err) {
             console.warn("[projects] Sanity fetch error:", err);
