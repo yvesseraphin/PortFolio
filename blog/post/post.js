@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "post_cache_v6_" + slug;
+  var CACHE_KEY = "post_cache_v7_" + slug;
   function readCache() {
     try {
       var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
@@ -178,7 +178,7 @@
         tocItems.push({ id: id3, label: stripTags(text) });
         html += '<h3 id="' + id3 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:24px;margin-bottom:6px">' + text + '</h3>';
       } else if (style === "blockquote") {
-        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray7);padding-left:18px;margin:24px 0;font-size:18px;line-height:30px;color:var(--colors-gray12)">' + text + '</blockquote>';
+        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray7);padding-left:18px;margin:24px 0;font-size:16px;line-height:28px;color:var(--colors-gray12)">' + text + '</blockquote>';
       } else if (text.trim()) {
         html += '<p class="' + P + '" style="margin-bottom:16px">' + text + '</p>';
       }
