@@ -206,13 +206,13 @@
     if (!items.length) return;
     var nav = document.createElement("nav");
     nav.setAttribute("aria-label", "Table of contents");
-    nav.style.cssText = "display:flex;flex-direction:column;gap:4px;margin-top:32px;";
+    nav.style.cssText = "display:flex;flex-direction:column;gap:8px;margin-top:32px;max-width:200px;";
     items.forEach(function (item) {
       var a = document.createElement("a");
       a.href = "#" + item.id;
       a.textContent = item.label;
       a.className = "c-gRVIZe";
-      a.style.cssText = "font-size:13px;color:var(--colors-gray11);line-height:1.5;";
+      a.style.cssText = "font-size:13px;color:var(--colors-gray11);line-height:1.4;white-space:normal;word-break:break-word;display:block;";
       nav.appendChild(a);
     });
     sidebar.appendChild(nav);
