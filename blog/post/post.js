@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "post_cache_v7_" + slug;
+  var CACHE_KEY = "post_cache_v8_" + slug;
   function readCache() {
     try {
       var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
@@ -172,13 +172,13 @@
       if (style === "h2") {
         var id2 = slugify(stripTags(text));
         tocItems.push({ id: id2, label: stripTags(text) });
-        html += '<h2 id="' + id2 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:32px;margin-bottom:8px">' + text + '</h2>';
+        html += '<h2 id="' + id2 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:32px;margin-bottom:8px;font-size:18px;line-height:24px">' + text + '</h2>';
       } else if (style === "h3") {
         var id3 = slugify(stripTags(text));
         tocItems.push({ id: id3, label: stripTags(text) });
-        html += '<h3 id="' + id3 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:24px;margin-bottom:6px">' + text + '</h3>';
+        html += '<h3 id="' + id3 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:24px;margin-bottom:6px;font-size:18px;line-height:24px">' + text + '</h3>';
       } else if (style === "blockquote") {
-        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray7);padding-left:18px;margin:24px 0;font-size:16px;line-height:28px;color:var(--colors-gray12)">' + text + '</blockquote>';
+        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray7);padding-left:18px;margin:24px 0;font-size:17px;line-height:28px;color:var(--colors-gray12)">' + text + '</blockquote>';
       } else if (text.trim()) {
         html += '<p class="' + P + '" style="margin-bottom:16px">' + text + '</p>';
       }
@@ -220,7 +220,7 @@
     var LINK_CLS = P + " c-iLbGmI-ikkecHh-css";
     var TEXT_CLS = P;
 
-    var html = '<h3 data-heading="true" id="' + esc(id) + '" class="' + H3_CLS + '">' + esc(heading || "References") + '</h3>';
+    var html = '<h3 data-heading="true" id="' + esc(id) + '" class="' + H3_CLS + '" style="font-size:18px;line-height:24px">' + esc(heading || "References") + '</h3>';
     html += '<ol class="c-lesPJm c-lesPJm-iilMZTZ-css c-lesPJm-ildRkSF-css" style="color:var(--colors-gray12);padding-left:20px;margin-top:12px">';
     items.forEach(function (item) {
       html += '<li style="color:var(--colors-gray12);margin-bottom:8px">';
