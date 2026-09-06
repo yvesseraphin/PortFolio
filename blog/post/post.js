@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "post_cache_v5_" + slug;
+  var CACHE_KEY = "post_cache_v6_" + slug;
   function readCache() {
     try {
       var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
@@ -109,15 +109,28 @@
   function renderBody(blocks, tocItems) {
     if (!Array.isArray(blocks)) return "";
     var html = "";
+    var currentListType = null; // "bullet" or "number"
+
+    function closeList() {
+      if (currentListType === "bullet") {
+        html += "</ul>";
+      } else if (currentListType === "number") {
+        html += "</ol>";
+      }
+      currentListType = null;
+    }
+
     blocks.forEach(function (block) {
       if (!block) return;
 
       if (block._type === "codeBlock") {
+        closeList();
         html += buildCodeBlock(block.code || "", block.language || "code");
         return;
       }
 
       if (block._type === "image") {
+        closeList();
         var ref = block.asset && block.asset._ref;
         if (!ref) return;
         var caption = block.caption
@@ -129,10 +142,32 @@
         return;
       }
 
-      if (block._type !== "block") return;
+      if (block._type !== "block") {
+        closeList();
+        return;
+      }
+
+      var text = renderSpans(block.children || [], block.markDefs || []);
+
+      // Render bullet and numbered lists
+      if (block.listItem) {
+        var itemType = block.listItem === "number" ? "number" : "bullet";
+        if (currentListType !== itemType) {
+          closeList();
+          currentListType = itemType;
+          if (itemType === "bullet") {
+            html += '<ul class="c-lesPJm">';
+          } else {
+            html += '<ol class="c-lesPJm">';
+          }
+        }
+        html += '<li class="' + P + '">' + text + '</li>';
+        return;
+      }
+
+      closeList();
 
       var style = block.style || "normal";
-      var text  = renderSpans(block.children || [], block.markDefs || []);
 
       if (style === "h2") {
         var id2 = slugify(stripTags(text));
@@ -148,6 +183,8 @@
         html += '<p class="' + P + '" style="margin-bottom:16px">' + text + '</p>';
       }
     });
+
+    closeList();
     return html;
   }
 
@@ -206,7 +243,7 @@
     if (!items.length) return;
     var nav = document.createElement("nav");
     nav.setAttribute("aria-label", "Table of contents");
-    nav.style.cssText = "display:flex;flex-direction:column;gap:12px;margin-top:32px;max-width:190px;";
+    nav.className = "post-toc-nav";
     items.forEach(function (item) {
       var a = document.createElement("a");
       a.href = "#" + item.id;

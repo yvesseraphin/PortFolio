@@ -2074,30 +2074,69 @@
       }
 
       /* ── Back link + TOC sidebar ── */
-      /* Always visible back arrow at top of content.
-           On wide screens (>1200px) it also floats left as a fixed sidebar.
-           On all other screens it sits inline above the title. */
+      /* By default (mobile and tablet <= 1200px):
+         Back arrow sits inline above content, TOC is completely hidden.
+         On wide screens (>1200px):
+         Floats left as fixed sidebar with TOC nav visible. */
       .c-lesPJm-ihxHQzT-css {
-        position: relative;
-        top: 0;
-        left: 0;
-        transform: none;
-        width: fit-content;
-        margin-bottom: 32px;
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        width: fit-content !important;
+        margin-bottom: 32px !important;
       }
 
-      .c-lesPJm-ihxHQzT-css nav {
-        max-width: 190px;
+      .c-lesPJm-ihxHQzT-css nav,
+      .post-toc-nav {
+        display: none !important;
       }
 
       @media (min-width: 1201px) {
         .c-lesPJm-ihxHQzT-css {
-          position: fixed;
-          top: 0;
-          left: 0;
-          transform: translate(calc(50vw - 360px - 240px), 121px);
-          margin-bottom: 0;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          transform: translate(calc(50vw - 360px - 240px), 121px) !important;
+          margin-bottom: 0 !important;
         }
+
+        .c-lesPJm-ihxHQzT-css nav,
+        .post-toc-nav {
+          display: flex !important;
+          flex-direction: column;
+          gap: 12px;
+          margin-top: 32px;
+          max-width: 190px;
+        }
+      }
+
+      /* ── Article content lists (bullet points and numbers) ── */
+      #post-body ul {
+        list-style-type: disc;
+        padding-left: 24px;
+        margin: 16px 0 24px;
+        color: var(--colors-gray12);
+      }
+
+      #post-body ol {
+        list-style-type: decimal;
+        padding-left: 24px;
+        margin: 16px 0 24px;
+        color: var(--colors-gray12);
+      }
+
+      #post-body li {
+        margin-bottom: 8px;
+        padding-left: 4px;
+        font-family: var(--fonts-body);
+        font-size: 16px;
+        line-height: 28px;
+        color: var(--colors-gray12);
+      }
+
+      #post-body li::marker {
+        color: var(--colors-gray11);
       }
 
       /* ── Main content column ── */
@@ -2179,7 +2218,7 @@
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <!-- Both scripts deferred in <head> so fetch fires while HTML still parses -->
   <script defer src="/assets/js/main.js"></script>
-  <script defer src="/blog/post/post.js?v=5"></script>
+  <script defer src="/blog/post/post.js?v=6"></script>
 </head>
 
 <body>
