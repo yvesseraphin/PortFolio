@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "post_cache_v4_" + slug;
+  var CACHE_KEY = "post_cache_v5_" + slug;
   function readCache() {
     try {
       var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
@@ -206,14 +206,14 @@
     if (!items.length) return;
     var nav = document.createElement("nav");
     nav.setAttribute("aria-label", "Table of contents");
-    nav.style.cssText = "display:flex;flex-direction:column;gap:12px;margin-top:32px;max-width:230px;";
+    nav.style.cssText = "display:flex;flex-direction:column;gap:12px;margin-top:32px;max-width:190px;";
     items.forEach(function (item) {
       var a = document.createElement("a");
       a.href = "#" + item.id;
       a.textContent = item.label;
       a.title = item.label;
       a.className = "c-gRVIZe";
-      a.style.cssText = "font-size:14px;color:var(--colors-gray11);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:230px;";
+      a.style.cssText = "font-size:14px;color:var(--colors-gray11);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:190px;";
       nav.appendChild(a);
     });
     sidebar.appendChild(nav);
