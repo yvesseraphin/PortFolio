@@ -7,7 +7,7 @@
 
   var slug = new URLSearchParams(window.location.search).get("slug") || "";
 
-  var CACHE_KEY = "post_cache_v2_" + slug;
+  var CACHE_KEY = "post_cache_v3_" + slug;
   function readCache() {
     try {
       var raw = sessionStorage.getItem(CACHE_KEY) || localStorage.getItem(CACHE_KEY);
@@ -55,13 +55,13 @@
   var H = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-lewMmC-size-16 c-iLbGmI-haFyCE-lineHeight-20 c-iLbGmI-hZNfDR-weight-500 c-iLbGmI-cOWITQ-color-gray12 c-iLbGmI-ifcaOLc-css";
   var S = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 c-iLbGmI-hgsrmT-color-gray11";
 
-  function highlightCode(rawCode, lang) {
+  function highlightCode(rawCode) {
     if (!rawCode) return "";
     var lines = rawCode.split("\n");
 
     return lines.map(function (line) {
-      if (!line.trim()) {
-        return '<span class="code-line">&nbsp;</span>';
+      if (!line) {
+        return '<div class="token-line codeblock_line__5uT_I">&nbsp;</div>';
       }
 
       var l = esc(line);
@@ -70,25 +70,25 @@
       // 1. Strings (single, double, backticks)
       l = l.replace(/(&quot;(?:\\.|[^&]|&(?!quot;))*&quot;|&#39;(?:\\.|[^&]|&(?!#39;))*&#39;|`(?:\\.|[^`])*`)/g, function (m) {
         var id = "___TOK_STR_" + tokens.length + "___";
-        tokens.push('<span class="tok-str">' + m + '</span>');
+        tokens.push('<span class="token string">' + m + '</span>');
         return id;
       });
 
       // 2. Comments (// or # or /* */)
       l = l.replace(/(\/\/.*$|#.*$|\/\*[\s\S]*?\*\/)/g, function (m) {
         var id = "___TOK_COM_" + tokens.length + "___";
-        tokens.push('<span class="tok-com">' + m + '</span>');
+        tokens.push('<span class="token comment">' + m + '</span>');
         return id;
       });
 
-      // 3. Keywords (JS/TS, Python, Rust, Go, etc.)
-      l = l.replace(/\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|class|extends|new|this|super|import|export|from|async|await|try|catch|finally|throw|typeof|instanceof|in|of|interface|type|enum|public|private|protected|static|readonly|def|self|elif|lambda|pass|raise|yield|with|is|not|and|or|True|False|None|true|false|null|undefined)\b/g, '<span class="tok-kw">$1</span>');
+      // 3. Keywords
+      l = l.replace(/\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|class|extends|new|this|super|import|export|from|async|await|try|catch|finally|throw|typeof|instanceof|in|of|interface|type|enum|public|private|protected|static|readonly|def|self|elif|lambda|pass|raise|yield|with|is|not|and|or|True|False|None|true|false|null|undefined)\b/g, '<span class="token keyword">$1</span>');
 
       // 4. Numbers
-      l = l.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="tok-num">$1</span>');
+      l = l.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="token number">$1</span>');
 
       // 5. Function calls: foo(...)
-      l = l.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g, '<span class="tok-fn">$1</span>');
+      l = l.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g, '<span class="token function">$1</span>');
 
       // Restore protected tokens
       for (var i = 0; i < tokens.length; i++) {
@@ -96,36 +96,14 @@
         l = l.replace("___TOK_COM_" + i + "___", tokens[i]);
       }
 
-      return '<span class="code-line">' + l + '</span>';
+      return '<div class="token-line codeblock_line__5uT_I">' + l + '</div>';
     }).join("");
   }
 
-  window.copySnippet = function (btn) {
-    var wrap = btn.closest(".codeblock-wrap");
-    if (!wrap) return;
-    var codeEl = wrap.querySelector("code");
-    if (!codeEl) return;
-    var text = codeEl.innerText || codeEl.textContent;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        var prev = btn.textContent;
-        btn.textContent = "Copied!";
-        setTimeout(function () {
-          btn.textContent = prev;
-        }, 1800);
-      });
-    }
-  };
-
   function buildCodeBlock(code, lang) {
     var language = esc(lang || "code");
-    var highlighted = highlightCode(code || "", language);
-    var header =
-      '<div class="codeblock-header">' +
-        '<span>' + language + '</span>' +
-        '<button type="button" class="codeblock-copy-btn" onclick="copySnippet(this)">Copy</button>' +
-      '</div>';
-    return '<div class="codeblock-wrap">' + header + '<pre class="codeblock-body"><code>' + highlighted + '</code></pre></div>';
+    var linesHtml = highlightCode(code || "");
+    return '<div class="codeblock_root__pf0C4" style="margin:24px 0"><div class="' + language + ' codeblock_editor__Hq7SO">' + linesHtml + '</div></div>';
   }
 
   function renderBody(blocks, tocItems) {
@@ -165,7 +143,7 @@
         tocItems.push({ id: id3, label: stripTags(text) });
         html += '<h3 id="' + id3 + '" data-heading="true" data-toc="true" class="' + H + '" style="margin-top:24px;margin-bottom:6px">' + text + '</h3>';
       } else if (style === "blockquote") {
-        html += '<blockquote class="' + P + ' quote-block">' + text + '</blockquote>';
+        html += '<blockquote class="' + P + '" style="border-left:3px solid var(--colors-gray6);padding-left:16px;margin:16px 0;color:var(--colors-gray11)">' + text + '</blockquote>';
       } else if (text.trim()) {
         html += '<p class="' + P + '" style="margin-bottom:16px">' + text + '</p>';
       }
