@@ -193,6 +193,9 @@
     });
 
     btn.addEventListener("click", () => {
+      if (btn.dataset.href && btn.dataset.href.startsWith("mailto:")) {
+        return;
+      }
       tooltip.style.opacity = "0";
       tooltip.style.transform = "translateY(4px)";
     });
@@ -207,7 +210,53 @@
       }
     });
     btn.addEventListener("click", (e) => {
-      if (href.startsWith("http") || href.startsWith("mailto")) {
+      if (href.startsWith("mailto:")) {
+        const email = href.replace(/^mailto:/i, "").split("?")[0] || "myvesseraphin@gmail.com";
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email).catch(() => {});
+        } else {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = email;
+            ta.style.cssText = "position:fixed;opacity:0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+          } catch (_) {}
+        }
+
+        clearTimeout(tooltipTimeout);
+        tooltip.textContent = "Copied email!";
+        updateTooltipTheme();
+        const rect = btn.getBoundingClientRect();
+        const tw = tooltip.offsetWidth || 80;
+        tooltip.style.left = rect.left + rect.width / 2 - tw / 2 + "px";
+        tooltip.style.top = rect.top - 8 - 28 + "px";
+        tooltip.style.opacity = "1";
+        tooltip.style.transform = "translateY(0)";
+        requestAnimationFrame(() => {
+          const tw2 = tooltip.offsetWidth;
+          tooltip.style.left = rect.left + rect.width / 2 - tw2 / 2 + "px";
+          tooltip.style.top = rect.top - 8 - tooltip.offsetHeight + "px";
+        });
+
+        tooltipTimeout = setTimeout(() => {
+          tooltip.style.opacity = "0";
+          tooltip.style.transform = "translateY(4px)";
+          setTimeout(() => {
+            const orig = btn.getAttribute("aria-label") || "Mail";
+            tooltip.textContent = orig;
+          }, 200);
+        }, 2000);
+
+        try {
+          window.location.href = href;
+        } catch (_) {}
+        return;
+      }
+
+      if (href.startsWith("http")) {
         window.open(href, "_blank", "noopener,noreferrer");
       } else if (href === "#") {
       } else if (window.__navigateWithPreload && href.includes("/blog")) {
