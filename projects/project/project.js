@@ -23,9 +23,9 @@
 
   var GROQ = slug
     ? '*[_type == "project" && slug.current == $slug][0]{' +
-        'title, "slug": slug.current, year, tagline, coverImage, body, references, referencesHeading,' +
-        '"prev": *[_type == "project" && order < ^.order] | order(order desc)[0]{ title, "slug": slug.current },' +
-        '"next": *[_type == "project" && order > ^.order] | order(order asc)[0]{ title, "slug": slug.current }' +
+        'title, "slug": slug.current, year, tagline, coverImage, "body": coalesce(body, processArchitecture), references, referencesHeading,' +
+        '"prev": *[_type == "project" && (order < ^.order || (order == ^.order && _createdAt < ^._createdAt))] | order(order desc, _createdAt desc)[0]{ title, "slug": slug.current },' +
+        '"next": *[_type == "project" && (order > ^.order || (order == ^.order && _createdAt > ^._createdAt))] | order(order asc, _createdAt asc)[0]{ title, "slug": slug.current }' +
       "}"
     : null;
 
