@@ -2212,11 +2212,13 @@
         margin-bottom: 40px;
       }
 
+      #project-title,
       #post-title {
         font-size: 20px;
         line-height: 28px;
       }
 
+      #project-body h2,
       #post-body h2 {
         font-size: 20px;
         line-height: 28px;
@@ -2224,6 +2226,7 @@
         margin-bottom: 12px;
       }
 
+      #project-body h3,
       #post-body h3 {
         font-size: 20px;
         line-height: 28px;
@@ -2231,9 +2234,38 @@
         margin-bottom: 10px;
       }
 
+      #project-body blockquote,
       #post-body blockquote {
         font-size: 17px !important;
         line-height: 28px !important;
+      }
+
+      #project-body ul,
+      .project-bullet-list {
+        list-style-type: disc !important;
+        padding-left: 24px !important;
+        margin-top: 14px !important;
+        margin-bottom: 20px !important;
+      }
+
+      #project-body ol,
+      .project-numbered-list {
+        list-style-type: decimal !important;
+        padding-left: 24px !important;
+        margin-top: 14px !important;
+        margin-bottom: 20px !important;
+      }
+
+      #project-body li,
+      .project-list-item {
+        margin-bottom: 8px !important;
+        line-height: 28px !important;
+        display: list-item !important;
+      }
+
+      #project-body li::marker,
+      .project-list-item::marker {
+        color: var(--colors-gray10) !important;
       }
     }
   </style>

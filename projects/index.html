@@ -477,73 +477,10 @@
         var PROJECT_ID  = "m77bsvm1";
         var DATASET     = "production";
         var API_VERSION = "2024-01-01";
-        var CACHE_KEY = "projects_sanity_cache_v2";
+        var CACHE_KEY = "projects_sanity_cache_v3";
 
         var listEl = document.getElementById("projects-list");
         if (!listEl) return;
-
-        var DEFAULT_PROJECTS = [
-          {
-            slug: "ai-powered-chatbot",
-            title: "AI-Powered Chatbot",
-            tagline: "Conversational assistant built on transformer models",
-            year: "2025"
-          },
-          {
-            slug: "securevault",
-            title: "SecureVault",
-            tagline: "End-to-end encrypted password manager with zero-knowledge architecture",
-            year: "2025"
-          },
-          {
-            slug: "rca-learning-platform",
-            title: "RCA Learning Platform",
-            tagline: "Full-stack LMS for Rwanda Coding Academy students",
-            year: "2024"
-          },
-          {
-            slug: "intrusion-detection-system",
-            title: "Intrusion Detection System",
-            tagline: "ML-based network anomaly detection for real-time threat analysis",
-            year: "2024"
-          },
-          {
-            slug: "agrisense",
-            title: "AgriSense",
-            tagline: "IoT + ML crop monitoring system for smallholder farmers",
-            year: "2024"
-          },
-          {
-            slug: "portfolio-v2",
-            title: "Portfolio v2",
-            tagline: "Personal site with interactive UI, blog, and Sanity CMS",
-            year: "2024"
-          },
-          {
-            slug: "embedded-morse-decoder",
-            title: "Embedded Morse Decoder",
-            tagline: "Hardware decoder using STM32 microcontroller and UART output",
-            year: "2023"
-          },
-          {
-            slug: "mini-os-kernel",
-            title: "Mini OS Kernel",
-            tagline: "Bare-metal kernel with process scheduling and memory management",
-            year: "2023"
-          },
-          {
-            slug: "sign-language-translator",
-            title: "Sign Language Translator",
-            tagline: "Computer vision model that recognizes Rwandan Sign Language gestures",
-            year: "2023"
-          },
-          {
-            slug: "devconnect",
-            title: "DevConnect",
-            tagline: "Developer networking platform with real-time chat and project matching",
-            year: "2022"
-          }
-        ];
 
         function esc(str) {
           return String(str || "")
@@ -554,7 +491,11 @@
         }
 
         function renderProjects(projects) {
-          var items = Array.isArray(projects) && projects.length > 0 ? projects : DEFAULT_PROJECTS;
+          var items = Array.isArray(projects) ? projects : [];
+          if (!items.length) {
+            listEl.innerHTML = "";
+            return;
+          }
 
           var html = "";
           items.forEach(function (p, i) {
@@ -597,18 +538,16 @@
           });
         }
 
-        // Instant render so there's never an empty/blank flash
-        var initialProjects = DEFAULT_PROJECTS;
+        // Render from local cache if previously fetched from Sanity
         try {
           var raw = localStorage.getItem(CACHE_KEY);
           if (raw) {
             var cached = JSON.parse(raw);
             if (Array.isArray(cached) && cached.length > 0) {
-              initialProjects = cached;
+              renderProjects(cached);
             }
           }
         } catch (e) {}
-        renderProjects(initialProjects);
 
         // Fetch real uploaded projects from Sanity
         var groq = '*[_type == "project"] | order(order asc, year desc, _createdAt desc){ title, "slug": slug.current, tagline, year, coverImage, githubUrl }';
@@ -622,7 +561,7 @@
           })
           .then(function (data) {
             var items = (data && data.result) || [];
-            if (Array.isArray(items) && items.length > 0) {
+            if (Array.isArray(items)) {
               try {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(items));
               } catch (e) {}

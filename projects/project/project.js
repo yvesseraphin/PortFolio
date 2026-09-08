@@ -23,7 +23,7 @@
 
   var GROQ = slug
     ? '*[_type == "project" && slug.current == $slug][0]{' +
-        'title, "slug": slug.current, year, tagline, coverImage, "body": coalesce(body, processArchitecture), references, referencesHeading,' +
+        'title, "slug": slug.current, year, tagline, coverImage, "body": coalesce(body, processArchitecture), directContribution, references, referencesHeading,' +
         '"prev": *[_type == "project" && (order < ^.order || (order == ^.order && _createdAt < ^._createdAt))] | order(order desc, _createdAt desc)[0]{ title, "slug": slug.current },' +
         '"next": *[_type == "project" && (order > ^.order || (order == ^.order && _createdAt > ^._createdAt))] | order(order asc, _createdAt asc)[0]{ title, "slug": slug.current }' +
       "}"
@@ -150,12 +150,12 @@
           closeList();
           currentListType = itemType;
           if (itemType === "bullet") {
-            html += '<ul class="c-lesPJm">';
+            html += '<ul class="project-bullet-list c-lesPJm">';
           } else {
-            html += '<ol class="c-lesPJm">';
+            html += '<ol class="project-numbered-list c-lesPJm">';
           }
         }
-        html += '<li class="' + P + '">' + text + '</li>';
+        html += '<li class="project-list-item ' + P + '">' + text + '</li>';
         return;
       }
 
@@ -355,6 +355,16 @@
     }
 
     bodyHtml += renderBody(project.body || [], tocItems);
+
+    if (Array.isArray(project.directContribution) && project.directContribution.length) {
+      bodyHtml += '<ul class="project-bullet-list c-lesPJm">';
+      project.directContribution.forEach(function (contrib) {
+        if (typeof contrib === "string" && contrib.trim()) {
+          bodyHtml += '<li class="project-list-item ' + P + '">' + esc(contrib) + '</li>';
+        }
+      });
+      bodyHtml += '</ul>';
+    }
 
     var refs = project.references || [];
     if (refs.length) {
