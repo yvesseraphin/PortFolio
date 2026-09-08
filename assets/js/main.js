@@ -211,7 +211,9 @@
     });
     btn.addEventListener("click", (e) => {
       if (href.startsWith("mailto:")) {
-        const email = href.replace(/^mailto:/i, "").split("?")[0] || "myvesseraphin@gmail.com";
+        const email =
+          href.replace(/^mailto:/i, "").split("?")[0] ||
+          "myvesseraphin@gmail.com";
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(email).catch(() => {});
         } else {
@@ -259,7 +261,13 @@
       if (href.startsWith("http")) {
         window.open(href, "_blank", "noopener,noreferrer");
       } else if (href === "#") {
-      } else if (href === "/cv" || href === "/cv/" || href === "/cv.pdf" || href === "/CV.pdf" || href.toLowerCase().endsWith(".pdf")) {
+      } else if (
+        href === "/cv" ||
+        href === "/cv/" ||
+        href === "/cv.pdf" ||
+        href === "/CV.pdf" ||
+        href.toLowerCase().endsWith(".pdf")
+      ) {
         window.open("/CV.pdf", "_blank", "noopener,noreferrer");
       } else if (window.__navigateWithPreload && href.includes("/blog")) {
         window.__navigateWithPreload(href, e);
@@ -448,39 +456,47 @@
   track.addEventListener("pointerup", endDrag);
   track.addEventListener("pointercancel", endDrag);
 
-  track.querySelectorAll("a[carousel-item], a[data-carousel-item]").forEach((a) => {
-    let sx = 0;
-    a.addEventListener("mousedown", (e) => {
-      sx = e.clientX;
-    });
-    a.addEventListener("click", (e) => {
-      if (Math.abs(e.clientX - sx) > 6) e.preventDefault();
-    });
-  });
-
-  document.querySelectorAll("[carousel-item], [data-carousel-item]").forEach((card) => {
-    const video = card.querySelector("video");
-
-    function activate() {
-      if (video) video.play().catch(() => {});
-      document.querySelectorAll("[carousel-item], [data-carousel-item]").forEach((c) => {
-        if (c !== card) c.style.setProperty("--blur", "2px");
+  track
+    .querySelectorAll("a[carousel-item], a[data-carousel-item]")
+    .forEach((a) => {
+      let sx = 0;
+      a.addEventListener("mousedown", (e) => {
+        sx = e.clientX;
       });
-    }
+      a.addEventListener("click", (e) => {
+        if (Math.abs(e.clientX - sx) > 6) e.preventDefault();
+      });
+    });
 
-    card.addEventListener("pointerenter", activate);
-    card.addEventListener("click", activate);
+  document
+    .querySelectorAll("[carousel-item], [data-carousel-item]")
+    .forEach((card) => {
+      const video = card.querySelector("video");
 
-    card.addEventListener("pointerleave", () => {
-      if (video) {
-        video.pause();
-        video.currentTime = 0;
+      function activate() {
+        if (video) video.play().catch(() => {});
+        document
+          .querySelectorAll("[carousel-item], [data-carousel-item]")
+          .forEach((c) => {
+            if (c !== card) c.style.setProperty("--blur", "2px");
+          });
       }
-      document.querySelectorAll("[carousel-item], [data-carousel-item]").forEach((c) => {
-        c.style.setProperty("--blur", "0px");
+
+      card.addEventListener("pointerenter", activate);
+      card.addEventListener("click", activate);
+
+      card.addEventListener("pointerleave", () => {
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
+        document
+          .querySelectorAll("[carousel-item], [data-carousel-item]")
+          .forEach((c) => {
+            c.style.setProperty("--blur", "0px");
+          });
       });
     });
-  });
 
   const inner = document.getElementById("carousel-inner");
   if (inner)
@@ -661,9 +677,9 @@ void main(){
 
 (function () {
   "use strict";
-  const isBlog    = window.location.pathname.includes("/blog");
+  const isBlog = window.location.pathname.includes("/blog");
   const isProject = window.location.pathname.includes("/projects");
-  const isPhotos  = window.location.pathname.includes("/photos");
+  const isPhotos = window.location.pathname.includes("/photos");
   if (isBlog || isProject || isPhotos) return;
 
   document.body.style.overflow = "hidden";
@@ -678,23 +694,25 @@ void main(){
   const columns = Array.from(document.querySelectorAll(".column"));
   if (!columns.length) return;
 
-  const state = columns.map((col) => {
-    const inner = col.querySelector(".column-inner");
-    if (!inner) return null;
+  const state = columns
+    .map((col) => {
+      const inner = col.querySelector(".column-inner");
+      if (!inner) return null;
 
-    const dur = parseFloat(
-      getComputedStyle(col).getPropertyValue("--scroll-duration") || "30"
-    );
+      const dur = parseFloat(
+        getComputedStyle(col).getPropertyValue("--scroll-duration") || "30",
+      );
 
-    return {
-      col,
-      inner,
-      dur,
-      offset: 0,
-      velocity: 0,
-      raf: null,
-    };
-  }).filter(Boolean);
+      return {
+        col,
+        inner,
+        dur,
+        offset: 0,
+        velocity: 0,
+        raf: null,
+      };
+    })
+    .filter(Boolean);
 
   if (!state.length) return;
 
@@ -728,88 +746,117 @@ void main(){
     return state;
   }
 
-  window.addEventListener("wheel", (e) => {
-    const grid = document.querySelector(".grid");
-    if (!grid) return;
-    const rect = grid.getBoundingClientRect();
-    if (
-      e.clientY < rect.top || e.clientY > rect.bottom ||
-      e.clientX < rect.left || e.clientX > rect.right
-    ) return;
+  window.addEventListener(
+    "wheel",
+    (e) => {
+      const grid = document.querySelector(".grid");
+      if (!grid) return;
+      const rect = grid.getBoundingClientRect();
+      if (
+        e.clientY < rect.top ||
+        e.clientY > rect.bottom ||
+        e.clientX < rect.left ||
+        e.clientX > rect.right
+      )
+        return;
 
-    e.preventDefault();
+      e.preventDefault();
 
-    const delta = e.deltaY || e.deltaX;
-    const targets = getTargetStates(e.clientX);
+      const delta = e.deltaY || e.deltaX;
+      const targets = getTargetStates(e.clientX);
 
-    targets.forEach((s) => {
-      cancelAnimationFrame(s.raf);
-      s.velocity = 0;
-      s.offset += delta;
-      applyOffset(s);
-    });
-  }, { passive: false });
+      targets.forEach((s) => {
+        cancelAnimationFrame(s.raf);
+        s.velocity = 0;
+        s.offset += delta;
+        applyOffset(s);
+      });
+    },
+    { passive: false },
+  );
 
   let touchY = null;
   let touchTargets = state;
 
-  window.addEventListener("touchstart", (e) => {
-    const grid = document.querySelector(".grid");
-    if (!grid) return;
-    const touch = e.touches[0];
-    const rect = grid.getBoundingClientRect();
-    if (touch.clientY < rect.top || touch.clientY > rect.bottom) return;
-    touchY = touch.clientY;
-    touchTargets = getTargetStates(touch.clientX);
-    touchTargets.forEach((s) => {
-      cancelAnimationFrame(s.raf);
-      s.velocity = 0;
-    });
-  }, { passive: true });
+  window.addEventListener(
+    "touchstart",
+    (e) => {
+      const grid = document.querySelector(".grid");
+      if (!grid) return;
+      const touch = e.touches[0];
+      const rect = grid.getBoundingClientRect();
+      if (touch.clientY < rect.top || touch.clientY > rect.bottom) return;
+      touchY = touch.clientY;
+      touchTargets = getTargetStates(touch.clientX);
+      touchTargets.forEach((s) => {
+        cancelAnimationFrame(s.raf);
+        s.velocity = 0;
+      });
+    },
+    { passive: true },
+  );
 
-  window.addEventListener("touchmove", (e) => {
-    if (touchY === null) return;
-    const touch = e.touches[0];
-    const dy = touchY - touch.clientY;
-    touchY = touch.clientY;
-    touchTargets.forEach((s) => {
-      s.velocity = dy;
-      s.offset += dy;
-      applyOffset(s);
-    });
-    e.preventDefault();
-  }, { passive: false });
+  window.addEventListener(
+    "touchmove",
+    (e) => {
+      if (touchY === null) return;
+      const touch = e.touches[0];
+      const dy = touchY - touch.clientY;
+      touchY = touch.clientY;
+      touchTargets.forEach((s) => {
+        s.velocity = dy;
+        s.offset += dy;
+        applyOffset(s);
+      });
+      e.preventDefault();
+    },
+    { passive: false },
+  );
 
-  window.addEventListener("touchend", () => {
-    if (touchY === null) return;
-    touchY = null;
-    touchTargets.forEach((s) => {
-      cancelAnimationFrame(s.raf);
-      s.raf = requestAnimationFrame(() => glide(s));
-    });
-  }, { passive: true });
-
+  window.addEventListener(
+    "touchend",
+    () => {
+      if (touchY === null) return;
+      touchY = null;
+      touchTargets.forEach((s) => {
+        cancelAnimationFrame(s.raf);
+        s.raf = requestAnimationFrame(() => glide(s));
+      });
+    },
+    { passive: true },
+  );
 })();
 
 (function () {
   "use strict";
 
-  var PROJECT_ID  = "m77bsvm1";
-  var DATASET     = "production";
+  var PROJECT_ID = "m77bsvm1";
+  var DATASET = "production";
   var API_VERSION = "2024-01-01";
 
   var GRID_CACHE_KEY = "blog_grid_cache_v2";
   var GRID_CACHE_TTL = 2 * 60 * 1000;
 
-  var GRID_GROQ = '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
+  var GRID_GROQ =
+    '*[_type == "post"] | order(postDate desc) { _type, title, "slug": slug.current, postDate, coverImage, aspectRatio }';
 
   function sanityImgUrl(ref, width) {
     if (!ref) return "";
     var parts = ref.split("-");
-    var ext   = parts[parts.length - 1];
-    var dims  = parts[parts.length - 2];
-    var id    = parts.slice(1, parts.length - 2).join("-");
-    var base  = "https://cdn.sanity.io/images/" + PROJECT_ID + "/" + DATASET + "/" + id + "-" + dims + "." + ext;
+    var ext = parts[parts.length - 1];
+    var dims = parts[parts.length - 2];
+    var id = parts.slice(1, parts.length - 2).join("-");
+    var base =
+      "https://cdn.sanity.io/images/" +
+      PROJECT_ID +
+      "/" +
+      DATASET +
+      "/" +
+      id +
+      "-" +
+      dims +
+      "." +
+      ext;
     return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
   }
 
@@ -820,12 +867,17 @@ void main(){
       var cached = JSON.parse(raw);
       if (Date.now() - cached.ts > GRID_CACHE_TTL) return null;
       return cached.items;
-    } catch (e) { return null; }
+    } catch (e) {
+      return null;
+    }
   }
 
   function writeBlogGridCache(items) {
     try {
-      localStorage.setItem(GRID_CACHE_KEY, JSON.stringify({ ts: Date.now(), items: items }));
+      localStorage.setItem(
+        GRID_CACHE_KEY,
+        JSON.stringify({ ts: Date.now(), items: items }),
+      );
     } catch (e) {}
   }
 
@@ -838,8 +890,15 @@ void main(){
     }
     if (gridFetchPromise) return gridFetchPromise || Promise.resolve(cached);
 
-    var sanityUrl = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
-                    "/data/query/" + DATASET + "?query=" + encodeURIComponent(GRID_GROQ);
+    var sanityUrl =
+      "https://" +
+      PROJECT_ID +
+      ".apicdn.sanity.io/v" +
+      API_VERSION +
+      "/data/query/" +
+      DATASET +
+      "?query=" +
+      encodeURIComponent(GRID_GROQ);
 
     gridFetchPromise = fetch(sanityUrl)
       .then(function (r) {
@@ -868,7 +927,11 @@ void main(){
   function preloadGridImages(items) {
     if (!Array.isArray(items)) return;
     items.forEach(function (item) {
-      if (item.coverImage && item.coverImage.asset && item.coverImage.asset._ref) {
+      if (
+        item.coverImage &&
+        item.coverImage.asset &&
+        item.coverImage.asset._ref
+      ) {
         var img = new Image();
         img.src = sanityImgUrl(item.coverImage.asset._ref, 800);
       }
@@ -882,7 +945,9 @@ void main(){
     var key = "post_cache_" + slug;
     try {
       return !!(sessionStorage.getItem(key) || localStorage.getItem(key));
-    } catch (e) { return false; }
+    } catch (e) {
+      return false;
+    }
   }
 
   function fetchSinglePost(slug) {
@@ -895,19 +960,30 @@ void main(){
       if (raw) cachedObj = JSON.parse(raw);
     } catch (e) {}
 
-    var groq = '*[_type == "post" && slug.current == $slug][0]{' +
+    var groq =
+      '*[_type == "post" && slug.current == $slug][0]{' +
       'title, "slug": slug.current, postDate, excerpt, coverImage, aspectRatio, body, references, referencesHeading,' +
       '"prev": *[_type == "post" && postDate < ^.postDate] | order(postDate desc)[0]{ title, "slug": slug.current },' +
       '"next": *[_type == "post" && postDate > ^.postDate] | order(postDate asc)[0]{ title, "slug": slug.current }' +
-    '}';
+      "}";
 
-    var url = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
-      "/data/query/" + DATASET + "?query=" + encodeURIComponent(groq) +
-      "&$slug=" + encodeURIComponent(JSON.stringify(slug));
+    var url =
+      "https://" +
+      PROJECT_ID +
+      ".apicdn.sanity.io/v" +
+      API_VERSION +
+      "/data/query/" +
+      DATASET +
+      "?query=" +
+      encodeURIComponent(groq) +
+      "&$slug=" +
+      encodeURIComponent(JSON.stringify(slug));
 
     if (!postFetchPromises[slug]) {
       postFetchPromises[slug] = fetch(url)
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+          return r.json();
+        })
         .then(function (data) {
           var res = data && data.result;
           if (res) {
@@ -915,7 +991,11 @@ void main(){
               sessionStorage.setItem(key, JSON.stringify(res));
               localStorage.setItem(key, JSON.stringify(res));
             } catch (e) {}
-            if (res.coverImage && res.coverImage.asset && res.coverImage.asset._ref) {
+            if (
+              res.coverImage &&
+              res.coverImage.asset &&
+              res.coverImage.asset._ref
+            ) {
               var img = new Image();
               img.src = sanityImgUrl(res.coverImage.asset._ref, 1200);
             }
@@ -948,7 +1028,9 @@ void main(){
       }
     }
     if (window.requestIdleCallback) {
-      requestIdleCallback(function () { next(); });
+      requestIdleCallback(function () {
+        next();
+      });
     } else {
       setTimeout(next, 200);
     }
@@ -968,14 +1050,27 @@ void main(){
       if (e && e.preventDefault) e.preventDefault();
       var done = false;
       var timer = setTimeout(function () {
-        if (!done) { done = true; window.location.href = targetUrl; }
+        if (!done) {
+          done = true;
+          window.location.href = targetUrl;
+        }
       }, 2500);
 
-      fetchBlogGrid().then(function () {
-        if (!done) { done = true; clearTimeout(timer); window.location.href = targetUrl; }
-      }).catch(function () {
-        if (!done) { done = true; clearTimeout(timer); window.location.href = targetUrl; }
-      });
+      fetchBlogGrid()
+        .then(function () {
+          if (!done) {
+            done = true;
+            clearTimeout(timer);
+            window.location.href = targetUrl;
+          }
+        })
+        .catch(function () {
+          if (!done) {
+            done = true;
+            clearTimeout(timer);
+            window.location.href = targetUrl;
+          }
+        });
       return;
     }
 
@@ -993,35 +1088,53 @@ void main(){
       if (e && e.preventDefault) e.preventDefault();
       var donePost = false;
       var timerPost = setTimeout(function () {
-        if (!donePost) { donePost = true; window.location.href = targetUrl; }
+        if (!donePost) {
+          donePost = true;
+          window.location.href = targetUrl;
+        }
       }, 2500);
 
-      fetchSinglePost(slug).then(function () {
-        if (!donePost) { donePost = true; clearTimeout(timerPost); window.location.href = targetUrl; }
-      }).catch(function () {
-        if (!donePost) { donePost = true; clearTimeout(timerPost); window.location.href = targetUrl; }
-      });
+      fetchSinglePost(slug)
+        .then(function () {
+          if (!donePost) {
+            donePost = true;
+            clearTimeout(timerPost);
+            window.location.href = targetUrl;
+          }
+        })
+        .catch(function () {
+          if (!donePost) {
+            donePost = true;
+            clearTimeout(timerPost);
+            window.location.href = targetUrl;
+          }
+        });
       return;
     }
 
     window.location.href = targetUrl;
   }
 
-  window.__readBlogGridCache   = readBlogGridCache;
-  window.__fetchBlogGrid       = fetchBlogGrid;
-  window.__fetchSinglePost     = fetchSinglePost;
-  window.__isPostCached       = isPostCached;
+  window.__readBlogGridCache = readBlogGridCache;
+  window.__fetchBlogGrid = fetchBlogGrid;
+  window.__fetchSinglePost = fetchSinglePost;
+  window.__isPostCached = isPostCached;
   window.__navigateWithPreload = navigateWithPreload;
 
   function formatDate(iso) {
     if (!iso) return "";
-    return new Date(iso).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    return new Date(iso).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
   }
 
   function escapeHtml(str) {
     return String(str)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
   }
 
   var ARROW_SVG =
@@ -1030,48 +1143,69 @@ void main(){
     '<path d="M6 12h12.5m0 0l-6-6m6 6l-6 6" stroke="currentColor" ' +
     'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
-  var P_BASE = "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 " +
-               "c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 " +
-               "c-iLbGmI-cOWITQ-color-gray12 ";
+  var P_BASE =
+    "c-iLbGmI c-iLbGmI-cyRcZm-family-body c-iLbGmI-jIjxDA-size-14 " +
+    "c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 " +
+    "c-iLbGmI-cOWITQ-color-gray12 ";
 
   function buildCard(item) {
-    var cover    = item.coverImage || null;
+    var cover = item.coverImage || null;
     var assetRef = cover && cover.asset ? cover.asset._ref : null;
     var mediaSrc = assetRef ? sanityImgUrl(assetRef, 800) : "";
-    var ratio    = item.aspectRatio ? parseFloat(item.aspectRatio).toFixed(5) : "1.40000";
-    var title    = escapeHtml(item.title || "Untitled");
-    var date     = escapeHtml(formatDate(item.postDate));
-    var slug     = item.slug || "";
-    var href     = "/blog/post/?slug=" + encodeURIComponent(slug);
+    var ratio = item.aspectRatio
+      ? parseFloat(item.aspectRatio).toFixed(5)
+      : "1.40000";
+    var title = escapeHtml(item.title || "Untitled");
+    var date = escapeHtml(formatDate(item.postDate));
+    var slug = item.slug || "";
+    var href = "/blog/post/?slug=" + encodeURIComponent(slug);
 
     var mediaEl = mediaSrc
-      ? '<img src="' + mediaSrc + '" alt="' + title + '" loading="eager" decoding="async" />'
+      ? '<img src="' +
+        mediaSrc +
+        '" alt="' +
+        title +
+        '" loading="eager" decoding="async" />'
       : "";
 
     var mediaHtml =
       '<div class="c-lesPJm c-lesPJm-iekRYXs-css">' +
-        '<div class="c-kjYPsQ" style="aspect-ratio:' + ratio + '/1">' +
-          mediaEl +
-        "</div>" +
-        '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center ' +
-             'c-gqwkJN-knmidH-justify-between c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-iiIbqbF-css">' +
-          '<p class="' + P_BASE + 'c-iLbGmI-ifMJHCC-css">' + title + "</p>" +
-          '<p class="' + P_BASE + 'c-iLbGmI-ijLzJmS-css">' + date  + "</p>" +
-        "</div>" +
+      '<div class="c-kjYPsQ" style="aspect-ratio:' +
+      ratio +
+      '/1">' +
+      mediaEl +
+      "</div>" +
+      '<div class="c-gqwkJN c-gqwkJN-ejCoEP-direction-row c-gqwkJN-jroWjL-align-center ' +
+      'c-gqwkJN-knmidH-justify-between c-gqwkJN-kVNAnR-wrap-no-wrap c-gqwkJN-iiIbqbF-css">' +
+      '<p class="' +
+      P_BASE +
+      'c-iLbGmI-ifMJHCC-css">' +
+      title +
+      "</p>" +
+      '<p class="' +
+      P_BASE +
+      'c-iLbGmI-ijLzJmS-css">' +
+      date +
+      "</p>" +
+      "</div>" +
       "</div>";
 
     return (
-      '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' + href + '">' +
-        mediaHtml +
-        '<div data-fake-button>Read Post ' + ARROW_SVG + "</div>" +
+      '<a class="c-dcJSMY c-dcJSMY-cEsUQp-interactive-true" href="' +
+      href +
+      '">' +
+      mediaHtml +
+      "<div data-fake-button>Read Post " +
+      ARROW_SVG +
+      "</div>" +
       "</a>"
     );
   }
 
   function distributeToColumns(items) {
-    var cols    = [[], [], []];
+    var cols = [[], [], []];
     var heights = [0, 0, 0];
-    var colW    = window.innerWidth / 3;
+    var colW = window.innerWidth / 3;
 
     items.forEach(function (item) {
       var ratio = item.aspectRatio ? parseFloat(item.aspectRatio) : 1.4;
@@ -1118,18 +1252,22 @@ void main(){
     }
   });
 
-  document.addEventListener("mouseover", function (e) {
-    var anchor = e.target.closest ? e.target.closest("a") : null;
-    if (!anchor) return;
-    var href = anchor.getAttribute("href");
-    if (!href) return;
-    if (href.includes("/blog/post")) {
-      var match = href.match(/slug=([^&]+)/);
-      if (match) fetchSinglePost(decodeURIComponent(match[1]));
-    } else if (href === "/blog" || href === "/blog/") {
-      fetchBlogGrid();
-    }
-  }, { passive: true });
+  document.addEventListener(
+    "mouseover",
+    function (e) {
+      var anchor = e.target.closest ? e.target.closest("a") : null;
+      if (!anchor) return;
+      var href = anchor.getAttribute("href");
+      if (!href) return;
+      if (href.includes("/blog/post")) {
+        var match = href.match(/slug=([^&]+)/);
+        if (match) fetchSinglePost(decodeURIComponent(match[1]));
+      } else if (href === "/blog" || href === "/blog/") {
+        fetchBlogGrid();
+      }
+    },
+    { passive: true },
+  );
 
   var gridEl = document.getElementById("blog-grid");
 
@@ -1141,5 +1279,4 @@ void main(){
       renderColumns(items);
     }
   });
-
 })();

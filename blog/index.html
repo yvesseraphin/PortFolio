@@ -11,8 +11,6 @@
       content="Seraphin. Software Engineer & ML Engineer. Building AI powered applications, secure software, and full-stack web solutions. Software engineer unsatisfiably curious about novel interfaces. Passionate about solving real-world problems through technology."
     />
     <meta name="robots" content="index,follow" />
-
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Seraphin" />
     <meta property="og:title" content="Blog · Seraphin" />
@@ -28,8 +26,6 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Blog · Seraphin" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@0x_serap_hin" />
     <meta name="twitter:creator" content="@0x_serap_hin" />
@@ -44,15 +40,14 @@
     />
 
     <link rel="canonical" href="https://www.yvesseraphin.xyz/blog" />
-
-    <!-- Preconnect to Sanity CDN so the fetch has zero DNS/TCP delay -->
-    <link rel="preconnect" href="https://m77bsvm1.apicdn.sanity.io" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://m77bsvm1.apicdn.sanity.io"
+      crossorigin
+    />
     <link rel="dns-prefetch" href="https://m77bsvm1.apicdn.sanity.io" />
-    <!-- Also preconnect to the Sanity image CDN -->
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
-
-    <!-- Theme detection: runs before paint to avoid flash -->
     <script>
       !(function () {
         try {
@@ -69,8 +64,6 @@
         } catch (e) {}
       })();
     </script>
-
-    <!-- Fonts -->
     <link
       rel="preload"
       href="../X-Regular.woff2"
@@ -87,13 +80,9 @@
     />
     <link rel="stylesheet" href="/assets/css/styles.css" />
     <script defer src="/assets/js/main.js"></script>
-
-    <!-- Design tokens & utility classes (generated) -->
     <style id="stitches">
-      /* ─── CSS Variables ─── */
       @media all {
         :root {
-          /* Gray scale */
           --colors-gray1: hsl(0 0% 99%);
           --colors-gray2: hsl(0 0% 97.3%);
           --colors-gray3: hsl(0 0% 95.1%);
@@ -106,7 +95,6 @@
           --colors-gray10: hsl(0 0% 52.3%);
           --colors-gray11: hsl(0 0% 43.5%);
           --colors-gray12: hsl(0 0% 9%);
-          /* Gray alpha */
           --colors-grayA1: hsl(0 0% 0%/0.012);
           --colors-grayA2: hsl(0 0% 0%/0.027);
           --colors-grayA3: hsl(0 0% 0%/0.047);
@@ -119,11 +107,9 @@
           --colors-grayA10: hsl(0 0% 0%/0.478);
           --colors-grayA11: hsl(0 0% 0%/0.565);
           --colors-grayA12: hsl(0 0% 0%/0.91);
-          /* Semantic */
           --colors-bg: #fff;
           --colors-lowContrast: #ffffff;
           --colors-highContrast: black;
-          /* Blue scale */
           --colors-blue1: hsl(206 100% 99.2%);
           --colors-blue2: hsl(210 100% 98%);
           --colors-blue3: hsl(209 100% 96.5%);
@@ -136,7 +122,6 @@
           --colors-blue10: hsl(208 100% 47.3%);
           --colors-blue11: hsl(211 100% 43.2%);
           --colors-blue12: hsl(211 100% 15%);
-          /* Blue alpha */
           --colors-blueA1: hsl(210 100% 51%/0.016);
           --colors-blueA2: hsl(210 100% 51%/0.04);
           --colors-blueA3: hsl(210 100% 50.3%/0.071);
@@ -149,7 +134,6 @@
           --colors-blueA10: hsl(208 100% 47.2%/0.98);
           --colors-blueA11: hsl(212 100% 43%/0.98);
           --colors-blueA12: hsl(213 100% 14.4%/0.98);
-          /* Green scale */
           --colors-green1: hsl(136 50% 98.9%);
           --colors-green2: hsl(138 62.5% 96.9%);
           --colors-green3: hsl(139 55.2% 94.5%);
@@ -162,7 +146,6 @@
           --colors-green10: hsl(152 57.5% 37.6%);
           --colors-green11: hsl(153 67% 28.5%);
           --colors-green12: hsl(155 40% 14%);
-          /* Amber scale */
           --colors-amber1: hsl(39 70% 99%);
           --colors-amber2: hsl(40 100% 96.5%);
           --colors-amber3: hsl(44 100% 91.7%);
@@ -175,7 +158,6 @@
           --colors-amber10: hsl(35 100% 55.5%);
           --colors-amber11: hsl(30 100% 34%);
           --colors-amber12: hsl(20 80% 17%);
-          /* Red scale */
           --colors-red1: hsl(359 100% 99.4%);
           --colors-red2: hsl(359 100% 98.6%);
           --colors-red3: hsl(360 100% 96.8%);
@@ -188,13 +170,11 @@
           --colors-red10: hsl(358 69.4% 55.2%);
           --colors-red11: hsl(358 65% 48.7%);
           --colors-red12: hsl(354 50% 14.6%);
-          /* Typography */
           --fonts-body:
             X, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
             "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
             "Helvetica Neue", sans-serif;
           --fonts-mono: Menlo, monospace;
-          /* Spacing */
           --space-1: 8px;
           --space-2: 16px;
           --space-3: 24px;
@@ -206,13 +186,11 @@
           --space-9: 72px;
           --space-10: 80px;
           --space-11: 88px;
-          /* Font weights */
           --fontWeights-400: 400;
           --fontWeights-500: 500;
           --fontWeights-600: 600;
           --fontWeights-700: 700;
           --fontWeights-800: 800;
-          /* Line heights */
           --lineHeights-12: 12px;
           --lineHeights-16: 16px;
           --lineHeights-20: 20px;
@@ -221,7 +199,6 @@
           --lineHeights-40: 40px;
           --lineHeights-48: 48px;
           --lineHeights-56: 56px;
-          /* Font sizes */
           --fontSizes-10: 10px;
           --fontSizes-12: 12px;
           --fontSizes-14: 14px;
@@ -231,22 +208,15 @@
           --fontSizes-32: 32px;
           --fontSizes-40: 40px;
           --fontSizes-48: 48px;
-          /* Radii */
           --radii-1: 4px;
           --radii-2: 8px;
           --radii-3: 16px;
           --radii-round: 9999px;
-          /* Shadows */
           --shadows-small: 0 5px 10px rgba(0, 0, 0, 0.12);
           --shadows-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
           --shadows-large: 0 30px 60px rgba(0, 0, 0, 0.12);
-          /* Transitions */
           --transitions-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-
-        /* ─── Dark mode overrides for --colors-* tokens ─── */
-        /* Mirrors the dark values from styles.css .dark{} but for the
-           --colors-* namespace used by card/grid classes */
         .dark {
           --colors-gray1: hsl(0 0% 8.5%);
           --colors-gray2: hsl(0 0% 11%);
@@ -267,8 +237,6 @@
           --colors-highContrast: hsl(0 0% 93%);
         }
       }
-
-      /* ─── Base reset & keyframes ─── */
       @media all {
         *,
         ::before,
@@ -304,14 +272,10 @@
           }
         }
       }
-
-      /* ─── Utility classes ─── */
       @media all {
         .c-lesPJm {
           box-sizing: border-box;
         }
-
-        /* Icon button (dock) */
         .c-gasElL {
           --gradient-color-1: var(--colors-gray2);
           --gradient-color-2: var(--colors-gray5);
@@ -352,20 +316,15 @@
           pointer-events: none;
           transform-origin: unset !important;
         }
-
-        /* Flex container */
         .c-gqwkJN {
           box-sizing: border-box;
           display: flex;
         }
-
-        /* Text block */
         .c-iLbGmI {
           display: block;
           margin: 0px;
         }
 
-        /* Link styles */
         .c-bFaGyl:focus-visible {
           outline: 0px;
           box-shadow:
@@ -384,7 +343,6 @@
           opacity: 1;
         }
 
-        /* Card */
         .c-dcJSMY {
           display: block;
           width: 100%;
@@ -405,24 +363,18 @@
           height: 100%;
           object-fit: cover;
         }
-
-        /* Media wrapper */
         .c-kjYPsQ {
           position: relative;
         }
         .c-kjYPsQ video {
           position: relative;
         }
-
-        /* Absolute-fill image */
         .c-jSplNA {
           position: absolute;
           inset: 0px;
           object-position: center center;
           border-radius: inherit;
         }
-
-        /* More link styles */
         .c-gRVIZe:focus-visible {
           outline: 0px;
           box-shadow:
@@ -448,8 +400,6 @@
         .c-bYlhjp:active {
           background: var(--colors-gray5);
         }
-
-        /* Dark-mode card shimmer */
         .c-gtuqhG::after {
           content: "";
           border-radius: inherit;
@@ -474,7 +424,6 @@
         }
       }
 
-      /* ─── Variant modifier classes ─── */
       @media all {
         .c-gqwkJN-ejCoEP-direction-row {
           flex-direction: row;
@@ -494,7 +443,6 @@
         .c-iLbGmI-cdWBIM-weight-400 {
           font-weight: 400;
         }
-        /* This class sets gray12 text color — present on every card <p> */
         .c-iLbGmI-cOWITQ-color-gray12 {
           color: var(--colors-gray12);
         }
@@ -502,7 +450,6 @@
           align-items: center;
         }
 
-        /* Interactive card */
         .c-dcJSMY-cEsUQp-interactive-true {
           cursor: pointer;
           ---focusColor: var(--colors-amber9);
@@ -544,9 +491,7 @@
         }
       }
 
-      /* ─── Component-specific overrides ─── */
       @media all {
-        /* Dock / navbar */
         .c-lesPJm-ilmIHfM-css {
           display: flex;
           align-items: flex-end;
@@ -573,8 +518,6 @@
             bottom: 0px;
           }
         }
-
-        /* Dock inner row */
         .c-lesPJm-iezzKVe-css {
           display: flex;
           align-items: flex-end;
@@ -589,8 +532,6 @@
             overflow: auto hidden;
           }
         }
-
-        /* Active indicator dot */
         .c-lesPJm-ieQQNgx-css {
           background: var(--colors-gray7);
           position: absolute;
@@ -600,8 +541,6 @@
           bottom: -6px;
           z-index: 1;
         }
-
-        /* Divider */
         .c-lesPJm-igIauhs-css {
           opacity: 1;
           height: 36px;
@@ -617,8 +556,6 @@
             transparent
           );
         }
-
-        /* Page layout */
         .c-lesPJm-idobalA-css {
           display: flex;
           flex-direction: column;
@@ -638,8 +575,6 @@
         .c-lesPJm-idobalA-css {
           padding: 8px 0px 4px 4px;
         }
-
-        /* Card with gradient overlay */
         .c-lesPJm-iekRYXs-css {
           position: relative;
           overflow: hidden;
@@ -660,8 +595,6 @@
           bottom: -64px;
           transition: opacity 200ms;
         }
-
-        /* Card footer row */
         .c-gqwkJN-iiIbqbF-css {
           width: 100%;
           height: 32px;
@@ -675,7 +608,6 @@
           white-space: nowrap;
         }
 
-        /* Card title (light on dark) */
         .c-iLbGmI-ifMJHCC-css {
           color: rgb(237, 237, 237);
           gap: 4px;
@@ -684,12 +616,10 @@
           text-overflow: ellipsis;
         }
 
-        /* Card subtitle */
         .c-iLbGmI-ijLzJmS-css {
           color: rgba(255, 255, 255, 0.592);
         }
 
-        /* Card without overlay */
         .c-lesPJm-ikgVxhC-css {
           position: relative;
           overflow: hidden;
@@ -722,8 +652,6 @@
           background: var(--colors-gray5);
           color: var(--colors-gray12);
         }
-
-        /* Conic border animation */
         .c-lesPJm-ibTpLUV-css::after {
           content: "";
           position: absolute;
@@ -772,8 +700,6 @@
         }
       }
     </style>
-
-    <!-- Base styles -->
     <style>
       @font-face {
         font-family: X;
@@ -808,8 +734,6 @@
         font-family: var(--fonts-body);
         border: 0;
       }
-
-      /* Grid — exact match to reference */
       .grid {
         --gap: 8px;
         display: flex;
@@ -818,20 +742,13 @@
         padding-right: 8px;
         padding-left: 4px;
       }
-
-      /* Column — exact match to reference */
       .column {
         padding-left: var(--gap);
         background-clip: padding-box;
-        /* overflow:hidden clips the scrolling animation */
         overflow: hidden;
-        /* Viewport-height clip so animation is bounded */
         max-height: 100vh;
       }
 
-      /* Endless upward scroll.
-         column-inner holds cards × 2 (original + clone).
-         -50% snaps back seamlessly to the start. */
       @keyframes scrollUp {
         from {
           transform: translateY(0);
@@ -846,7 +763,6 @@
         will-change: transform;
       }
 
-      /* Pause on hover */
       .column:hover .column-inner {
         animation-play-state: paused;
       }
@@ -858,8 +774,13 @@
       }
 
       @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50%       { opacity: 0.4; }
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
       }
 
       @media (max-width: 960px) {
@@ -869,18 +790,14 @@
         }
       }
 
-      /* ─── Dark mode: body + card overrides ─── */
       .dark body {
         background: var(--colors-gray1);
       }
 
-      /* Card background and border */
       .dark .c-dcJSMY {
         background: var(--colors-gray2);
         border-color: var(--colors-gray5);
       }
-
-      /* Fake button */
       .dark .c-dcJSMY-cEsUQp-interactive-true [data-fake-button] {
         background: var(--colors-gray3);
         color: var(--colors-gray12);
@@ -890,7 +807,6 @@
         background: var(--colors-gray4);
       }
 
-      /* Inner card shimmer border */
       .dark .c-dcJSMY::after {
         content: "";
         border-radius: inherit;
@@ -907,7 +823,6 @@
 
   <body>
     <div id="__next">
-      <!-- ─── Navigation Dock ─── -->
       <footer
         id="footer"
         class="dock"
@@ -916,7 +831,6 @@
       >
         <div aria-hidden="true" class="dock-highlight"></div>
         <div class="dock-items">
-          <!-- Home -->
           <button class="dock-btn" aria-label="Home" data-href="/">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -945,7 +859,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- Blog -->
           <button class="dock-btn" aria-label="Blog" data-href="/blog">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -974,7 +887,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- Projects -->
           <button class="dock-btn" aria-label="Projects" data-href="/projects">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -1001,7 +913,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- Photos -->
           <button class="dock-btn" aria-label="Photos" data-href="/photos">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -1030,7 +941,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- About (Experience, Education & Stack) -->
           <button class="dock-btn" aria-label="About" data-href="/about">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -1058,12 +968,7 @@
 
           <hr class="dock-divider" />
 
-          <!-- CV -->
-          <button
-            class="dock-btn"
-            aria-label="CV"
-            data-href="/cv"
-          >
+          <button class="dock-btn" aria-label="CV" data-href="/cv">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -1095,7 +1000,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- Instagram -->
           <button
             class="dock-btn"
             aria-label="Instagram"
@@ -1109,7 +1013,15 @@
               fill="none"
               aria-hidden="true"
             >
-              <rect x="2" y="2" width="20" height="20" rx="5.5" opacity="0.25" fill="currentColor" />
+              <rect
+                x="2"
+                y="2"
+                width="20"
+                height="20"
+                rx="5.5"
+                opacity="0.25"
+                fill="currentColor"
+              />
               <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
@@ -1127,7 +1039,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- GitHub -->
           <button
             class="dock-btn"
             aria-label="GitHub"
@@ -1149,7 +1060,6 @@
             <div class="dock-indicator" aria-hidden="true"></div>
           </button>
 
-          <!-- Mail -->
           <button
             class="dock-btn"
             aria-label="Mail"
@@ -1180,7 +1090,6 @@
 
           <hr class="dock-divider" />
 
-          <!-- Theme toggle -->
           <button id="btn-theme" class="dock-btn" aria-label="Toggle theme">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <span class="icon-sun" aria-hidden="true">
@@ -1216,7 +1125,6 @@
         </div>
       </footer>
 
-      <!-- ─── Blog Grid ─── -->
       <main class="c-lesPJm c-lesPJm-idobalA-css page-wrapper--scroll">
         <div class="grid" id="blog-grid">
           <div
@@ -1243,6 +1151,5 @@
         </div>
       </main>
     </div>
-    <!-- /#__next -->
   </body>
 </html>

@@ -53,7 +53,6 @@ export const projectType = defineType({
   title: 'Project',
   type: 'document',
   fields: [
-    // ── Essential Metadata ──
     defineField({
       name: 'title',
       title: 'Project Title',
@@ -71,7 +70,8 @@ export const projectType = defineType({
       name: 'tagline',
       title: 'Subtitle / Tagline',
       type: 'string',
-      description: 'Short 1-line elevator pitch for the project list (keep under 50-60 characters for best look)',
+      description:
+        'Short 1-line elevator pitch for the project list (keep under 50-60 characters for best look)',
       validation: (R) => R.required(),
     }),
     defineField({
@@ -143,7 +143,8 @@ export const projectType = defineType({
     defineField({
       name: 'body',
       title: 'Project Content (Body)',
-      description: 'Paste your full project writeup here. Supports Headings, Bold, Italics, Lists, Quotes, Images, and Code Blocks.',
+      description:
+        'Paste your full project writeup here. Supports Headings, Bold, Italics, Lists, Quotes, Images, and Code Blocks.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -243,7 +244,15 @@ export const projectType = defineType({
           ],
           preview: {
             select: {language: 'language', caption: 'caption', code: 'code'},
-            prepare({language, caption, code}: {language?: string; caption?: string; code?: string}) {
+            prepare({
+              language,
+              caption,
+              code,
+            }: {
+              language?: string
+              caption?: string
+              code?: string
+            }) {
               return {
                 title: caption || `[${language || 'code'}]`,
                 subtitle: (code || '').substring(0, 60),

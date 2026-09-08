@@ -10,4 +10,3 @@ export const schemaTypes = [
   projectMetricType,
   photoType,
 ]
-
