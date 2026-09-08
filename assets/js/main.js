@@ -259,6 +259,8 @@
       if (href.startsWith("http")) {
         window.open(href, "_blank", "noopener,noreferrer");
       } else if (href === "#") {
+      } else if (href === "/cv" || href === "/cv/" || href === "/cv.pdf" || href === "/CV.pdf" || href.toLowerCase().endsWith(".pdf")) {
+        window.open("/CV.pdf", "_blank", "noopener,noreferrer");
       } else if (window.__navigateWithPreload && href.includes("/blog")) {
         window.__navigateWithPreload(href, e);
       } else {
