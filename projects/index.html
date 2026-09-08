@@ -477,71 +477,71 @@
         var PROJECT_ID  = "m77bsvm1";
         var DATASET     = "production";
         var API_VERSION = "2024-01-01";
-        var CACHE_KEY   = "projects_sanity_cache_v1";
+        var CACHE_KEY = "projects_sanity_cache_v2";
 
         var listEl = document.getElementById("projects-list");
         if (!listEl) return;
 
         var DEFAULT_PROJECTS = [
           {
+            slug: "ai-powered-chatbot",
             title: "AI-Powered Chatbot",
             tagline: "Conversational assistant built on transformer models",
-            year: "2025",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2025"
           },
           {
+            slug: "securevault",
             title: "SecureVault",
             tagline: "End-to-end encrypted password manager with zero-knowledge architecture",
-            year: "2025",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2025"
           },
           {
+            slug: "rca-learning-platform",
             title: "RCA Learning Platform",
             tagline: "Full-stack LMS for Rwanda Coding Academy students",
-            year: "2024",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2024"
           },
           {
+            slug: "intrusion-detection-system",
             title: "Intrusion Detection System",
             tagline: "ML-based network anomaly detection for real-time threat analysis",
-            year: "2024",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2024"
           },
           {
+            slug: "agrisense",
             title: "AgriSense",
             tagline: "IoT + ML crop monitoring system for smallholder farmers",
-            year: "2024",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2024"
           },
           {
+            slug: "portfolio-v2",
             title: "Portfolio v2",
             tagline: "Personal site with interactive UI, blog, and Sanity CMS",
-            year: "2024",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2024"
           },
           {
+            slug: "embedded-morse-decoder",
             title: "Embedded Morse Decoder",
             tagline: "Hardware decoder using STM32 microcontroller and UART output",
-            year: "2023",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2023"
           },
           {
+            slug: "mini-os-kernel",
             title: "Mini OS Kernel",
             tagline: "Bare-metal kernel with process scheduling and memory management",
-            year: "2023",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2023"
           },
           {
+            slug: "sign-language-translator",
             title: "Sign Language Translator",
             tagline: "Computer vision model that recognizes Rwandan Sign Language gestures",
-            year: "2023",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2023"
           },
           {
+            slug: "devconnect",
             title: "DevConnect",
             tagline: "Developer networking platform with real-time chat and project matching",
-            year: "2022",
-            githubUrl: "https://github.com/yvesseraphin"
+            year: "2022"
           }
         ];
 
@@ -558,13 +558,12 @@
 
           var html = "";
           items.forEach(function (p, i) {
-            var slug = p.slug || "";
-            var href = slug ? ("/projects/project/?slug=" + encodeURIComponent(slug)) : (p.githubUrl || "#");
+            var slug = p.slug || (p.title ? p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : "");
+            var href = "/projects/project/?slug=" + encodeURIComponent(slug);
             var d1 = (i * 0.05).toFixed(3);
             var d2 = (i * 0.10).toFixed(3);
-            var isExternal = !slug && href.startsWith("http");
             html +=
-              '<a href="' + href + '" ' + (isExternal ? 'target="_blank" rel="noopener noreferrer" ' : '') + 'class="project-row" data-delay="' + i + '">' +
+              '<a href="' + href + '" class="project-row" data-delay="' + i + '">' +
               '  <span class="project-title">' + esc(p.title) + '</span>' +
               '  <span class="project-desc">' + esc(p.tagline || "") + '</span>' +
               '  <div class="project-divider" style="--d1:' + d1 + 's;--d2:' + d2 + 's;"></div>' +
