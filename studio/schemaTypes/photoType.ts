@@ -6,16 +6,10 @@ export const photoType = defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'title',
-      title: 'Title / Caption',
-      type: 'string',
-      description: 'Short title or description for this photo',
-    }),
-    defineField({
       name: 'image',
-      title: 'Image',
+      title: 'Photo Image',
       type: 'image',
-      description: 'Upload your custom photograph',
+      description: 'Upload your photograph here',
       options: {
         hotspot: true,
         metadata: ['blurhash', 'lqip', 'palette'],
@@ -24,36 +18,24 @@ export const photoType = defineType({
       fields: [
         defineField({
           name: 'alt',
-          title: 'Alternative text',
+          title: 'Alt text (optional)',
           type: 'string',
-          description: 'Description for accessibility and SEO',
+          description: 'Optional description for screen readers and SEO',
         }),
       ],
-    }),
-    defineField({
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
-      description: 'Lower numbers appear first (e.g. 1, 2, 3...)',
-      initialValue: 1,
-    }),
-    defineField({
-      name: 'date',
-      title: 'Date Taken',
-      type: 'date',
     }),
   ],
   preview: {
     select: {
-      title: 'title',
       media: 'image',
-      subtitle: 'date',
+      createdAt: '_createdAt',
     },
     prepare(selection) {
-      const {title, media, subtitle} = selection
+      const {media, createdAt} = selection
+      const dateStr = createdAt ? new Date(createdAt).toLocaleDateString() : ''
       return {
-        title: title || 'Untitled Photo',
-        subtitle: subtitle || '',
+        title: 'Photo',
+        subtitle: dateStr ? `Uploaded: ${dateStr}` : '',
         media,
       }
     },

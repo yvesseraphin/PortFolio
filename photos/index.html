@@ -399,7 +399,7 @@
           // Real image — fades in once loaded
           var img = document.createElement("img");
           img.className = "photo-real";
-          img.alt = photo.title || photo.alt || "Photo";
+          img.alt = photo.alt || "Photo";
           if (index === 0) {
             img.fetchPriority = "high";
             img.decoding = "async";
@@ -446,8 +446,8 @@
           }
         } catch (e) {}
 
-        // 2. Fetch custom uploaded photos directly from Sanity
-        var groq = '*[_type == "photo"] | order(order asc, _createdAt desc){ _id, title, "alt": image.alt, "imageUrl": image.asset->url, "lqip": image.asset->metadata.lqip }';
+        // 2. Fetch custom uploaded photos directly from Sanity (ordered automatically by upload date, newest first)
+        var groq = '*[_type == "photo"] | order(_createdAt desc){ _id, "alt": image.alt, "imageUrl": image.asset->url, "lqip": image.asset->metadata.lqip }';
         var url = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
                   "/data/query/" + DATASET + "?query=" + encodeURIComponent(groq);
 
