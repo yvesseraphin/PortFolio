@@ -215,25 +215,22 @@
     var contentEl = document.getElementById("project-content");
     if (!contentEl || !p) return;
 
-    var html = "";
+    var titleEl = document.getElementById("project-title");
+    var taglineEl = document.getElementById("project-tagline");
+    if (titleEl) titleEl.textContent = p.title || "Project";
+    if (taglineEl) {
+      var metaText = "";
+      if (p.year) metaText += p.year;
+      if (p.tagline) metaText += (metaText ? " · " : "") + p.tagline;
+      taglineEl.textContent = metaText;
+    }
 
-    // ── 1. Header & Summary ──
-    html += '<header class="header-section">';
-    html += '  <div class="title-row">';
-    html += '    <h1 class="project-h1">' + esc(p.title) + '</h1>';
-    if (p.year) {
-      html += '    <span class="project-year-pill">' + esc(p.year) + '</span>';
-    }
-    html += '  </div>';
-    if (p.tagline) {
-      html += '  <p class="project-pitch">' + esc(p.tagline) + '</p>';
-    }
-    html += '</header>';
+    var html = "";
 
     // Hero Visual
     if (p.coverImage && p.coverImage.asset && p.coverImage.asset._ref) {
       var heroImg = sanityImgUrl(p.coverImage.asset._ref, 1400);
-      html += '<div class="hero-media-wrap">';
+      html += '<div class="hero-media-wrap" style="margin-top:0">';
       html += '  <img class="hero-media-img" src="' + esc(heroImg) + '" alt="' + esc(p.coverImage.alt || p.title) + '" loading="eager" decoding="async" />';
       if (p.coverImage.alt) {
         html += '  <div class="hero-media-caption">' + esc(p.coverImage.alt) + '</div>';
@@ -422,22 +419,26 @@
 
     contentEl.innerHTML = html;
 
-    // ── Pagination Footer ──
+    // ── Divider (matching blog post) ──
+    var dividerEl = document.getElementById("project-divider");
+    if (dividerEl) dividerEl.style.display = "";
+
+    // ── Pagination Footer (matching blog post) ──
     var paginationEl = document.getElementById("project-pagination");
     if (paginationEl && (p.prev || p.next)) {
       var navHtml = "";
       if (p.prev) {
-        navHtml += '<a href="/projects/project/?slug=' + esc(p.prev.slug) + '" class="nav-card">';
-        navHtml += '  <span class="nav-card-dir">&larr; Previous Project</span>';
-        navHtml += '  <span class="nav-card-title">' + esc(p.prev.title) + '</span>';
+        navHtml += '<a class="project-nav-item" href="/projects/project/?slug=' + esc(p.prev.slug) + '">';
+        navHtml += '  <div class="project-nav-label">&larr; Previous</div>';
+        navHtml += '  <span class="project-nav-title">' + esc(p.prev.title) + '</span>';
         navHtml += '</a>';
       } else {
-        navHtml += '<div style="flex:1"></div>';
+        navHtml += '<div></div>';
       }
       if (p.next) {
-        navHtml += '<a href="/projects/project/?slug=' + esc(p.next.slug) + '" class="nav-card" style="text-align:right">';
-        navHtml += '  <span class="nav-card-dir">Next Project &rarr;</span>';
-        navHtml += '  <span class="nav-card-title">' + esc(p.next.title) + '</span>';
+        navHtml += '<a class="project-nav-item" style="margin-left:auto;text-align:right" href="/projects/project/?slug=' + esc(p.next.slug) + '">';
+        navHtml += '  <div class="project-nav-label" style="margin-left:auto">Next &rarr;</div>';
+        navHtml += '  <span class="project-nav-title">' + esc(p.next.title) + '</span>';
         navHtml += '</a>';
       }
       paginationEl.innerHTML = navHtml;
@@ -447,26 +448,55 @@
 
   function initCopyButton() {
     var btn = document.getElementById("btn-copy-url");
-    if (!btn) return;
+    if (!btn || btn.dataset.init) return;
+    btn.dataset.init = "true";
     btn.addEventListener("click", function () {
       var url = window.location.href;
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function () {
-          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
-          setTimeout(function () {
-            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>';
-          }, 2000);
-        });
+        navigator.clipboard.writeText(url).then(showCopied, fallback);
+      } else {
+        fallback();
+      }
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.cssText = "position:fixed;opacity:0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showCopied();
+        } catch (e) {}
+        document.body.removeChild(ta);
       }
     });
+
+    function showCopied() {
+      var orig = btn.getAttribute("aria-label");
+      var svg = btn.querySelector("svg");
+      var origSvg = svg ? svg.outerHTML : "";
+      btn.setAttribute("aria-label", "Copied!");
+      btn.style.background = "var(--colors-gray4)";
+      if (svg) svg.outerHTML = '<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      setTimeout(function () {
+        btn.setAttribute("aria-label", orig);
+        btn.style.background = "";
+        var s = btn.querySelector("svg");
+        if (s && origSvg) s.outerHTML = origSvg;
+      }, 2000);
+    }
   }
 
   function renderNotFound(msg) {
+    var titleEl = document.getElementById("project-title");
+    var taglineEl = document.getElementById("project-tagline");
+    if (titleEl) titleEl.textContent = msg || "Project not found";
+    if (taglineEl) taglineEl.textContent = "";
+
     var contentEl = document.getElementById("project-content");
     if (!contentEl) return;
     contentEl.innerHTML =
       '<div class="state-box">' +
-      '  <p style="font-size:16px;font-weight:500;margin-bottom:8px;color:var(--colors-gray12);">' + esc(msg || "Project not found") + '</p>' +
       '  <p style="color:var(--colors-gray11);margin-bottom:20px;">The requested project could not be found or has not been published yet in Sanity Studio.</p>' +
       '  <a href="/projects" class="artifact-btn" style="display:inline-flex;">&larr; Back to all projects</a>' +
       '</div>';
