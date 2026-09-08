@@ -925,26 +925,6 @@
     .project-nav-item:hover .project-nav-title {
       color: var(--colors-gray11);
     }
-
-    /* ── Loading / Error State ── */
-    .state-box {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--colors-gray11);
-      font-size: 14px;
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, var(--colors-gray3) 25%, var(--colors-gray4) 50%, var(--colors-gray3) 75%);
-      background-size: 200% 100%;
-      animation: pulse 1.5s infinite;
-      border-radius: 6px;
-    }
-
-    @keyframes pulse {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
   </style>
 </head>
 <body>
@@ -978,15 +958,7 @@
     </div>
 
     <!-- Main Dynamic Content Target -->
-    <main id="project-content">
-      <!-- Loading Skeleton -->
-      <div id="loading-state">
-        <div class="skeleton" style="width: 50%; height: 32px; margin-bottom: 12px;"></div>
-        <div class="skeleton" style="width: 80%; height: 20px; margin-bottom: 24px;"></div>
-        <div class="skeleton" style="width: 100%; height: 320px; margin-bottom: 32px;"></div>
-        <div class="skeleton" style="width: 100%; height: 120px;"></div>
-      </div>
-    </main>
+    <main id="project-content"></main>
 
     <!-- Divider (matching blog post) -->
     <hr id="project-divider" class="project-divider" style="display: none;" />

@@ -494,17 +494,12 @@
     if (taglineEl) taglineEl.textContent = "";
 
     var contentEl = document.getElementById("project-content");
-    if (!contentEl) return;
-    contentEl.innerHTML =
-      '<div class="state-box">' +
-      '  <p style="color:var(--colors-gray11);margin-bottom:20px;">The requested project could not be found or has not been published yet in Sanity Studio.</p>' +
-      '  <a href="/projects" class="artifact-btn" style="display:inline-flex;">&larr; Back to all projects</a>' +
-      '</div>';
+    if (contentEl) contentEl.innerHTML = "";
   }
 
   // ── Main Controller ──
   if (!slug) {
-    renderNotFound("No project specified");
+    renderNotFound("Project not found");
     return;
   }
 
@@ -550,7 +545,7 @@
     .catch(function (err) {
       console.warn("[project detail] Sanity error:", err);
       if (!cached) {
-        renderNotFound("Unable to load project");
+        renderNotFound("Project not found");
       }
     });
 })();
