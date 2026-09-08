@@ -9,10 +9,9 @@ export const photoType = defineType({
       name: 'image',
       title: 'Photo Image',
       type: 'image',
-      description: 'Upload your photograph here',
+      description: 'Upload your photograph',
       options: {
         hotspot: true,
-        metadata: ['blurhash', 'lqip', 'palette'],
       },
       validation: (Rule) => Rule.required(),
       fields: [
@@ -20,7 +19,6 @@ export const photoType = defineType({
           name: 'alt',
           title: 'Alt text (optional)',
           type: 'string',
-          description: 'Optional description for screen readers and SEO',
         }),
       ],
     }),
@@ -28,14 +26,10 @@ export const photoType = defineType({
   preview: {
     select: {
       media: 'image',
-      createdAt: '_createdAt',
     },
-    prepare(selection) {
-      const {media, createdAt} = selection
-      const dateStr = createdAt ? new Date(createdAt).toLocaleDateString() : ''
+    prepare({media}) {
       return {
         title: 'Photo',
-        subtitle: dateStr ? `Uploaded: ${dateStr}` : '',
         media,
       }
     },
