@@ -9,29 +9,20 @@ export const projectChallengeType = defineType({
       name: 'title',
       title: 'Challenge Title',
       type: 'string',
-      description: 'e.g. Real-Time Inference at Scale, Zero-Knowledge Key Derivation',
-      validation: (R) => R.required(),
     }),
     defineField({
       name: 'roadblock',
       title: 'The Roadblock',
       type: 'text',
       rows: 3,
-      description: 'What obstacle or technical roadblock did you encounter?',
-      validation: (R) => R.required(),
     }),
     defineField({
       name: 'tradeoff',
       title: 'Solution & Trade-offs',
       type: 'text',
       rows: 3,
-      description: 'What compromise or architectural decision was made to resolve it?',
-      validation: (R) => R.required(),
     }),
   ],
-  preview: {
-    select: {title: 'title', subtitle: 'roadblock'},
-  },
 })
 
 export const projectMetricType = defineType({
@@ -43,26 +34,18 @@ export const projectMetricType = defineType({
       name: 'value',
       title: 'Metric Value',
       type: 'string',
-      description: 'e.g. "-45%", "10k+", "< 50ms", "99.9%"',
-      validation: (R) => R.required(),
     }),
     defineField({
       name: 'label',
       title: 'Metric Label',
       type: 'string',
-      description: 'e.g. "Latency Reduction", "Active Users", "API Response Time"',
-      validation: (R) => R.required(),
     }),
     defineField({
       name: 'description',
       title: 'Context / Note (Optional)',
       type: 'string',
-      description: 'e.g. "Benchmarked on NVIDIA T4 via TensorRT"',
     }),
   ],
-  preview: {
-    select: {title: 'value', subtitle: 'label'},
-  },
 })
 
 export const projectType = defineType({
@@ -70,7 +53,7 @@ export const projectType = defineType({
   title: 'Project',
   type: 'document',
   fields: [
-    // ── 1. Header & Summary ──
+    // ── Essential Metadata ──
     defineField({
       name: 'title',
       title: 'Project Title',
@@ -86,31 +69,41 @@ export const projectType = defineType({
     }),
     defineField({
       name: 'tagline',
-      title: 'One-Sentence Elevator Pitch',
+      title: 'Subtitle / Tagline',
       type: 'string',
-      description: 'Hooks the reviewer within 5 seconds. Used as subtitle and in project list.',
+      description: 'Short 1-line elevator pitch for the project list (keep under 50-60 characters for best look)',
       validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'projectType',
+      title: 'Project Type / Category',
+      type: 'string',
+      description: 'e.g. "Machine Learning & AI", "Full-Stack Web App", "Open-Source Tool"',
     }),
     defineField({
       name: 'year',
       title: 'Year',
       type: 'string',
-      description: 'e.g. "2025"',
-      initialValue: '2025',
-      validation: (R) => R.required(),
+      initialValue: '2026',
+      description: 'e.g. "2026"',
     }),
     defineField({
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
-      description: 'Lower number appears first (e.g. 1, 2, 3...)',
-      initialValue: 1,
+      name: 'timeline',
+      title: 'Timeline / Duration',
+      type: 'string',
+      description: 'e.g. "2 months (Jul – Aug 2026)"',
+    }),
+    defineField({
+      name: 'role',
+      title: 'Role',
+      type: 'string',
+      description: 'e.g. "Lead AI Engineer & Full-Stack Developer"',
     }),
     defineField({
       name: 'coverImage',
-      title: 'Primary Visual or Demo GIF',
+      title: 'Cover Image / Visual Demo',
       type: 'image',
-      description: 'High quality screenshot, demo GIF, or teaser visual',
+      description: 'Main project screenshot or visual banner',
       options: {hotspot: true},
       fields: [
         defineField({
@@ -119,82 +112,39 @@ export const projectType = defineType({
           type: 'string',
         }),
       ],
-      validation: (R) => R.required(),
-    }),
-
-    // ── 2. Metadata at a Glance ──
-    defineField({
-      name: 'role',
-      title: 'Role',
-      type: 'string',
-      description: 'e.g. "Lead ML Engineer", "Full-Stack Developer"',
-      validation: (R) => R.required(),
-    }),
-    defineField({
-      name: 'timeline',
-      title: 'Timeline',
-      type: 'string',
-      description: 'e.g. "3 months (Jan – Mar 2025)"',
-      validation: (R) => R.required(),
-    }),
-    defineField({
-      name: 'teamSize',
-      title: 'Team Size',
-      type: 'string',
-      description: 'e.g. "Solo project", "4 engineers, 1 designer"',
-      validation: (R) => R.required(),
     }),
     defineField({
       name: 'techStack',
-      title: 'Core Tech Stack / Tools',
+      title: 'Tech Stack (Tags)',
       type: 'array',
       of: [defineArrayMember({type: 'string'})],
       options: {layout: 'tags'},
-      description: 'e.g. Python, PyTorch, Next.js, TypeScript, Docker, FastAPI',
-      validation: (R) => R.required().min(1),
+      description: 'e.g. Python, PyTorch, React, FastAPI, Docker',
+    }),
+    defineField({
+      name: 'liveDemoUrl',
+      title: 'Live Demo URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'githubUrl',
+      title: 'GitHub Repository URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'order',
+      title: 'Display Order',
+      type: 'number',
+      description: 'Lower number appears first (1, 2, 3...)',
+      initialValue: 1,
     }),
 
-    // ── 3. The Problem & Objective ──
+    // ── Rich Content Body ──
     defineField({
-      name: 'problem',
-      title: 'The Problem',
-      type: 'text',
-      rows: 4,
-      description: 'What specific problem or pain point were you solving?',
-      validation: (R) => R.required(),
-    }),
-    defineField({
-      name: 'targetUser',
-      title: 'Target User',
-      type: 'string',
-      description: 'Who was the user or target audience? (e.g. ML researchers, smallholder farmers, healthcare workers)',
-      validation: (R) => R.required(),
-    }),
-    defineField({
-      name: 'goal',
-      title: 'The Objective & Goal',
-      type: 'text',
-      rows: 4,
-      description: 'What was the defined success criteria or goal?',
-      validation: (R) => R.required(),
-    }),
-
-    // ── 4. Your Direct Contribution ──
-    defineField({
-      name: 'directContribution',
-      title: 'Your Direct Contribution',
+      name: 'body',
+      title: 'Project Content (Body)',
+      description: 'Paste your full project writeup here. Supports Headings, Bold, Italics, Lists, Quotes, Images, and Code Blocks.',
       type: 'array',
-      of: [defineArrayMember({type: 'string'})],
-      description: 'Bullet points detailing your exact ownership vs. team contributions (e.g. "Architected the zero-knowledge encryption protocol", "Trained and fine-tuned the model")',
-      validation: (R) => R.required().min(1),
-    }),
-
-    // ── 5. Process & Architecture ──
-    defineField({
-      name: 'processArchitecture',
-      title: 'Process & Architecture',
-      type: 'array',
-      description: 'System design diagrams, technical decisions, workflow steps, and code snippets.',
       of: [
         defineArrayMember({
           type: 'block',
@@ -202,13 +152,20 @@ export const projectType = defineType({
             {title: 'Normal', value: 'normal'},
             {title: 'Heading 2', value: 'h2'},
             {title: 'Heading 3', value: 'h3'},
+            {title: 'Heading 4', value: 'h4'},
             {title: 'Quote', value: 'blockquote'},
+          ],
+          lists: [
+            {title: 'Bullet', value: 'bullet'},
+            {title: 'Numbered', value: 'number'},
           ],
           marks: {
             decorators: [
-              {title: 'Strong', value: 'strong'},
-              {title: 'Emphasis', value: 'em'},
+              {title: 'Strong (Bold)', value: 'strong'},
+              {title: 'Emphasis (Italic)', value: 'em'},
               {title: 'Code', value: 'code'},
+              {title: 'Underline', value: 'underline'},
+              {title: 'Strike', value: 'strike-through'},
             ],
             annotations: [
               defineArrayMember({
@@ -230,7 +187,7 @@ export const projectType = defineType({
         }),
         defineArrayMember({
           type: 'image',
-          title: 'Architecture Diagram / Wireframe',
+          title: 'Inline Image',
           options: {hotspot: true},
           fields: [
             defineField({
@@ -263,7 +220,10 @@ export const projectType = defineType({
                   {title: 'Go', value: 'go'},
                   {title: 'C / C++', value: 'c'},
                   {title: 'Bash / Shell', value: 'bash'},
+                  {title: 'SQL', value: 'sql'},
                   {title: 'JSON', value: 'json'},
+                  {title: 'HTML', value: 'html'},
+                  {title: 'CSS', value: 'css'},
                   {title: 'Plain text', value: 'code'},
                 ],
               },
@@ -277,9 +237,8 @@ export const projectType = defineType({
             }),
             defineField({
               name: 'caption',
-              title: 'File name / Description',
+              title: 'File name / Description (Optional)',
               type: 'string',
-              description: 'e.g. "engine/inference.py" or "Core tokenization pipeline"',
             }),
           ],
           preview: {
@@ -293,53 +252,6 @@ export const projectType = defineType({
           },
         }),
       ],
-    }),
-
-    // ── 6. Key Challenges & Trade-offs ──
-    defineField({
-      name: 'challenges',
-      title: 'Key Challenges & Trade-offs',
-      type: 'array',
-      of: [defineArrayMember({type: 'projectChallenge'})],
-      description: '1–2 major roadblocks faced and compromises made.',
-    }),
-
-    // ── 7. Results & Impact ──
-    defineField({
-      name: 'metrics',
-      title: 'Impact Metrics (Quantitative)',
-      type: 'array',
-      of: [defineArrayMember({type: 'projectMetric'})],
-      description: 'Highlight cards displaying key numbers (e.g. latency, adoption, throughput).',
-    }),
-    defineField({
-      name: 'impactSummary',
-      title: 'Qualitative Impact & Results',
-      type: 'text',
-      rows: 4,
-      description: 'Business value, user reception, qualitative feedback, or long-term outcomes.',
-    }),
-
-    // ── 8. Artifacts & Links ──
-    defineField({
-      name: 'liveDemoUrl',
-      title: 'Live Demo Link',
-      type: 'url',
-    }),
-    defineField({
-      name: 'githubUrl',
-      title: 'GitHub Repository',
-      type: 'url',
-    }),
-    defineField({
-      name: 'docsUrl',
-      title: 'Documentation Link',
-      type: 'url',
-    }),
-    defineField({
-      name: 'designSpecsUrl',
-      title: 'Design Specs / Whitepaper URL',
-      type: 'url',
     }),
   ],
   preview: {

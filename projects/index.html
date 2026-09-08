@@ -269,6 +269,8 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        max-width: clamp(140px, 38vw, 360px);
+        flex-shrink: 1;
       }
 
       @media (max-width: 720px) {
