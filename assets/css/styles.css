@@ -1,15 +1,15 @@
 @font-face {
-  font-family: X;
-  font-weight: 400;
+  font-family: 'Space Grotesk';
+  font-weight: 300 700;
   font-display: swap;
-  src: url(../../X-Regular.woff2) format("woff2");
+  src: url(../../SpaceGrotesk.woff2) format("woff2");
 }
 
 @font-face {
   font-family: X;
-  font-weight: 500;
+  font-weight: 300 700;
   font-display: swap;
-  src: url(../../X-Medium.woff2) format("woff2");
+  src: url(../../SpaceGrotesk.woff2) format("woff2");
 }
 
 :root {
@@ -37,7 +37,7 @@
   --space-3: 24px;
 
   --font-body:
-    X, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    "Space Grotesk", X, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
     Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 
   --fade-edge: rgba(255, 255, 255, 0.00001);
