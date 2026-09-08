@@ -30,6 +30,12 @@
 
     <link rel="canonical" href="https://www.yvesseraphin.xyz/photos" />
 
+    <!-- Preconnect to Sanity CDN -->
+    <link rel="preconnect" href="https://m77bsvm1.apicdn.sanity.io" crossorigin />
+    <link rel="dns-prefetch" href="https://m77bsvm1.apicdn.sanity.io" />
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+
     <!-- Theme detection: runs before paint to avoid flash -->
     <script>
       !(function () {
@@ -295,7 +301,7 @@
             <path d="M18 10C18.5523 10 19 9.55228 19 9C19 8.44772 18.5523 8 18 8C17.4477 8 17 8.44772 17 9C17 9.55228 17.4477 10 18 10Z" fill="currentColor"/>
             <path fill-rule="evenodd" clip-rule="evenodd" d="M16 13C16 15.2091 14.2091 17 12 17C9.79086 17 8 15.2091 8 13C8 10.7909 9.79086 9 12 9C14.2091 9 16 10.7910 16 13ZM14 13C14 14.1046 13.1046 15 12 15C10.8954 15 10 14.1046 10 13C10 11.8954 10.8954 11 12 11C13.1046 11 14 11.8954 14 13Z" fill="currentColor"/>
           </svg>
-          <div class="dock-indicator" aria-hidden="true"></div>
+          <div class="dock-indicator" style="opacity: 1;" aria-hidden="true"></div>
         </button>
 
         <hr class="dock-divider" />
@@ -357,55 +363,33 @@
       <ul class="gallery" id="gallery" aria-label="Photo gallery"></ul>
     </main>
 
-    <script src="../assets/js/main.js"></script>
+    <script defer src="../assets/js/main.js"></script>
     <script>
       (function () {
         "use strict";
 
-        /*
-         * Photos sourced from Unsplash (free to use).
-         * Each entry: { id, w, h } — w/h used to set aspect context (all cards
-         * are fixed 700px tall by CSS, matching the reference exactly).
-         * Using Unsplash Source API: https://source.unsplash.com/{id}/{w}x{h}
-         */
-        var PHOTOS = [
-          { id: "photo-1506905925346-21bda4d32df4", desc: "Mountain landscape" },
-          { id: "photo-1469474968028-56623f02e42e", desc: "Forest path" },
-          { id: "photo-1447752875215-b2761acb3c5d", desc: "Autumn forest" },
-          { id: "photo-1500534314209-a25ddb2bd429", desc: "Desert road" },
-          { id: "photo-1493246507139-91e8fad9978e", desc: "Rocky mountains" },
-          { id: "photo-1518173946687-a4c8892bbd9f", desc: "Golden field" },
-          { id: "photo-1414609245224-aea2114de439", desc: "City lights" },
-          { id: "photo-1501854140801-50d01698950b", desc: "Aerial forest" },
-          { id: "photo-1465146344425-f00d5f5c8f07", desc: "Wildflowers" },
-          { id: "photo-1433086966358-54859d0ed716", desc: "Waterfall" },
-          { id: "photo-1448375240586-882707db888b", desc: "Pine forest" },
-          { id: "photo-1546587348-d12660c30c50", desc: "Lake reflection" },
-          { id: "photo-1504893524553-b855bce32c67", desc: "Canyon river" },
-          { id: "photo-1559128010-7c1ad6e1b6a5", desc: "Ocean waves" },
-          { id: "photo-1502635385003-6675ca8cf8b5", desc: "Coastal cliffs" },
-          { id: "photo-1508739773434-c26b3d09e071", desc: "Beach sunset" },
-          { id: "photo-1518020382113-a7e8fc38eac9", desc: "Snow mountains" },
-          { id: "photo-1472214103451-9374bd1c798e", desc: "Green hills" },
-          { id: "photo-1530908295418-a12e326966ba", desc: "Night sky" },
-          { id: "photo-1519681393784-d120267933ba", desc: "Starry mountains" },
-          { id: "photo-1505765050516-f72dcac9c60e", desc: "Lake dock" },
-          { id: "photo-1477346611705-65d1883cee1e", desc: "Mountain lake" },
-          { id: "photo-1534067783941-51c9c23ecefd", desc: "Misty forest" },
-          { id: "photo-1484910292437-025e5d13ce87", desc: "Foggy trees" },
-        ];
+        var PROJECT_ID  = "m77bsvm1";
+        var DATASET     = "production";
+        var API_VERSION = "2024-01-01";
+        var CACHE_KEY   = "photos_sanity_cache_v1";
 
         var gallery = document.getElementById("gallery");
         if (!gallery) return;
 
         function buildItem(photo, index) {
-          var url = "https://images.unsplash.com/" + photo.id + "?auto=format&fit=crop&w=800&q=80";
-          var thumbUrl = "https://images.unsplash.com/" + photo.id + "?auto=format&fit=crop&w=20&q=10&blur=10";
+          var url = photo.imageUrl
+            ? (photo.imageUrl + "?auto=format&fit=crop&w=1200&q=85")
+            : "";
+          var thumbUrl = photo.lqip
+            ? photo.lqip
+            : (photo.imageUrl
+              ? (photo.imageUrl + "?auto=format&fit=crop&w=40&blur=20&q=20")
+              : "");
 
           var li = document.createElement("li");
           li.className = "photo-item";
 
-          // Blurred placeholder — tiny version shown immediately
+          // Blurred placeholder — shown immediately
           var placeholder = document.createElement("img");
           placeholder.className = "photo-placeholder";
           placeholder.setAttribute("aria-hidden", "true");
@@ -415,7 +399,7 @@
           // Real image — fades in once loaded
           var img = document.createElement("img");
           img.className = "photo-real";
-          img.alt = photo.desc;
+          img.alt = photo.title || photo.alt || "Photo";
           if (index === 0) {
             img.fetchPriority = "high";
             img.decoding = "async";
@@ -441,11 +425,49 @@
           return li;
         }
 
-        // Render all photos
-        PHOTOS.forEach(function (photo, i) {
-          gallery.appendChild(buildItem(photo, i));
-        });
+        function renderGallery(photos) {
+          if (!Array.isArray(photos)) return;
+          gallery.innerHTML = "";
+          photos.forEach(function (photo, i) {
+            if (photo && photo.imageUrl) {
+              gallery.appendChild(buildItem(photo, i));
+            }
+          });
+        }
 
+        // 1. Instant render from local cache if photos were previously loaded
+        try {
+          var raw = localStorage.getItem(CACHE_KEY);
+          if (raw) {
+            var cached = JSON.parse(raw);
+            if (Array.isArray(cached) && cached.length > 0) {
+              renderGallery(cached);
+            }
+          }
+        } catch (e) {}
+
+        // 2. Fetch custom uploaded photos directly from Sanity
+        var groq = '*[_type == "photo"] | order(order asc, _createdAt desc){ _id, title, "alt": image.alt, "imageUrl": image.asset->url, "lqip": image.asset->metadata.lqip }';
+        var url = "https://" + PROJECT_ID + ".apicdn.sanity.io/v" + API_VERSION +
+                  "/data/query/" + DATASET + "?query=" + encodeURIComponent(groq);
+
+        fetch(url)
+          .then(function (r) {
+            if (!r.ok) throw new Error("Sanity fetch status: " + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            var items = (data && data.result) || [];
+            if (Array.isArray(items)) {
+              try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify(items));
+              } catch (e) {}
+              renderGallery(items);
+            }
+          })
+          .catch(function (err) {
+            console.warn("[photos] Sanity fetch error:", err);
+          });
       })();
     </script>
   </body>
