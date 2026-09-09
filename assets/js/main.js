@@ -382,7 +382,7 @@
 
     if (noiseWrap) {
       noiseWrap.style.opacity = String(l);
-      noiseWrap.style.mixBlendMode = isDark ? "color-burn" : "color-dodge";
+      noiseWrap.style.mixBlendMode = "color-burn";
     }
   }
 
@@ -546,7 +546,7 @@ void main(){
   float noise=random(st);
   fragColor=vec4(blendOverlay(
     palette(cnoise(vec3(uv.x,uv.y+sin(uv.x+1.15+t)*3.0,t)*0.4),
-      vec3(0.45,0.29,0.45),vec3(0.5,0.3,0.1),vec3(1.0,1.1,1.1),vec3(0.38,0.25,1.1)),
+      vec3(0.55,0.75,0.92),vec3(0.25,0.20,0.15),vec3(1.0,1.0,1.0),vec3(0.0,0.15,0.35)),
     vec3(noise),0.2),1.0);
 }`;
 
