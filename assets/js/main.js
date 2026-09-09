@@ -386,75 +386,15 @@
     }
   }
 
+  // Prevent horizontal scroll from wheel gestures on hero
   window.addEventListener(
     "wheel",
     (e) => {
       if (window.matchMedia("(max-width: 720px)").matches) return;
       e.preventDefault();
-      const delta = e.deltaY + e.deltaX;
-      scrollN = uZ(scrollN + delta, -MAX_SCROLL, MAX_SCROLL);
-      setTrackOffset(trackOffset + delta);
-      onScroll();
     },
     { passive: false },
   );
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-    const dir = e.key === "ArrowRight" ? 1 : -1;
-    const nSpeed = e.shiftKey ? 500 : 10;
-    const tSpeed = 250;
-    scrollN = uZ(scrollN + dir * nSpeed, -MAX_SCROLL, MAX_SCROLL);
-    setTrackOffset(trackOffset + dir * tSpeed);
-    onScroll();
-  });
-
-  let isDragging = false,
-    dragStartX = 0,
-    dragStartO = 0,
-    dragStartN = 0;
-  let velocity = 0,
-    rafId = null;
-
-  track.addEventListener("pointerdown", (e) => {
-    isDragging = true;
-    dragStartX = e.clientX;
-    dragStartO = trackOffset;
-    dragStartN = scrollN;
-    velocity = 0;
-    cancelAnimationFrame(rafId);
-    track.setPointerCapture(e.pointerId);
-    track.style.cursor = "grabbing";
-  });
-
-  track.addEventListener("pointermove", (e) => {
-    if (!isDragging) return;
-    const dx = dragStartX - e.clientX;
-    velocity = dx - (dragStartO - trackOffset);
-    const newO = dragStartO + dx;
-    const newN = uZ(dragStartN + dx, -MAX_SCROLL, MAX_SCROLL);
-    trackOffset = ((newO % TOTAL_W) + TOTAL_W) % TOTAL_W;
-    track.style.transform = `translate3d(${-trackOffset}px, 0, 0) translateZ(0)`;
-    scrollN = newN;
-    onScroll();
-  });
-
-  const endDrag = () => {
-    if (!isDragging) return;
-    isDragging = false;
-    track.style.cursor = "";
-    const glide = () => {
-      if (Math.abs(velocity) < 0.3) return;
-      velocity *= 0.93;
-      setTrackOffset(trackOffset + velocity);
-      scrollN = uZ(scrollN + velocity, -MAX_SCROLL, MAX_SCROLL);
-      onScroll();
-      rafId = requestAnimationFrame(glide);
-    };
-    glide();
-  };
-  track.addEventListener("pointerup", endDrag);
-  track.addEventListener("pointercancel", endDrag);
 
   track
     .querySelectorAll("a[carousel-item], a[data-carousel-item]")

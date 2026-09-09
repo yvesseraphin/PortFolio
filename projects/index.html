@@ -67,7 +67,7 @@
 
     <link
       rel="preload"
-      href="../SpaceGrotesk.woff2"
+      href="../OpenSans.woff2"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
@@ -76,14 +76,27 @@
 
     <style>
       @font-face {
-        font-family: 'Space Grotesk';
-        font-weight: 300 700;
-        src: url(../SpaceGrotesk.woff2) format("woff2");
+        font-family: 'Open Sans';
+        font-weight: 300 800;
+        src: url(../OpenSans.woff2) format("woff2");
       }
+
+      @font-face {
+        font-family: 'OpenSans';
+        font-weight: 300 800;
+        src: url(../OpenSans.woff2) format("woff2");
+      }
+
+      @font-face {
+        font-family: 'Space Grotesk';
+        font-weight: 300 800;
+        src: url(../OpenSans.woff2) format("woff2");
+      }
+
       @font-face {
         font-family: X;
-        font-weight: 300 700;
-        src: url(../SpaceGrotesk.woff2) format("woff2");
+        font-weight: 300 800;
+        src: url(../OpenSans.woff2) format("woff2");
       }
 
       :root {
@@ -104,7 +117,7 @@
         --colors-amber9: hsl(39 100% 57%);
         --shadows-large: 0 30px 60px rgba(0, 0, 0, 0.12);
         --fonts-body:
-          "Space Grotesk", X, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+          "Open Sans", "OpenSans", "Space Grotesk", X, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
           "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
           sans-serif;
         --space-3: 24px;
