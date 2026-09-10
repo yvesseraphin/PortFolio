@@ -382,7 +382,7 @@
 
     if (noiseWrap) {
       noiseWrap.style.opacity = String(l);
-      noiseWrap.style.mixBlendMode = "color-burn";
+      noiseWrap.style.mixBlendMode = isDark ? "color-dodge" : "color-burn";
     }
   }
 
@@ -546,13 +546,14 @@ void main(){
   float noise=random(st);
   fragColor=vec4(blendOverlay(
     palette(cnoise(vec3(uv.x,uv.y+sin(uv.x+1.15+t)*3.0,t)*0.4),
-      vec3(0.55,0.75,0.92),vec3(0.25,0.20,0.15),vec3(1.0,1.0,1.0),vec3(0.0,0.15,0.35)),
+      vec3(0.60,0.12,0.82),vec3(0.28,0.10,0.18),vec3(1.0,1.0,1.0),vec3(0.15,0.40,0.65)),
     vec3(noise),0.2),1.0);
 }`;
 
   try {
+    const getH = () => canvas.clientHeight || 340;
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = getH();
 
     const gl = canvas.getContext("webgl2");
     if (!gl) return;
@@ -596,7 +597,7 @@ void main(){
 
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = getH();
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform1f(uWidth, canvas.width);
       gl.uniform1f(uHeight, canvas.height);
