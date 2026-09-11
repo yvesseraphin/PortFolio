@@ -546,7 +546,7 @@ void main(){
   float noise=random(st);
   fragColor=vec4(blendOverlay(
     palette(cnoise(vec3(uv.x,uv.y+sin(uv.x+1.15+t)*3.0,t)*0.4),
-      vec3(0.60,0.12,0.82),vec3(0.28,0.10,0.18),vec3(1.0,1.0,1.0),vec3(0.15,0.40,0.65)),
+      vec3(0.52,0.53,0.55),vec3(0.35,0.35,0.35),vec3(1.0,1.0,1.0),vec3(0.0,0.0,0.0)),
     vec3(noise),0.2),1.0);
 }`;
 
