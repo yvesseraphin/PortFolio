@@ -153,10 +153,8 @@
         font-family: var(--fonts-body);
         background: var(--colors-gray1);
         margin: 0;
-        min-height: 100vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        height: 100vh;
+        overflow: hidden;
       }
 
       ::selection {
@@ -229,24 +227,17 @@
         z-index: 1;
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
-        height: auto;
+        height: 100vh;
         max-width: 1150px;
         margin: 0 auto;
-        padding: 24px 32px 90px;
+        padding: 16px 32px 80px;
         justify-content: center;
+        box-sizing: border-box;
       }
 
-      @media (max-height: 760px) {
+      @media (max-height: 700px) {
         .page-canvas {
-          padding-top: 16px;
-          padding-bottom: 74px;
-        }
-      }
-
-      @media (max-height: 640px) {
-        .page-canvas {
-          padding-top: 8px;
+          padding-top: 10px;
           padding-bottom: 74px;
         }
         .liquid-aura-wrapper {
@@ -260,14 +251,17 @@
         .timeline-list {
           gap: 8px;
         }
-        .badges-flow {
-          gap: 7px;
-        }
       }
 
       @media (max-height: 520px) {
+        body {
+          overflow-y: auto;
+          height: auto;
+        }
         .page-canvas {
-          padding-top: 4px;
+          height: auto;
+          min-height: 100vh;
+          padding-top: 8px;
           padding-bottom: 70px;
         }
         .liquid-aura-wrapper {
@@ -348,9 +342,9 @@
 
       .liquid-aura-wrapper {
         position: relative;
-        width: 220px;
-        height: 170px;
-        margin-bottom: 24px;
+        width: 190px;
+        height: 125px;
+        margin-bottom: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -452,7 +446,7 @@
       .cards-col {
         display: flex;
         flex-direction: column;
-        gap: 22px;
+        gap: 16px;
         flex: 1;
         max-width: 670px;
       }
@@ -513,7 +507,7 @@
         flex-direction: column;
         position: relative;
         padding-left: 20px;
-        gap: 14px;
+        gap: 10px;
       }
 
       .timeline-item {
@@ -634,99 +628,6 @@
         }
       }
 
-      /* 4K & Large Interactive Smart Displays (IQTouch IFPD, Smart TVs, Classroom Displays) */
-      @media (min-width: 2200px) and (min-height: 1100px) {
-        .page-canvas {
-          max-width: 1600px;
-          padding: 48px 64px 140px;
-        }
-
-        .about-layout {
-          gap: 80px;
-        }
-
-        .profile-col {
-          width: 480px;
-        }
-
-        .liquid-aura-wrapper {
-          width: 300px;
-          height: 230px;
-          margin-bottom: 32px;
-        }
-
-        .profile-wordmark {
-          width: 280px;
-        }
-
-        .profile-title {
-          font-size: 22px;
-        }
-
-        .profile-bio {
-          font-size: 20px;
-          line-height: 1.65;
-        }
-
-        .cards-col {
-          max-width: 960px;
-          gap: 36px;
-        }
-
-        .section-title-group {
-          font-size: 22px;
-          gap: 14px;
-        }
-
-        .section-title-group svg {
-          width: 28px;
-          height: 28px;
-        }
-
-        .timeline-list {
-          gap: 20px;
-          padding-left: 28px;
-        }
-
-        .timeline-item:not(:last-child)::before {
-          left: -22px;
-          top: 14px;
-          bottom: -20px;
-        }
-
-        .timeline-dot {
-          left: -26px;
-          top: 8px;
-          width: 10px;
-          height: 10px;
-        }
-
-        .timeline-name {
-          font-size: 20px;
-        }
-
-        .timeline-date {
-          font-size: 18px;
-        }
-
-        .timeline-desc {
-          font-size: 18px;
-          line-height: 1.55;
-        }
-
-        .stack-badge {
-          font-size: 18px;
-          padding: 9px 18px;
-        }
-
-        .badges-flow {
-          gap: 12px;
-        }
-
-        .badges-row {
-          gap: 10px;
-        }
-      }
     </style>
   </head>
   <body>
