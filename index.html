@@ -48,6 +48,21 @@
     <script>
       !(function () {
         try {
+          if (location.hash && location.hash.indexOf(':~:') !== -1) {
+            history.replaceState(null, '', location.pathname + location.search);
+          }
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+          function toTop() {
+            if (window.scrollY !== 0) window.scrollTo(0, 0);
+            if (document.documentElement.scrollTop !== 0) document.documentElement.scrollTop = 0;
+            var pw = document.querySelector('.page-wrapper');
+            if (pw && pw.scrollTop !== 0) pw.scrollTop = 0;
+          }
+          toTop();
+          window.addEventListener('DOMContentLoaded', toTop);
+          window.addEventListener('load', toTop);
+          var _t = setInterval(toTop, 50);
+          setTimeout(function () { clearInterval(_t); }, 3000);
           var d = document.documentElement.classList;
           d.remove("dark", "light");
           var e = localStorage.getItem("theme");

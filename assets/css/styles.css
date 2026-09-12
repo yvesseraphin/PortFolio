@@ -97,6 +97,11 @@ body {
   color: black;
 }
 
+::target-text {
+  background-color: transparent;
+  color: inherit;
+}
+
 h1,
 h2,
 h3,
@@ -159,6 +164,7 @@ strong {
   position: relative;
   height: 100vh;
   overflow: hidden;
+  overflow: clip;
   padding-left: var(--space-3);
   padding-right: var(--space-3);
   padding-top: 0;

@@ -337,6 +337,47 @@
 (function () {
   "use strict";
 
+  const isFixedHome = document.querySelector(
+    ".page-wrapper:not(.page-wrapper--scroll)"
+  );
+  if (!isFixedHome) return;
+
+  function resetScroll() {
+    if (isFixedHome.scrollTop !== 0) {
+      isFixedHome.scrollTop = 0;
+    }
+    if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }
+
+  isFixedHome.scrollTop = 0;
+  isFixedHome.addEventListener("scroll", resetScroll);
+
+  // Handle Chrome text fragment (#:~:text=) or initial load shift on the fixed homepage
+  if (
+    window.location.hash.includes(":~:") ||
+    window.location.href.includes(":~:") ||
+    Boolean(document.fragmentDirective)
+  ) {
+    resetScroll();
+    window.addEventListener("scroll", resetScroll, { passive: true });
+    setTimeout(resetScroll, 50);
+    setTimeout(resetScroll, 150);
+    setTimeout(resetScroll, 300);
+    setTimeout(resetScroll, 600);
+    setTimeout(() => {
+      resetScroll();
+      window.removeEventListener("scroll", resetScroll);
+    }, 1500);
+  }
+})();
+
+(function () {
+  "use strict";
+
   function uZ(v, lo, hi) {
     return Math.min(Math.max(v, lo), hi);
   }
