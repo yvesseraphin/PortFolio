@@ -561,6 +561,7 @@ strong {
   color: var(--gray10);
   cursor: pointer;
   flex-shrink: 0;
+  text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   background-image: linear-gradient(
     45deg,
@@ -570,6 +571,13 @@ strong {
     var(--gradient-color-2)
   );
   background-size: 200% 100%;
+}
+
+.dock-btn:hover,
+.dock-btn:visited,
+.dock-btn:active {
+  text-decoration: none;
+  color: var(--gray10);
 }
 
 .dock-btn:focus-visible {

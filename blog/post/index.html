@@ -2337,7 +2337,7 @@
       >
         <div aria-hidden="true" class="dock-highlight"></div>
         <div class="dock-items">
-          <button class="dock-btn" aria-label="Home" data-href="/">
+          <a class="dock-btn" aria-label="Home" href="/" data-href="/">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -2363,8 +2363,9 @@
               />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
-          <button class="dock-btn" aria-label="Blog" data-href="/blog">
+          </a>
+
+          <a class="dock-btn" aria-label="Blog" href="/blog" data-href="/blog">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -2389,9 +2390,14 @@
                 fill="currentColor"
               />
             </svg>
-            <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
-          <button class="dock-btn" aria-label="Projects" data-href="/projects">
+            <div
+              class="dock-indicator"
+              aria-hidden="true"
+              style="opacity: 1"
+            ></div>
+          </a>
+
+          <a class="dock-btn" aria-label="Projects" href="/projects" data-href="/projects">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -2415,8 +2421,9 @@
               />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
-          <button class="dock-btn" aria-label="Photos" data-href="/photos">
+          </a>
+
+          <a class="dock-btn" aria-label="Photos" href="/photos" data-href="/photos">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -2442,8 +2449,9 @@
               />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
-          <button class="dock-btn" aria-label="About" data-href="/about">
+          </a>
+
+          <a class="dock-btn" aria-label="About" href="/about" data-href="/about">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -2466,10 +2474,11 @@
               />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
+          </a>
 
           <hr class="dock-divider" />
-          <button class="dock-btn" aria-label="CV" data-href="/cv">
+
+          <a class="dock-btn" aria-label="CV" href="/cv" data-href="/cv" target="_blank" rel="noopener noreferrer">
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
               width="24"
@@ -2499,11 +2508,15 @@
               />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
-          <button
+          </a>
+
+          <a
             class="dock-btn"
             aria-label="Instagram"
+            href="https://www.instagram.com/0x_serap_hin/"
             data-href="https://www.instagram.com/0x_serap_hin/"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -2537,11 +2550,15 @@
               <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor" />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
-          <button
+          </a>
+
+          <a
             class="dock-btn"
             aria-label="GitHub"
+            href="https://github.com/yvesseraphin"
             data-href="https://github.com/yvesseraphin"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <div aria-hidden="true" class="dock-btn-sheen"></div>
             <svg
@@ -2557,7 +2574,7 @@
               />
             </svg>
             <div class="dock-indicator" aria-hidden="true"></div>
-          </button>
+          </a>
           <button
             class="dock-btn"
             aria-label="Mail"

@@ -202,7 +202,7 @@
   });
 
   buttons.forEach((btn) => {
-    const href = btn.dataset.href;
+    const href = btn.dataset.href || btn.getAttribute("href");
     if (!href) return;
     btn.addEventListener("mouseenter", () => {
       if (href.includes("/blog") && window.__fetchBlogGrid) {
@@ -211,6 +211,7 @@
     });
     btn.addEventListener("click", (e) => {
       if (href.startsWith("mailto:")) {
+        e.preventDefault();
         const email =
           href.replace(/^mailto:/i, "").split("?")[0] ||
           "myvesseraphin@gmail.com";
@@ -259,8 +260,12 @@
       }
 
       if (href.startsWith("http")) {
+        if (btn.tagName === "A" && btn.getAttribute("target") === "_blank") {
+          return;
+        }
         window.open(href, "_blank", "noopener,noreferrer");
       } else if (href === "#") {
+        e.preventDefault();
       } else if (
         href === "/cv" ||
         href === "/cv/" ||
@@ -268,18 +273,23 @@
         href === "/CV.pdf" ||
         href.toLowerCase().endsWith(".pdf")
       ) {
+        if (btn.tagName === "A" && btn.getAttribute("target") === "_blank") {
+          return;
+        }
         window.open("/CV.pdf", "_blank", "noopener,noreferrer");
       } else if (window.__navigateWithPreload && href.includes("/blog")) {
         window.__navigateWithPreload(href, e);
       } else {
-        window.location.href = href;
+        if (btn.tagName !== "A") {
+          window.location.href = href;
+        }
       }
     });
   });
 
   const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
   buttons.forEach((btn) => {
-    const href = btn.dataset.href;
+    const href = btn.dataset.href || btn.getAttribute("href");
     if (!href) return;
     const normHref = href.replace(/\/$/, "") || "/";
     if (currentPath === normHref) {

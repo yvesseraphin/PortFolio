@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Photos</title>
+    <title>Photos — MANZI SHIMWA Yves Seraphin</title>
     <link rel="shortcut icon" href="../favicon.svg" />
     <meta name="author" content="Manzi Shimwa Yves Seraphin" />
-    <meta name="description" content="Photos by Seraphin." />
+    <meta name="description" content="Visual captures and photography moments by Manzi Shimwa Yves Seraphin." />
     <meta name="robots" content="index,follow" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Seraphin" />
-    <meta property="og:title" content="Photos — Seraphin" />
-    <meta property="og:description" content="Photos by Seraphin." />
+    <meta property="og:site_name" content="MANZI Seraphin" />
+    <meta property="og:title" content="Photos — MANZI SHIMWA Yves Seraphin" />
+    <meta property="og:description" content="Visual captures and photography moments by Manzi Shimwa Yves Seraphin." />
     <meta property="og:url" content="https://www.yvesseraphin.xyz/photos" />
     <meta
       property="og:image"
@@ -23,14 +23,53 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@0x_serap_hin" />
     <meta name="twitter:creator" content="@0x_serap_hin" />
-    <meta name="twitter:title" content="Photos — Seraphin" />
-    <meta name="twitter:description" content="Photos by Seraphin." />
+    <meta name="twitter:title" content="Photos — MANZI SHIMWA Yves Seraphin" />
+    <meta name="twitter:description" content="Visual captures and photography moments by Manzi Shimwa Yves Seraphin." />
     <meta
       name="twitter:image"
       content="https://www.yvesseraphin.xyz/assets/images/og.jpg"
     />
 
     <link rel="canonical" href="https://www.yvesseraphin.xyz/photos" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "CollectionPage",
+            "@id": "https://www.yvesseraphin.xyz/photos#webpage",
+            "url": "https://www.yvesseraphin.xyz/photos",
+            "name": "Photos — MANZI SHIMWA Yves Seraphin",
+            "description": "Visual captures and photography moments by Manzi Shimwa Yves Seraphin.",
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://www.yvesseraphin.xyz/#website",
+              "url": "https://www.yvesseraphin.xyz/",
+              "name": "MANZI SHIMWA Yves Seraphin"
+            }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.yvesseraphin.xyz/photos#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.yvesseraphin.xyz/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Photos",
+                "item": "https://www.yvesseraphin.xyz/photos"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <link
       rel="preconnect"
       href="https://m77bsvm1.apicdn.sanity.io"
@@ -316,7 +355,7 @@
     >
       <div aria-hidden="true" class="dock-highlight"></div>
       <div class="dock-items">
-        <button class="dock-btn" aria-label="Home" data-href="/">
+        <a class="dock-btn" aria-label="Home" href="/" data-href="/">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -342,8 +381,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="Blog" data-href="/blog">
+        </a>
+        <a class="dock-btn" aria-label="Blog" href="/blog" data-href="/blog">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -369,8 +408,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="Projects" data-href="/projects">
+        </a>
+        <a class="dock-btn" aria-label="Projects" href="/projects" data-href="/projects">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -394,8 +433,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="Photos" data-href="/photos">
+        </a>
+        <a class="dock-btn" aria-label="Photos" href="/photos" data-href="/photos">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -425,8 +464,8 @@
             style="opacity: 1"
             aria-hidden="true"
           ></div>
-        </button>
-        <button class="dock-btn" aria-label="About" data-href="/about">
+        </a>
+        <a class="dock-btn" aria-label="About" href="/about" data-href="/about">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -449,10 +488,10 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
+        </a>
 
         <hr class="dock-divider" />
-        <button class="dock-btn" aria-label="CV" data-href="/cv">
+        <a class="dock-btn" aria-label="CV" href="/cv" data-href="/cv" target="_blank" rel="noopener noreferrer">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -482,11 +521,14 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button
+        </a>
+        <a
           class="dock-btn"
           aria-label="Instagram"
+          href="https://www.instagram.com/0x_serap_hin/"
           data-href="https://www.instagram.com/0x_serap_hin/"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
@@ -520,11 +562,14 @@
             <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor" />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button
+        </a>
+        <a
           class="dock-btn"
           aria-label="GitHub"
+          href="https://github.com/yvesseraphin"
           data-href="https://github.com/yvesseraphin"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
@@ -540,7 +585,7 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
+        </a>
         <button
           class="dock-btn"
           aria-label="Mail"

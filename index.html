@@ -81,35 +81,99 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Manzi Shimwa Yves Seraphin",
-        "alternateName": "Seraphin",
-        "url": "https://www.yvesseraphin.xyz",
-        "email": "myvesseraphin@gmail.com",
-        "image": "https://www.yvesseraphin.xyz/assets/images/og.jpg",
-        "description": "Software Engineer and ML Engineer at Rwanda Coding Academy. Building AI-powered applications, secure software, and full-stack web solutions.",
-        "sameAs": [
-          "https://github.com/yvesseraphin",
-          "https://www.instagram.com/0x_serap_hin/"
-        ],
-        "jobTitle": "Software Engineer & ML Engineer",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Rwanda Coding Academy",
-          "url": "https://www.rca.ac.rw/"
-        },
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Kigali",
-          "addressCountry": "Rwanda"
-        },
-        "knowsAbout": [
-          "Artificial Intelligence",
-          "Machine Learning",
-          "Cybersecurity",
-          "Full-Stack Web Development",
-          "Backend Engineering",
-          "Embedded Systems"
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://www.yvesseraphin.xyz/#website",
+            "url": "https://www.yvesseraphin.xyz/",
+            "name": "MANZI SHIMWA Yves Seraphin",
+            "alternateName": [
+              "MANZI Seraphin",
+              "Yves Seraphin",
+              "Seraphin",
+              "yvesseraphin.xyz"
+            ],
+            "description": "Portfolio of Manzi Shimwa Yves Seraphin — Software Engineer & ML Engineer. Building AI-powered applications, secure software, and full-stack web solutions.",
+            "publisher": {
+              "@id": "https://www.yvesseraphin.xyz/#person"
+            },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "Person",
+            "@id": "https://www.yvesseraphin.xyz/#person",
+            "name": "Manzi Shimwa Yves Seraphin",
+            "alternateName": [
+              "MANZI Seraphin",
+              "Yves Seraphin",
+              "Seraphin",
+              "0x_serap_hin"
+            ],
+            "url": "https://www.yvesseraphin.xyz/",
+            "email": "myvesseraphin@gmail.com",
+            "image": "https://www.yvesseraphin.xyz/assets/images/og.jpg",
+            "description": "Software Engineer and ML Engineer at Rwanda Coding Academy. Building AI-powered applications, secure software, and full-stack web solutions.",
+            "sameAs": [
+              "https://github.com/yvesseraphin",
+              "https://twitter.com/0x_serap_hin",
+              "https://x.com/0x_serap_hin",
+              "https://www.instagram.com/0x_serap_hin/"
+            ],
+            "jobTitle": "Software Engineer & ML Engineer",
+            "worksFor": {
+              "@type": "Organization",
+              "name": "Rwanda Coding Academy",
+              "url": "https://www.rca.ac.rw/"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Kigali",
+              "addressCountry": "Rwanda"
+            },
+            "knowsAbout": [
+              "Artificial Intelligence",
+              "Machine Learning",
+              "Cybersecurity",
+              "Full-Stack Web Development",
+              "Backend Engineering",
+              "Embedded Systems"
+            ]
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://www.yvesseraphin.xyz/#navigation",
+            "name": "Site Navigation",
+            "itemListElement": [
+              {
+                "@type": "SiteNavigationElement",
+                "position": 1,
+                "name": "About",
+                "description": "About Seraphin — Software Engineer & ML Engineer. Education, Tech Stack, and Experience.",
+                "url": "https://www.yvesseraphin.xyz/about"
+              },
+              {
+                "@type": "SiteNavigationElement",
+                "position": 2,
+                "name": "Projects",
+                "description": "Selected software engineering, AI, and full-stack projects.",
+                "url": "https://www.yvesseraphin.xyz/projects"
+              },
+              {
+                "@type": "SiteNavigationElement",
+                "position": 3,
+                "name": "Blog",
+                "description": "Articles, notes, and technical deep dives by Seraphin.",
+                "url": "https://www.yvesseraphin.xyz/blog"
+              },
+              {
+                "@type": "SiteNavigationElement",
+                "position": 4,
+                "name": "Photos",
+                "description": "Visual captures and photography moments by Seraphin.",
+                "url": "https://www.yvesseraphin.xyz/photos"
+              }
+            ]
+          }
         ]
       }
     </script>
@@ -123,7 +187,7 @@
     >
       <div aria-hidden="true" class="dock-highlight"></div>
       <div class="dock-items">
-        <button class="dock-btn" aria-label="Home" data-href="/">
+        <a class="dock-btn" aria-label="Home" href="/" data-href="/">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -149,8 +213,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="Blog" data-href="/blog">
+        </a>
+        <a class="dock-btn" aria-label="Blog" href="/blog" data-href="/blog">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -176,8 +240,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="Projects" data-href="/projects">
+        </a>
+        <a class="dock-btn" aria-label="Projects" href="/projects" data-href="/projects">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -201,8 +265,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="Photos" data-href="/photos">
+        </a>
+        <a class="dock-btn" aria-label="Photos" href="/photos" data-href="/photos">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -228,8 +292,8 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button class="dock-btn" aria-label="About" data-href="/about">
+        </a>
+        <a class="dock-btn" aria-label="About" href="/about" data-href="/about">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -252,10 +316,10 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
+        </a>
 
         <hr class="dock-divider" />
-        <button class="dock-btn" aria-label="CV" data-href="/cv">
+        <a class="dock-btn" aria-label="CV" href="/cv" data-href="/cv" target="_blank" rel="noopener noreferrer">
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
             width="24"
@@ -285,11 +349,14 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button
+        </a>
+        <a
           class="dock-btn"
           aria-label="Instagram"
+          href="https://www.instagram.com/0x_serap_hin/"
           data-href="https://www.instagram.com/0x_serap_hin/"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
@@ -323,11 +390,14 @@
             <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor" />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
-        <button
+        </a>
+        <a
           class="dock-btn"
           aria-label="GitHub"
+          href="https://github.com/yvesseraphin"
           data-href="https://github.com/yvesseraphin"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <div aria-hidden="true" class="dock-btn-sheen"></div>
           <svg
@@ -343,7 +413,7 @@
             />
           </svg>
           <div class="dock-indicator" aria-hidden="true"></div>
-        </button>
+        </a>
         <button
           class="dock-btn"
           aria-label="Mail"
