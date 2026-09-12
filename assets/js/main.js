@@ -386,25 +386,97 @@
     }
   }
 
-  // Prevent horizontal scroll from wheel gestures on hero
+  // Wheel scrolling
   window.addEventListener(
     "wheel",
     (e) => {
       if (window.matchMedia("(max-width: 720px)").matches) return;
       e.preventDefault();
+      const delta = e.deltaY + e.deltaX;
+      scrollN = uZ(scrollN + delta, -MAX_SCROLL, MAX_SCROLL);
+      setTrackOffset(trackOffset + delta);
+      onScroll();
     },
     { passive: false },
   );
 
+  // Keyboard navigation
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const dir = e.key === "ArrowRight" ? 1 : -1;
+    const nSpeed = e.shiftKey ? 500 : 10;
+    const tSpeed = 250;
+    scrollN = uZ(scrollN + dir * nSpeed, -MAX_SCROLL, MAX_SCROLL);
+    setTrackOffset(trackOffset + dir * tSpeed);
+    onScroll();
+  });
+
+  // Pointer drag on track (touchscreen, stylus pen, and mouse)
+  let isDragging = false,
+    dragStartX = 0,
+    dragStartO = 0,
+    dragStartN = 0,
+    dragMoved = false;
+  let velocity = 0,
+    rafId = null;
+
+  track.addEventListener("pointerdown", (e) => {
+    isDragging = true;
+    dragMoved = false;
+    dragStartX = e.clientX;
+    dragStartO = trackOffset;
+    dragStartN = scrollN;
+    velocity = 0;
+    cancelAnimationFrame(rafId);
+    try {
+      track.setPointerCapture(e.pointerId);
+    } catch (_) {}
+    track.style.cursor = "grabbing";
+  });
+
+  track.addEventListener("pointermove", (e) => {
+    if (!isDragging) return;
+    const dx = dragStartX - e.clientX;
+    if (Math.abs(dx) > 6) dragMoved = true;
+    velocity = dx - (dragStartO - trackOffset);
+    const newO = dragStartO + dx;
+    const newN = uZ(dragStartN + dx, -MAX_SCROLL, MAX_SCROLL);
+    trackOffset = ((newO % TOTAL_W) + TOTAL_W) % TOTAL_W;
+    track.style.transform = `translate3d(${-trackOffset}px, 0, 0) translateZ(0)`;
+    scrollN = newN;
+    onScroll();
+  });
+
+  const endDrag = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    track.style.cursor = "";
+    if (e && e.pointerId) {
+      try {
+        track.releasePointerCapture(e.pointerId);
+      } catch (_) {}
+    }
+    const glide = () => {
+      if (Math.abs(velocity) < 0.3) return;
+      velocity *= 0.93;
+      setTrackOffset(trackOffset + velocity);
+      scrollN = uZ(scrollN + velocity, -MAX_SCROLL, MAX_SCROLL);
+      onScroll();
+      rafId = requestAnimationFrame(glide);
+    };
+    glide();
+  };
+  track.addEventListener("pointerup", endDrag);
+  track.addEventListener("pointercancel", endDrag);
+
   track
     .querySelectorAll("a[carousel-item], a[data-carousel-item]")
     .forEach((a) => {
-      let sx = 0;
-      a.addEventListener("mousedown", (e) => {
-        sx = e.clientX;
-      });
       a.addEventListener("click", (e) => {
-        if (Math.abs(e.clientX - sx) > 6) e.preventDefault();
+        if (dragMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
       });
     });
 

@@ -161,20 +161,26 @@ strong {
   overflow: hidden;
   padding-left: var(--space-3);
   padding-right: var(--space-3);
-  padding-top: 120px;
-  padding-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 60px;
+  justify-content: center;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 .page-wrapper--scroll {
   height: auto;
   min-height: 100vh;
   overflow: visible;
+  padding-top: 120px;
   padding-bottom: 120px;
+  justify-content: flex-start;
 }
 
 @media (max-width: 720px) {
   .page-wrapper {
     padding-top: 40px;
+    padding-bottom: 90px;
+    justify-content: flex-start;
   }
 }
 
@@ -290,7 +296,7 @@ strong {
   margin-top: 64px;
 }
 
-@media (hover: none) {
+@media (hover: none) and (max-width: 720px) {
   .carousel-section {
     display: none;
   }
@@ -373,9 +379,16 @@ strong {
   opacity: 0.5;
   will-change: transform;
   transform: translate3d(0, 0, 0) translateZ(0);
-  cursor: default;
+  cursor: grab;
   position: relative;
   z-index: 1;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.carousel-track:active {
+  cursor: grabbing;
 }
 
 .dark .carousel-track {
@@ -742,4 +755,35 @@ strong {
 
 .cursor-moving* * {
   user-select: none;
+}
+
+/* Responsive clearance for smart screen & TV displays with constrained heights */
+@media (max-height: 800px) {
+  .page-wrapper {
+    padding-top: 16px;
+    padding-bottom: 70px;
+    justify-content: flex-start;
+  }
+  .bio-section {
+    margin: 0 auto 12px;
+  }
+  .carousel-section {
+    margin-top: 16px;
+  }
+}
+
+@media (max-height: 680px) {
+  body,
+  html {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+  .page-wrapper {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+    padding-top: 16px;
+    padding-bottom: 90px;
+    justify-content: flex-start;
+  }
 }
