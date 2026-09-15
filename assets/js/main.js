@@ -11,7 +11,7 @@
     html.classList.add(isDark ? "light" : "dark");
     try {
       localStorage.setItem("theme", isDark ? "light" : "dark");
-    } catch (_) {}
+    } catch (_) { }
   });
 })();
 
@@ -216,7 +216,7 @@
           href.replace(/^mailto:/i, "").split("?")[0] ||
           "myvesseraphin@gmail.com";
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(email).catch(() => {});
+          navigator.clipboard.writeText(email).catch(() => { });
         } else {
           try {
             const ta = document.createElement("textarea");
@@ -226,7 +226,7 @@
             ta.select();
             document.execCommand("copy");
             document.body.removeChild(ta);
-          } catch (_) {}
+          } catch (_) { }
         }
 
         clearTimeout(tooltipTimeout);
@@ -255,7 +255,7 @@
 
         try {
           window.location.href = href;
-        } catch (_) {}
+        } catch (_) { }
         return;
       }
 
@@ -433,7 +433,7 @@
 
     if (noiseWrap) {
       noiseWrap.style.opacity = String(l);
-      noiseWrap.style.mixBlendMode = isDark ? "color-dodge" : "color-burn";
+      noiseWrap.style.mixBlendMode = isDark ? "color-burn" : "color-dodge";
     }
   }
 
@@ -481,7 +481,7 @@
     cancelAnimationFrame(rafId);
     try {
       track.setPointerCapture(e.pointerId);
-    } catch (_) {}
+    } catch (_) { }
     track.style.cursor = "grabbing";
   });
 
@@ -505,7 +505,7 @@
     if (e && e.pointerId) {
       try {
         track.releasePointerCapture(e.pointerId);
-      } catch (_) {}
+      } catch (_) { }
     }
     const glide = () => {
       if (Math.abs(velocity) < 0.3) return;
@@ -537,7 +537,7 @@
       const video = card.querySelector("video");
 
       function activate() {
-        if (video) video.play().catch(() => {});
+        if (video) video.play().catch(() => { });
         document
           .querySelectorAll("[carousel-item], [data-carousel-item]")
           .forEach((c) => {
@@ -669,7 +669,7 @@ void main(){
   float noise=random(st);
   fragColor=vec4(blendOverlay(
     palette(cnoise(vec3(uv.x,uv.y+sin(uv.x+1.15+t)*3.0,t)*0.4),
-      vec3(0.52,0.53,0.55),vec3(0.35,0.35,0.35),vec3(1.0,1.0,1.0),vec3(0.0,0.0,0.0)),
+      vec3(0.45,0.29,0.45),vec3(0.5,0.3,0.1),vec3(1.0,1.1,1.1),vec3(0.38,0.25,1.1)),
     vec3(noise),0.2),1.0);
 }`;
 
@@ -736,7 +736,7 @@ void main(){
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       requestAnimationFrame(loop);
     })();
-  } catch (e) {}
+  } catch (e) { }
 })();
 
 (function () {
@@ -942,7 +942,7 @@ void main(){
         GRID_CACHE_KEY,
         JSON.stringify({ ts: Date.now(), items: items }),
       );
-    } catch (e) {}
+    } catch (e) { }
   }
 
   var gridFetchPromise = null;
@@ -1022,7 +1022,7 @@ void main(){
     try {
       var raw = sessionStorage.getItem(key) || localStorage.getItem(key);
       if (raw) cachedObj = JSON.parse(raw);
-    } catch (e) {}
+    } catch (e) { }
 
     var groq =
       '*[_type == "post" && slug.current == $slug][0]{' +
@@ -1054,7 +1054,7 @@ void main(){
             try {
               sessionStorage.setItem(key, JSON.stringify(res));
               localStorage.setItem(key, JSON.stringify(res));
-            } catch (e) {}
+            } catch (e) { }
             if (
               res.coverImage &&
               res.coverImage.asset &&
@@ -1226,10 +1226,10 @@ void main(){
 
     var mediaEl = mediaSrc
       ? '<img src="' +
-        mediaSrc +
-        '" alt="' +
-        title +
-        '" loading="eager" decoding="async" />'
+      mediaSrc +
+      '" alt="' +
+      title +
+      '" loading="eager" decoding="async" />'
       : "";
 
     var mediaHtml =
