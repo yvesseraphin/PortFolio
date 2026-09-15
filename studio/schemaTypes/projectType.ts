@@ -265,6 +265,13 @@ export const projectType = defineType({
 
     // ── Direct Contributions ──
     defineField({
+      name: 'contributionsHeading',
+      title: 'Contributions Heading / Title',
+      type: 'string',
+      initialValue: 'Key Contributions',
+      description: 'Title for the contributions section (default: "Key Contributions")',
+    }),
+    defineField({
       name: 'directContribution',
       title: 'Your Direct Contribution',
       type: 'array',

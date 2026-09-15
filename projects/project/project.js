@@ -26,7 +26,7 @@
 
   var GROQ = slug
     ? '*[_type == "project" && slug.current == $slug][0]{' +
-      'title, "slug": slug.current, year, tagline, coverImage, "body": coalesce(body, processArchitecture), directContribution, references, referencesHeading,' +
+      'title, "slug": slug.current, year, tagline, coverImage, "body": coalesce(body, processArchitecture), contributionsHeading, directContribution, references, referencesHeading,' +
       '"prev": *[_type == "project" && (order < ^.order || (order == ^.order && _createdAt < ^._createdAt))] | order(order desc, _createdAt desc)[0]{ title, "slug": slug.current },' +
       '"next": *[_type == "project" && (order > ^.order || (order == ^.order && _createdAt > ^._createdAt))] | order(order asc, _createdAt asc)[0]{ title, "slug": slug.current }' +
       "}"
@@ -486,6 +486,17 @@
       Array.isArray(project.directContribution) &&
       project.directContribution.length
     ) {
+      var contribHeading = project.contributionsHeading || "Key Contributions";
+      var contribId = slugify(contribHeading);
+      tocItems.push({ id: contribId, label: contribHeading });
+      bodyHtml +=
+        '<h3 id="' +
+        contribId +
+        '" data-heading="true" data-toc="true" class="' +
+        H +
+        '" style="margin-top:40px;margin-bottom:12px;font-size:20px;line-height:28px">' +
+        esc(contribHeading) +
+        "</h3>";
       bodyHtml += '<ul class="project-bullet-list c-lesPJm">';
       project.directContribution.forEach(function (contrib) {
         if (typeof contrib === "string" && contrib.trim()) {
