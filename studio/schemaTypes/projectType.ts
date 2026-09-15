@@ -262,6 +262,31 @@ export const projectType = defineType({
         }),
       ],
     }),
+
+    // ── Direct Contributions ──
+    defineField({
+      name: 'directContribution',
+      title: 'Your Direct Contribution',
+      type: 'array',
+      of: [defineArrayMember({type: 'string'})],
+      description: 'Bullet points detailing your ownership vs. team contributions',
+    }),
+
+    // ── References & Citations ──
+    defineField({
+      name: 'referencesHeading',
+      title: 'References Heading',
+      type: 'string',
+      initialValue: 'References',
+      description: 'Heading for the references section at the bottom (default: "References")',
+    }),
+    defineField({
+      name: 'references',
+      title: 'References',
+      type: 'array',
+      of: [defineArrayMember({type: 'referenceItem'})],
+      description: 'Numbered citations shown at the bottom of the project page.',
+    }),
   ],
   preview: {
     select: {
