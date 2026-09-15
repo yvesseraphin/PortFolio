@@ -26,7 +26,7 @@
 
   var GROQ = slug
     ? '*[_type == "project" && slug.current == $slug][0]{' +
-      'title, "slug": slug.current, year, tagline, coverImage, "body": coalesce(body, processArchitecture), contributionsHeading, directContribution, references, referencesHeading,' +
+      'title, "slug": slug.current, year, tagline, coverImage, coverVideo, "body": coalesce(body, processArchitecture), contributionsHeading, directContribution, references, referencesHeading,' +
       '"prev": *[_type == "project" && (order < ^.order || (order == ^.order && _createdAt < ^._createdAt))] | order(order desc, _createdAt desc)[0]{ title, "slug": slug.current },' +
       '"next": *[_type == "project" && (order > ^.order || (order == ^.order && _createdAt > ^._createdAt))] | order(order asc, _createdAt asc)[0]{ title, "slug": slug.current }' +
       "}"
@@ -62,7 +62,24 @@
       dims +
       "." +
       ext;
+    if (ext === "gif") return base;
     return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
+  }
+  function sanityFileUrl(ref) {
+    if (!ref) return "";
+    var parts = ref.split("-");
+    var ext = parts[parts.length - 1];
+    var id = parts.slice(1, parts.length - 1).join("-");
+    return (
+      "https://cdn.sanity.io/files/" +
+      PROJECT_ID +
+      "/" +
+      DATASET +
+      "/" +
+      id +
+      "." +
+      ext
+    );
   }
 
   var P =
@@ -175,6 +192,32 @@
           esc(block.alt || "") +
           '" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:inherit">' +
           caption +
+          "</figure>";
+        return;
+      }
+
+      if (block._type === "videoFile" || block._type === "video") {
+        closeList();
+        var videoRef = block.asset && block.asset._ref;
+        var videoUrl = block.url || (videoRef ? sanityFileUrl(videoRef) : "");
+        if (!videoUrl) return;
+        var videoCaption = block.caption
+          ? '<figcaption style="font-size:12px;color:var(--colors-gray10);text-align:center;margin-top:4px">' +
+            esc(block.caption) +
+            "</figcaption>"
+          : "";
+        var autoplayAttr =
+          block.autoplay !== false
+            ? "autoplay loop muted playsinline"
+            : "";
+        html +=
+          '<figure class="c-gtuqhG" style="margin:24px 0">' +
+          '<video src="' +
+          esc(videoUrl) +
+          '" ' +
+          autoplayAttr +
+          ' controls style="width:100%;height:auto;display:block;border-radius:inherit"></video>' +
+          videoCaption +
           "</figure>";
         return;
       }
@@ -450,7 +493,7 @@
       ? sanityImgUrl(coverRef, 1200)
       : "https://www.yvesseraphin.xyz/assets/images/og.jpg";
 
-    document.getElementById("page-title").textContent = title + " · Seraphin";
+    document.getElementById("page-title").textContent = title;
     setMeta("meta-description", project.tagline || title);
     setMeta("og-title", title);
     setMeta("og-description", project.tagline || title);
@@ -471,13 +514,28 @@
     var tocItems = [];
     var bodyHtml = "";
 
-    if (coverRef) {
+    var coverVideoRef =
+      project.coverVideo && project.coverVideo.asset
+        ? project.coverVideo.asset._ref
+        : null;
+    var coverVideoUrl = coverVideoRef ? sanityFileUrl(coverVideoRef) : null;
+
+    if (coverVideoUrl) {
+      bodyHtml +=
+        '<div class="c-gtuqhG" style="margin-bottom:24px">' +
+        '<video src="' +
+        esc(coverVideoUrl) +
+        '" autoplay loop muted playsinline controls ' +
+        'style="width:100%;height:auto;display:block;border-radius:inherit"></video></div>';
+    } else if (coverRef) {
       bodyHtml +=
         '<div class="c-gtuqhG" style="margin-bottom:24px">' +
         '<img src="' +
         esc(sanityImgUrl(coverRef, 1200)) +
         '" fetchpriority="high" loading="eager" decoding="async" ' +
-        'alt="Cover image" style="width:100%;height:auto;display:block;border-radius:inherit"></div>';
+        'alt="' +
+        esc((project.coverImage && project.coverImage.alt) || title) +
+        '" style="width:100%;height:auto;display:block;border-radius:inherit"></div>';
     }
 
     bodyHtml += renderBody(project.body || [], tocItems);

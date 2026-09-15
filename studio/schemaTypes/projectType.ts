@@ -101,9 +101,9 @@ export const projectType = defineType({
     }),
     defineField({
       name: 'coverImage',
-      title: 'Cover Image / Visual Demo',
+      title: 'Cover Image / Visual Demo (Image or GIF)',
       type: 'image',
-      description: 'Main project screenshot or visual banner',
+      description: 'Main project screenshot, demo GIF, or visual banner',
       options: {hotspot: true},
       fields: [
         defineField({
@@ -112,6 +112,15 @@ export const projectType = defineType({
           type: 'string',
         }),
       ],
+    }),
+    defineField({
+      name: 'coverVideo',
+      title: 'Cover Video (MP4 / WebM)',
+      type: 'file',
+      description: 'Optional demo video. If uploaded, displays at the top of the project page.',
+      options: {
+        accept: 'video/mp4,video/webm,video/quicktime',
+      },
     }),
     defineField({
       name: 'techStack',
@@ -188,7 +197,7 @@ export const projectType = defineType({
         }),
         defineArrayMember({
           type: 'image',
-          title: 'Inline Image',
+          title: 'Inline Image / Animated GIF',
           options: {hotspot: true},
           fields: [
             defineField({
@@ -200,6 +209,28 @@ export const projectType = defineType({
               name: 'caption',
               type: 'string',
               title: 'Caption',
+            }),
+          ],
+        }),
+        defineArrayMember({
+          type: 'file',
+          name: 'videoFile',
+          title: 'Inline Video (MP4 / WebM)',
+          description: 'Upload a short video or screen recording clip',
+          options: {
+            accept: 'video/mp4,video/webm,video/quicktime',
+          },
+          fields: [
+            defineField({
+              name: 'caption',
+              type: 'string',
+              title: 'Caption',
+            }),
+            defineField({
+              name: 'autoplay',
+              type: 'boolean',
+              title: 'Autoplay (muted, loop)',
+              initialValue: true,
             }),
           ],
         }),
