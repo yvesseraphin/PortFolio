@@ -11,7 +11,6 @@
     content="About Seraphin — Software Engineer & ML Engineer. Education, Tech Stack, and Experience." />
   <meta name="robots" content="index,follow" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MANZI Seraphin" />
   <meta property="og:title" content="About — MANZI SHIMWA Yves Seraphin" />
@@ -23,7 +22,6 @@
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="About — Seraphin" />
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@0x_serap_hin" />
   <meta name="twitter:creator" content="@0x_serap_hin" />
@@ -104,8 +102,6 @@
 
   <link rel="preload" href="/OpenSans.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
   <link rel="stylesheet" href="/assets/css/styles.css" />
-
-
 
   <style>
     @font-face {
@@ -210,7 +206,6 @@
       cursor: pointer;
     }
 
-    /* Background Atmospheric Graphics */
     .bg-layer {
       position: fixed;
       inset: 0;
@@ -255,7 +250,6 @@
       mix-blend-mode: screen;
     }
 
-    /* Main Page Wrapper */
     .page-canvas {
       position: relative;
       z-index: 1;
@@ -318,7 +312,6 @@
       }
     }
 
-    /* Top Bar */
     .top-nav {
       display: flex;
       align-items: center;
@@ -362,7 +355,6 @@
       font-size: 14px;
     }
 
-    /* Main Two-Column Layout */
     .about-layout {
       display: flex;
       align-items: center;
@@ -373,7 +365,6 @@
       margin-bottom: auto;
     }
 
-    /* Left Column: Profile Bio & Liquid Art */
     .profile-col {
       display: flex;
       flex-direction: column;
@@ -434,7 +425,6 @@
       margin-top: 4px;
     }
 
-    /* Metadata chips layout */
     .profile-meta-list {
       display: flex;
       flex-direction: column;
@@ -483,7 +473,6 @@
       color: var(--colors-gray12);
     }
 
-    /* Right Column: Two Spacious Uncompressed Sections */
     .cards-col {
       display: flex;
       flex-direction: column;
@@ -542,7 +531,6 @@
       height: 14px;
     }
 
-    /* Timeline List (Education & Experience) */
     .timeline-list {
       display: flex;
       flex-direction: column;
@@ -558,7 +546,6 @@
       gap: 3px;
     }
 
-    /* Connecting vertical line stopping at the last dot */
     .timeline-item:not(:last-child)::before {
       content: "";
       position: absolute;
@@ -608,7 +595,6 @@
       line-height: 1.5;
     }
 
-    /* Tech Stack Badges */
     .badges-flow {
       display: flex;
       flex-direction: column;
@@ -640,7 +626,6 @@
       background: var(--colors-gray5);
     }
 
-    /* Responsive rules */
     @media (max-width: 860px) {
       body {
         overflow-y: auto;
@@ -672,13 +657,11 @@
 </head>
 
 <body>
-  <!-- Background graphics from earlier commits -->
   <div class="bg-layer" aria-hidden="true">
-    <img src="/assets/images/bg-liquid-left.png" class="bg-liquid-left" alt="" />
-    <img src="/assets/images/bg-arch-right.png" class="bg-arch-right" alt="" />
+    <img src="/assets/images/bg-liquid-left.webp" class="bg-liquid-left" alt="" decoding="async" />
+    <img src="/assets/images/bg-arch-right.webp" class="bg-arch-right" alt="" decoding="async" />
   </div>
 
-  <!-- Persistent Dock matching all pages -->
   <footer id="footer" class="dock" role="navigation" aria-label="Site navigation">
     <div aria-hidden="true" class="dock-highlight"></div>
     <div class="dock-items">
@@ -828,18 +811,14 @@
     </div>
   </footer>
 
-  <!-- Main Viewport Canvas -->
   <main class="page-canvas">
-    <!-- Two-Column Layout (Spacious, Clean, Uncompressed) -->
     <div class="about-layout">
-      <!-- Left Column: Identity, Bio & Liquid Aura -->
       <section class="profile-col" aria-label="Profile">
         <div class="liquid-aura-wrapper">
-          <img src="/assets/images/about-liquid-splash.png" alt="" class="liquid-aura-img" width="220" height="170" />
+          <img src="/assets/images/about-liquid-splash.webp" alt="" class="liquid-aura-img" width="220" height="170" decoding="async" />
         </div>
 
         <div class="profile-info">
-          <!-- SERAPHIN Custom Wordmark SVG -->
           <svg class="profile-wordmark" viewBox="408 287 692 190" fill="none" xmlns="http://www.w3.org/2000/svg"
             aria-label="SERAPHIN">
             <path id="L1" fill="currentColor" fill-rule="evenodd"
@@ -868,9 +847,7 @@
         </div>
       </section>
 
-      <!-- Right Column: 2 Open, Focused Sections -->
       <section class="cards-col" aria-label="Details">
-        <!-- Section 1: Education -->
         <div class="about-section">
           <div class="section-top">
             <div class="section-title-group">
@@ -919,7 +896,6 @@
           </div>
         </div>
 
-        <!-- Section 2: Tech Stack (Core Software, ML & Cybersecurity) -->
         <div class="about-section">
           <div class="section-top">
             <div class="section-title-group">
