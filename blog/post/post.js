@@ -69,7 +69,7 @@
       dims +
       "." +
       ext;
-    return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
+    return base + (width ? "?w=" + width + "&q=75&auto=format&fit=max" : "?q=75&auto=format");
   }
 
   var P =

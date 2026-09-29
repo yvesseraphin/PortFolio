@@ -216,38 +216,49 @@
 
     .bg-liquid-left {
       position: absolute;
-      left: 0;
+      left: -20px;
       top: 50%;
       transform: translateY(-50%);
-      height: 75vh;
-      max-height: 700px;
-      opacity: 0.35;
+      height: 70vh;
+      max-height: 640px;
+      opacity: 0.18;
       mix-blend-mode: multiply;
       user-select: none;
+      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 75%);
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 75%);
     }
 
     .bg-arch-right {
       position: absolute;
-      right: 0;
+      right: -20px;
       top: 50%;
       transform: translateY(-50%);
-      height: 75vh;
-      max-height: 700px;
-      opacity: 0.30;
+      height: 70vh;
+      max-height: 640px;
+      opacity: 0.16;
       mix-blend-mode: multiply;
       user-select: none;
+      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 75%);
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 75%);
     }
 
     .dark .bg-liquid-left {
-      opacity: 0.18;
+      opacity: 0.12;
       filter: invert(1);
       mix-blend-mode: screen;
     }
 
     .dark .bg-arch-right {
-      opacity: 0.15;
+      opacity: 0.10;
       filter: invert(1);
       mix-blend-mode: screen;
+    }
+
+    /* On tablets & mobile: completely remove background images so words are never obstructed */
+    @media (max-width: 1024px) {
+      .bg-layer {
+        display: none !important;
+      }
     }
 
     .page-canvas {
@@ -258,58 +269,9 @@
       height: 100vh;
       max-width: 1150px;
       margin: 0 auto;
-      padding: 16px 32px 80px;
+      padding: 24px 32px max(84px, calc(env(safe-area-inset-bottom) + 74px));
       justify-content: center;
       box-sizing: border-box;
-    }
-
-    @media (max-height: 700px) {
-      .page-canvas {
-        padding-top: 10px;
-        padding-bottom: 74px;
-      }
-
-      .liquid-aura-wrapper {
-        height: 100px;
-        width: 150px;
-        margin-bottom: 8px;
-      }
-
-      .cards-col {
-        gap: 12px;
-      }
-
-      .timeline-list {
-        gap: 8px;
-      }
-    }
-
-    @media (max-height: 520px) {
-      body {
-        overflow-y: auto;
-        height: auto;
-      }
-
-      .page-canvas {
-        height: auto;
-        min-height: 100vh;
-        padding-top: 8px;
-        padding-bottom: 70px;
-      }
-
-      .liquid-aura-wrapper {
-        height: 75px;
-        width: 110px;
-        margin-bottom: 4px;
-      }
-
-      .cards-col {
-        gap: 8px;
-      }
-
-      .timeline-list {
-        gap: 5px;
-      }
     }
 
     .top-nav {
@@ -319,6 +281,7 @@
       width: 100%;
       height: 32px;
       user-select: none;
+      margin-bottom: 12px;
     }
 
     .back-home {
@@ -374,18 +337,19 @@
 
     .liquid-aura-wrapper {
       position: relative;
-      width: 190px;
-      height: 125px;
+      width: 180px;
+      height: 120px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     .liquid-aura-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      object-position: left center;
       user-select: none;
       mix-blend-mode: multiply;
       opacity: 0.85;
@@ -423,60 +387,13 @@
       line-height: 1.6;
       color: var(--colors-gray12);
       margin-top: 4px;
-    }
-
-    .profile-meta-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .profile-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .meta-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      font-size: 13.5px;
-      color: var(--colors-gray11);
-    }
-
-    .chip-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--colors-gray3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--colors-gray11);
-      flex-shrink: 0;
-    }
-
-    .chip-icon i,
-    .chip-icon svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .meta-chip a {
-      color: inherit;
-      transition: color 150ms ease;
-    }
-
-    .meta-chip a:hover {
-      color: var(--colors-gray12);
+      text-wrap: pretty;
     }
 
     .cards-col {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
       flex: 1;
       max-width: 670px;
     }
@@ -510,33 +427,12 @@
       flex-shrink: 0;
     }
 
-    .section-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--colors-gray10);
-      cursor: pointer;
-      transition: color 150ms ease;
-    }
-
-    .section-action:hover {
-      color: var(--colors-gray12);
-    }
-
-    .section-action i,
-    .section-action svg {
-      width: 14px;
-      height: 14px;
-    }
-
     .timeline-list {
       display: flex;
       flex-direction: column;
       position: relative;
       padding-left: 20px;
-      gap: 10px;
+      gap: 12px;
     }
 
     .timeline-item {
@@ -551,7 +447,7 @@
       position: absolute;
       left: -16px;
       top: 10px;
-      bottom: -14px;
+      bottom: -16px;
       width: 2px;
       background: var(--colors-gray5);
     }
@@ -572,24 +468,27 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 4px 12px;
     }
 
     .timeline-name {
       font-size: 16px;
       font-weight: 500;
       color: var(--colors-gray12);
+      flex: 1 1 200px;
     }
 
     .timeline-date {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 400;
       color: var(--colors-gray9);
       white-space: nowrap;
+      margin-left: auto;
     }
 
     .timeline-desc {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 400;
       color: var(--colors-gray10);
       line-height: 1.5;
@@ -598,7 +497,7 @@
     .badges-flow {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 10px;
     }
 
     .badges-row {
@@ -614,7 +513,7 @@
       border: none;
       border-radius: 9999px;
       padding: 6px 14px;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 500;
       color: var(--colors-gray12);
       line-height: 1.35;
@@ -626,31 +525,105 @@
       background: var(--colors-gray5);
     }
 
-    @media (max-width: 860px) {
+    /* Tablet & Responsive Breakpoints */
+    @media (max-width: 960px) {
       body {
-        overflow-y: auto;
-        height: auto;
+        overflow-y: auto !important;
+        height: auto !important;
       }
 
       .page-canvas {
-        height: auto;
+        height: auto !important;
         min-height: 100vh;
-        padding: 24px 16px 100px;
+        padding: 24px 24px max(110px, calc(env(safe-area-inset-bottom) + 96px));
+        justify-content: flex-start;
       }
 
       .about-layout {
         flex-direction: column;
         align-items: flex-start;
         gap: 36px;
+        margin-top: 16px;
+        margin-bottom: 24px;
       }
 
       .profile-col {
         width: 100%;
       }
 
+      .liquid-aura-wrapper {
+        width: 150px;
+        height: 100px;
+        margin-bottom: 8px;
+      }
+
       .cards-col {
         width: 100%;
         max-width: 100%;
+        gap: 28px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .page-canvas {
+        padding-left: 18px;
+        padding-right: 18px;
+        padding-top: 20px;
+        padding-bottom: max(120px, calc(env(safe-area-inset-bottom) + 104px));
+      }
+
+      .about-layout {
+        gap: 28px;
+      }
+
+      .profile-wordmark {
+        width: 180px;
+      }
+
+      .profile-bio {
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .timeline-list {
+        padding-left: 16px;
+      }
+
+      .timeline-dot {
+        left: -16px;
+      }
+
+      .timeline-item:not(:last-child)::before {
+        left: -13px;
+      }
+
+      .timeline-name {
+        font-size: 15px;
+      }
+
+      .timeline-date {
+        font-size: 13px;
+      }
+
+      .stack-badge {
+        padding: 5px 12px;
+        font-size: 13.5px;
+      }
+    }
+
+    /* Height constraint fallback */
+    @media (max-height: 720px) and (min-width: 961px) {
+      body {
+        overflow-y: auto !important;
+        height: auto !important;
+      }
+
+      .page-canvas {
+        height: auto !important;
+        min-height: 100vh;
+        padding-top: 20px;
+        padding-bottom: 90px;
+        justify-content: flex-start;
       }
     }
   </style>

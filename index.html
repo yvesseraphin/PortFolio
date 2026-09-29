@@ -53,16 +53,17 @@
           }
           if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
           function toTop() {
-            if (window.scrollY !== 0) window.scrollTo(0, 0);
-            if (document.documentElement.scrollTop !== 0) document.documentElement.scrollTop = 0;
-            var pw = document.querySelector('.page-wrapper');
-            if (pw && pw.scrollTop !== 0) pw.scrollTop = 0;
+            if (location.hash && location.hash.indexOf(':~:') !== -1) {
+              if (window.scrollY !== 0) window.scrollTo(0, 0);
+              if (document.documentElement.scrollTop !== 0) document.documentElement.scrollTop = 0;
+              var pw = document.querySelector('.page-wrapper');
+              if (pw && pw.scrollTop !== 0) pw.scrollTop = 0;
+            }
           }
           toTop();
           window.addEventListener('DOMContentLoaded', toTop);
-          window.addEventListener('load', toTop);
           var _t = setInterval(toTop, 50);
-          setTimeout(function () { clearInterval(_t); }, 3000);
+          setTimeout(function () { clearInterval(_t); }, 300);
           var d = document.documentElement.classList;
           d.remove("dark", "light");
           var e = localStorage.getItem("theme");
@@ -73,6 +74,22 @@
           } else if (e) {
             d.add(e);
           }
+          function applyScale() {
+            if (window.innerWidth > 720) {
+              var h = window.innerHeight;
+              var availH = h - 90;
+              if (availH < 760) {
+                var s = Math.min(1, Math.max(0.55, availH / 760));
+                document.documentElement.style.setProperty('--page-scale', s.toFixed(4));
+              } else {
+                document.documentElement.style.removeProperty('--page-scale');
+              }
+            } else {
+              document.documentElement.style.removeProperty('--page-scale');
+            }
+          }
+          applyScale();
+          window.addEventListener('resize', applyScale, { passive: true });
         } catch (e) {}
       })();
     </script>
@@ -84,7 +101,7 @@
       type="font/woff2"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/styles.css?v=10" />
     <meta
       name="google-site-verification"
       content="aysQaAjMoIb5-I-E33AbfJ_CT-yEspKddj-fhM6jWfY"
@@ -502,7 +519,15 @@
             aria-label="Current time and location"
           >
             <span class="header-meta">
-              <span data-clock>12:50:12</span>
+              <span data-clock id="live-clock">--:--:--</span>
+              <script>
+                (function(){
+                  try {
+                    var el = document.getElementById("live-clock");
+                    if (el) el.textContent = new Date().toLocaleTimeString([], { timeZone: "Africa/Kigali", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+                  } catch(e){}
+                })();
+              </script>
               <span class="meta-dot">.</span>
               <span>Kigali, Rwanda</span>
             </span>
@@ -667,7 +692,7 @@
             />
           </svg>
 
-          <div id="carousel-inner" class="carousel-inner" style="opacity: 0">
+          <div id="carousel-inner" class="carousel-inner">
             <div
               aria-hidden="true"
               class="carousel-fade carousel-fade--left"
@@ -685,14 +710,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/1.jpg"
-                  alt="Photo 1"
-                  width="320"
-                  height="340"
-                  loading="eager"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/1.webp" type="image/webp" />
+                  <img
+                    src="assets/images/1.jpg"
+                    alt="Photo 1"
+                    width="320"
+                    height="340"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -716,14 +744,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/2.jpg"
-                  alt="Photo 2"
-                  width="320"
-                  height="340"
-                  loading="eager"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/2.webp" type="image/webp" />
+                  <img
+                    src="assets/images/2.jpg"
+                    alt="Photo 2"
+                    width="320"
+                    height="340"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -747,14 +778,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/3.jpg"
-                  alt="Photo 3"
-                  width="320"
-                  height="340"
-                  loading="eager"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/3.webp" type="image/webp" />
+                  <img
+                    src="assets/images/3.jpg"
+                    alt="Photo 3"
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -778,14 +812,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/4.jpg"
-                  alt="Photo 4"
-                  width="320"
-                  height="340"
-                  loading="eager"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/4.webp" type="image/webp" />
+                  <img
+                    src="assets/images/4.jpg"
+                    alt="Photo 4"
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -809,14 +846,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/5.jpg"
-                  alt="Photo 5"
-                  width="320"
-                  height="340"
-                  loading="eager"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/5.webp" type="image/webp" />
+                  <img
+                    src="assets/images/5.jpg"
+                    alt="Photo 5"
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -840,14 +880,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/6.jpg"
-                  alt="Photo 6"
-                  width="320"
-                  height="340"
-                  loading="eager"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/6.webp" type="image/webp" />
+                  <img
+                    src="assets/images/6.jpg"
+                    alt="Photo 6"
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -871,14 +914,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/7.jpg"
-                  alt="Photo 7"
-                  width="320"
-                  height="340"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/7.webp" type="image/webp" />
+                  <img
+                    src="assets/images/7.jpg"
+                    alt="Photo 7"
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -902,14 +948,17 @@
                 carousel-item
                 tabindex="-1"
               >
-                <img
-                  src="assets/images/8.jpg"
-                  alt="Photo 8"
-                  width="320"
-                  height="340"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source srcset="assets/images/8.webp" type="image/webp" />
+                  <img
+                    src="assets/images/8.jpg"
+                    alt="Photo 8"
+                    width="320"
+                    height="340"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div
                   data-fake-button=""
                   class="card-arrow-btn"
@@ -933,13 +982,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/1.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/1.webp" type="image/webp" />
+                    <img
+                      src="assets/images/1.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -956,13 +1008,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/2.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/2.webp" type="image/webp" />
+                    <img
+                      src="assets/images/2.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -979,13 +1034,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/3.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/3.webp" type="image/webp" />
+                    <img
+                      src="assets/images/3.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1002,13 +1060,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/4.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/4.webp" type="image/webp" />
+                    <img
+                      src="assets/images/4.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1025,13 +1086,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/5.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/5.webp" type="image/webp" />
+                    <img
+                      src="assets/images/5.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1048,13 +1112,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/6.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/6.webp" type="image/webp" />
+                    <img
+                      src="assets/images/6.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1071,13 +1138,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/7.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/7.webp" type="image/webp" />
+                    <img
+                      src="assets/images/7.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1094,13 +1164,16 @@
                   class="carousel-card"
                   carousel-item
                   tabindex="-1"
-                  ><img
-                    src="assets/images/8.jpg"
-                    alt=""
-                    width="320"
-                    height="340"
-                    loading="lazy"
-                    decoding="async" />
+                  ><picture>
+                    <source srcset="assets/images/8.webp" type="image/webp" />
+                    <img
+                      src="assets/images/8.jpg"
+                      alt=""
+                      width="320"
+                      height="340"
+                      loading="lazy"
+                      decoding="async" />
+                  </picture>
                   <div data-fake-button="" class="card-arrow-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -1124,6 +1197,6 @@
       </div>
     </main>
 
-    <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/main.js?v=10" defer></script>
   </body>
 </html>

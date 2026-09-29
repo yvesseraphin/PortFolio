@@ -81,10 +81,27 @@
   const INPUT_DIST = [-240, -192, -120, 0, 120, 192, 240];
   const OUTPUT_SIZE = [40, 44, 56.56, 80, 56.56, 44, 40];
   let mouseX = null;
+  let cachedCenters = null;
+
+  function recomputeCenters() {
+    cachedCenters = buttonState.map(({ btn }) => {
+      const rect = btn.getBoundingClientRect();
+      return rect.left + rect.width / 2;
+    });
+  }
+
+  footer.addEventListener("pointerenter", () => {
+    recomputeCenters();
+  });
+
+  window.addEventListener("resize", () => {
+    cachedCenters = null;
+  });
 
   footer.addEventListener("pointermove", (e) => {
     if (e.pointerType !== "mouse") return;
     mouseX = e.clientX;
+    if (!cachedCenters) recomputeCenters();
     updateSizes();
   });
 
@@ -116,11 +133,10 @@
   });
 
   function updateSizes() {
-    buttonState.forEach(({ btn, sizeSpring }) => {
+    buttonState.forEach(({ btn, sizeSpring }, idx) => {
       let targetSize = 40;
-      if (mouseX !== null) {
-        const rect = btn.getBoundingClientRect();
-        const center = rect.left + rect.width / 2;
+      if (mouseX !== null && cachedCenters) {
+        const center = cachedCenters[idx];
         const dist = mouseX - center;
         targetSize = interpolate(INPUT_DIST, OUTPUT_SIZE, dist);
       }
@@ -144,7 +160,7 @@
     pointer-events: none;
     white-space: nowrap;
     opacity: 0;
-    transform: translateY(4px);
+    transform: translate(-50%, -100%) translateY(4px);
     transition: opacity 150ms ease, transform 150ms ease;
   `;
   document.body.appendChild(tooltip);
@@ -171,24 +187,16 @@
       tooltip.textContent = label;
       updateTooltipTheme();
       const rect = btn.getBoundingClientRect();
-      const tw = tooltip.offsetWidth || 80;
-      tooltip.style.left = rect.left + rect.width / 2 - tw / 2 + "px";
-      tooltip.style.top = rect.top - 8 - 28 + "px";
-
+      tooltip.style.left = rect.left + rect.width / 2 + "px";
+      tooltip.style.top = rect.top - 8 + "px";
       tooltip.style.opacity = "1";
-      tooltip.style.transform = "translateY(0)";
-
-      requestAnimationFrame(() => {
-        const tw2 = tooltip.offsetWidth;
-        tooltip.style.left = rect.left + rect.width / 2 - tw2 / 2 + "px";
-        tooltip.style.top = rect.top - 8 - tooltip.offsetHeight + "px";
-      });
+      tooltip.style.transform = "translate(-50%, -100%) translateY(0)";
     });
 
     btn.addEventListener("mouseleave", () => {
       tooltipTimeout = setTimeout(() => {
         tooltip.style.opacity = "0";
-        tooltip.style.transform = "translateY(4px)";
+        tooltip.style.transform = "translate(-50%, -100%) translateY(4px)";
       }, 60);
     });
 
@@ -197,7 +205,7 @@
         return;
       }
       tooltip.style.opacity = "0";
-      tooltip.style.transform = "translateY(4px)";
+      tooltip.style.transform = "translate(-50%, -100%) translateY(4px)";
     });
   });
 
@@ -434,6 +442,9 @@
     if (noiseWrap) {
       noiseWrap.style.opacity = String(l);
       noiseWrap.style.mixBlendMode = isDark ? "color-burn" : "color-dodge";
+      if (l > 0.01 && window.__wakeNoiseCanvas) {
+        window.__wakeNoiseCanvas();
+      }
     }
   }
 
@@ -462,6 +473,11 @@
     onScroll();
   });
 
+  function getPageScale() {
+    const s = parseFloat(document.documentElement.style.getPropertyValue("--page-scale"));
+    return !isNaN(s) && s > 0 ? s : 1;
+  }
+
   // Pointer drag on track (touchscreen, stylus pen, and mouse)
   let isDragging = false,
     dragStartX = 0,
@@ -471,7 +487,7 @@
   let velocity = 0,
     rafId = null;
 
-  track.addEventListener("pointerdown", (e) => {
+  function onPointerDown(e) {
     isDragging = true;
     dragMoved = false;
     dragStartX = e.clientX;
@@ -483,12 +499,16 @@
       track.setPointerCapture(e.pointerId);
     } catch (_) { }
     track.style.cursor = "grabbing";
-  });
+    if (window.__wakeNoiseCanvas) window.__wakeNoiseCanvas();
+  }
+
+  track.addEventListener("pointerdown", onPointerDown);
 
   track.addEventListener("pointermove", (e) => {
     if (!isDragging) return;
-    const dx = dragStartX - e.clientX;
-    if (Math.abs(dx) > 6) dragMoved = true;
+    const scale = getPageScale();
+    const dx = (dragStartX - e.clientX) / scale;
+    if (Math.abs(dx) > 5) dragMoved = true;
     velocity = dx - (dragStartO - trackOffset);
     const newO = dragStartO + dx;
     const newN = uZ(dragStartN + dx, -MAX_SCROLL, MAX_SCROLL);
@@ -508,8 +528,8 @@
       } catch (_) { }
     }
     const glide = () => {
-      if (Math.abs(velocity) < 0.3) return;
-      velocity *= 0.93;
+      if (Math.abs(velocity) < 0.25) return;
+      velocity *= 0.92;
       setTrackOffset(trackOffset + velocity);
       scrollN = uZ(scrollN + velocity, -MAX_SCROLL, MAX_SCROLL);
       onScroll();
@@ -561,11 +581,7 @@
       });
     });
 
-  const inner = document.getElementById("carousel-inner");
-  if (inner)
-    setTimeout(() => {
-      inner.style.opacity = "1";
-    }, 150);
+  // Carousel is now visible immediately with CSS to prevent layout popping
 
   function updateLetterParallax(i, a) {
     const letters = [
@@ -719,7 +735,7 @@ void main(){
     gl.uniform1f(uHeight, canvas.height);
 
     window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
+      canvas.width = Math.min(window.innerWidth, 1440);
       canvas.height = getH();
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform1f(uWidth, canvas.width);
@@ -727,29 +743,82 @@ void main(){
     });
 
     let elapsed = 0,
-      t0 = Date.now();
-    (function loop() {
+      t0 = Date.now(),
+      rafId = null,
+      isLooping = false,
+      idleTimer = null;
+
+    function renderFrame() {
       const now = Date.now();
       elapsed += (now - t0) / 2000;
       t0 = now;
       gl.uniform1f(uTime, elapsed);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      requestAnimationFrame(loop);
-    })();
+    }
+
+    function startLoop() {
+      t0 = Date.now();
+      if (!isLooping) {
+        isLooping = true;
+        (function tick() {
+          if (!isLooping) return;
+          renderFrame();
+          rafId = requestAnimationFrame(tick);
+        })();
+      }
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        isLooping = false;
+        cancelAnimationFrame(rafId);
+      }, 1200);
+    }
+
+    // Render single initial frame so shader is ready without continuous background drain
+    renderFrame();
+
+    window.__wakeNoiseCanvas = startLoop;
+    window.addEventListener("scroll", startLoop, { passive: true });
+    window.addEventListener("wheel", startLoop, { passive: true });
+    window.addEventListener("pointerdown", startLoop, { passive: true });
+    window.addEventListener("touchmove", startLoop, { passive: true });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        isLooping = false;
+        cancelAnimationFrame(rafId);
+      } else {
+        renderFrame();
+      }
+    });
   } catch (e) { }
 })();
 
 (function () {
   "use strict";
-  const isBlog = window.location.pathname.includes("/blog");
-  const isProject = window.location.pathname.includes("/projects");
-  const isPhotos = window.location.pathname.includes("/photos");
-  if (isBlog || isProject || isPhotos) return;
+  const path = window.location.pathname;
+  const isScrollablePage =
+    path.includes("/blog") ||
+    path.includes("/projects") ||
+    path.includes("/photos") ||
+    path.includes("/about");
+  if (isScrollablePage) return;
 
-  document.body.style.overflow = "hidden";
-  document.body.style.overscrollBehaviorX = "none";
-  document.body.style.overscrollBehaviorY = "none";
-  document.documentElement.style.overflow = "hidden";
+  function updateHomeOverflow() {
+    const isConstrained = window.innerWidth <= 720 || window.innerHeight < 640;
+    if (isConstrained) {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      document.body.style.overscrollBehaviorX = "";
+      document.body.style.overscrollBehaviorY = "";
+    } else {
+      document.body.style.overflow = "hidden";
+      document.body.style.overscrollBehaviorX = "none";
+      document.body.style.overscrollBehaviorY = "none";
+      document.documentElement.style.overflow = "hidden";
+    }
+  }
+
+  updateHomeOverflow();
+  window.addEventListener("resize", updateHomeOverflow, { passive: true });
 })();
 
 (function () {
@@ -921,7 +990,7 @@ void main(){
       dims +
       "." +
       ext;
-    return base + (width ? "?w=" + width + "&auto=format&fit=max" : "");
+    return base + (width ? "?w=" + width + "&q=75&auto=format&fit=max" : "?q=75&auto=format");
   }
 
   function readBlogGridCache() {
@@ -929,8 +998,8 @@ void main(){
       var raw = localStorage.getItem(GRID_CACHE_KEY);
       if (!raw) return null;
       var cached = JSON.parse(raw);
-      if (Date.now() - cached.ts > GRID_CACHE_TTL) return null;
-      return cached.items;
+      // Stale-While-Revalidate: serve cached items immediately
+      return cached ? cached.items : null;
     } catch (e) {
       return null;
     }
@@ -949,10 +1018,7 @@ void main(){
 
   function fetchBlogGrid() {
     var cached = readBlogGridCache();
-    if (cached) {
-      preloadGridImages(cached);
-    }
-    if (gridFetchPromise) return gridFetchPromise || Promise.resolve(cached);
+    if (gridFetchPromise) return gridFetchPromise;
 
     var sanityUrl =
       "https://" +
@@ -964,24 +1030,36 @@ void main(){
       "?query=" +
       encodeURIComponent(GRID_GROQ);
 
-    gridFetchPromise = fetch(sanityUrl)
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var signal = controller ? controller.signal : undefined;
+    var timer = setTimeout(function() {
+      if (controller) controller.abort();
+    }, 6000);
+
+    gridFetchPromise = fetch(sanityUrl, { signal: signal })
       .then(function (r) {
+        clearTimeout(timer);
         if (!r.ok) throw new Error("Sanity fetch failed: " + r.status);
         return r.json();
       })
       .then(function (data) {
+        clearTimeout(timer);
         var items = (data && data.result) || [];
         if (items.length) {
           writeBlogGridCache(items);
-          preloadGridImages(items);
-          prefetchAllPostsInBackground(items);
+          var isSlowNet = navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType === "2g");
+          if (!isSlowNet) {
+            preloadGridImages(items);
+            prefetchAllPostsInBackground(items);
+          }
         }
         gridFetchPromise = null;
         return items;
       })
       .catch(function (err) {
+        clearTimeout(timer);
         gridFetchPromise = null;
-        console.warn("[blog grid] Sanity fetch error:", err);
+        console.warn("[blog grid] Sanity fetch note:", err);
         return cached || [];
       });
 
@@ -1212,10 +1290,10 @@ void main(){
     "c-iLbGmI-bwnKsc-lineHeight-28 c-iLbGmI-cdWBIM-weight-400 " +
     "c-iLbGmI-cOWITQ-color-gray12 ";
 
-  function buildCard(item) {
+  function buildCard(item, idx) {
     var cover = item.coverImage || null;
     var assetRef = cover && cover.asset ? cover.asset._ref : null;
-    var mediaSrc = assetRef ? sanityImgUrl(assetRef, 800) : "";
+    var mediaSrc = assetRef ? sanityImgUrl(assetRef, 600) : "";
     var ratio = item.aspectRatio
       ? parseFloat(item.aspectRatio).toFixed(5)
       : "1.40000";
@@ -1223,13 +1301,14 @@ void main(){
     var date = escapeHtml(formatDate(item.postDate));
     var slug = item.slug || "";
     var href = "/blog/post/?slug=" + encodeURIComponent(slug);
+    var loadMode = (typeof idx === "number" && idx < 2) ? "eager" : "lazy";
 
     var mediaEl = mediaSrc
       ? '<img src="' +
       mediaSrc +
       '" alt="' +
       title +
-      '" loading="eager" decoding="async" />'
+      '" loading="' + loadMode + '" decoding="async" />'
       : "";
 
     var mediaHtml =
@@ -1295,7 +1374,7 @@ void main(){
         inner.style.animation = "none";
         return;
       }
-      inner.innerHTML = colItems.map(buildCard).join("");
+      inner.innerHTML = colItems.map(function(item, idx) { return buildCard(item, idx); }).join("");
       requestAnimationFrame(function () {
         if (inner.scrollHeight <= window.innerHeight) {
           inner.style.animation = "none";
@@ -1334,13 +1413,19 @@ void main(){
   );
 
   var gridEl = document.getElementById("blog-grid");
+  if (gridEl) {
+    var cached = readBlogGridCache();
+    if (cached && cached.length) renderColumns(cached);
 
-  var cached = readBlogGridCache();
-  if (gridEl && cached) renderColumns(cached);
-
-  fetchBlogGrid().then(function (items) {
-    if (gridEl && items.length) {
-      renderColumns(items);
-    }
-  });
+    fetchBlogGrid().then(function (items) {
+      if (items && items.length) {
+        var currentJson = cached ? JSON.stringify(cached) : "";
+        var freshJson = JSON.stringify(items);
+        if (currentJson !== freshJson) {
+          renderColumns(items);
+        }
+      }
+    });
+  }
 })();
+
