@@ -503,15 +503,11 @@
     .stack-group {
       display: flex;
       flex-direction: column;
-      gap: 7px;
     }
 
-    .stack-group-title {
-      color: var(--colors-gray10);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+    .stack-group + .stack-group {
+      border-top: 1px solid var(--colors-gray4);
+      padding-top: 10px;
     }
 
     .badges-row {
@@ -901,7 +897,6 @@
           </div>
           <div class="badges-flow">
             <div class="stack-group">
-              <span class="stack-group-title">Languages &amp; Frameworks</span>
               <div class="badges-row">
                 <span class="stack-badge">Java</span>
                 <span class="stack-badge">Python</span>
@@ -916,7 +911,6 @@
               </div>
             </div>
             <div class="stack-group">
-              <span class="stack-group-title">Development &amp; Data</span>
               <div class="badges-row">
                 <span class="stack-badge">Node.js</span>
                 <span class="stack-badge">PostgreSQL</span>
@@ -926,7 +920,6 @@
               </div>
             </div>
             <div class="stack-group">
-              <span class="stack-group-title">Cybersecurity Toolkit</span>
               <div class="badges-row">
                 <span class="stack-badge">Nmap</span>
                 <span class="stack-badge">Burp Suite</span>
