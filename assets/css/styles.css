@@ -271,6 +271,12 @@ strong {
   color: var(--gray11);
 }
 
+.bio-role {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: min(25px, 5vw);
+}
+
 .bio-icon {
   display: inline-block;
   vertical-align: middle;

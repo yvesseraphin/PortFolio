@@ -689,9 +689,10 @@ void main(){
     vec3(noise),0.2),1.0);
 }`;
 
+  const initializeNoiseCanvas = () => {
   try {
     const getH = () => canvas.clientHeight || 340;
-    canvas.width = window.innerWidth;
+    canvas.width = Math.min(window.innerWidth, 1440);
     canvas.height = getH();
 
     const gl = canvas.getContext("webgl2");
@@ -790,6 +791,13 @@ void main(){
       }
     });
   } catch (e) { }
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(initializeNoiseCanvas, { timeout: 1200 });
+  } else {
+    window.setTimeout(initializeNoiseCanvas, 0);
+  }
 })();
 
 (function () {
@@ -1047,11 +1055,6 @@ void main(){
         var items = (data && data.result) || [];
         if (items.length) {
           writeBlogGridCache(items);
-          var isSlowNet = navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType === "2g");
-          if (!isSlowNet) {
-            preloadGridImages(items);
-            prefetchAllPostsInBackground(items);
-          }
         }
         gridFetchPromise = null;
         return items;
@@ -1064,20 +1067,6 @@ void main(){
       });
 
     return cached ? Promise.resolve(cached) : gridFetchPromise;
-  }
-
-  function preloadGridImages(items) {
-    if (!Array.isArray(items)) return;
-    items.forEach(function (item) {
-      if (
-        item.coverImage &&
-        item.coverImage.asset &&
-        item.coverImage.asset._ref
-      ) {
-        var img = new Image();
-        img.src = sanityImgUrl(item.coverImage.asset._ref, 800);
-      }
-    });
   }
 
   var postFetchPromises = {};
@@ -1153,29 +1142,6 @@ void main(){
     }
 
     return cachedObj ? Promise.resolve(cachedObj) : postFetchPromises[slug];
-  }
-
-  function prefetchAllPostsInBackground(items) {
-    if (!Array.isArray(items)) return;
-    var index = 0;
-    function next() {
-      if (index >= items.length) return;
-      var item = items[index++];
-      if (item && item.slug && !isPostCached(item.slug)) {
-        fetchSinglePost(item.slug).then(function () {
-          setTimeout(next, 50);
-        });
-      } else {
-        next();
-      }
-    }
-    if (window.requestIdleCallback) {
-      requestIdleCallback(function () {
-        next();
-      });
-    } else {
-      setTimeout(next, 200);
-    }
   }
 
   function navigateWithPreload(targetUrl, e) {
@@ -1301,14 +1267,16 @@ void main(){
     var date = escapeHtml(formatDate(item.postDate));
     var slug = item.slug || "";
     var href = "/blog/post/?slug=" + encodeURIComponent(slug);
-    var loadMode = (typeof idx === "number" && idx < 2) ? "eager" : "lazy";
+    var isFirstCard = typeof idx === "number" && idx === 0;
+    var loadMode = isFirstCard ? "eager" : "lazy";
 
     var mediaEl = mediaSrc
       ? '<img src="' +
       mediaSrc +
       '" alt="' +
       title +
-      '" loading="' + loadMode + '" decoding="async" />'
+      '" loading="' + loadMode + '" decoding="async"' +
+      (isFirstCard ? ' fetchpriority="high"' : '') + ' />'
       : "";
 
     var mediaHtml =
