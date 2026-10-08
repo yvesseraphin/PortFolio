@@ -500,6 +500,20 @@
       gap: 10px;
     }
 
+    .stack-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .stack-group-title {
+      color: var(--colors-gray10);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
     .badges-row {
       display: flex;
       flex-wrap: wrap;
@@ -882,26 +896,48 @@
                 <path d="M2 17.5L12 22.5L22 17.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
-              <span>Languages, Frameworks &amp; Tools</span>
+              <span>Technical Skills</span>
             </div>
           </div>
           <div class="badges-flow">
-            <div class="badges-row">
-              <span class="stack-badge">Python</span>
-              <span class="stack-badge">Java</span>
-              <span class="stack-badge">TypeScript</span>
-              <span class="stack-badge">JavaScript</span>
-              <span class="stack-badge">C</span>
-              <span class="stack-badge">React</span>
+            <div class="stack-group">
+              <span class="stack-group-title">Languages &amp; Frameworks</span>
+              <div class="badges-row">
+                <span class="stack-badge">Java</span>
+                <span class="stack-badge">Python</span>
+                <span class="stack-badge">JavaScript</span>
+                <span class="stack-badge">TypeScript</span>
+                <span class="stack-badge">C</span>
+                <span class="stack-badge">C++</span>
+                <span class="stack-badge">Spring Boot</span>
+                <span class="stack-badge">React</span>
+                <span class="stack-badge">Express.js</span>
+                <span class="stack-badge">FastAPI</span>
+              </div>
             </div>
-            <div class="badges-row">
-              <span class="stack-badge">Node.js</span>
-              <span class="stack-badge">PostgreSQL</span>
-              <span class="stack-badge">Docker</span>
-              <span class="stack-badge">Linux</span>
-              <span class="stack-badge">Wireshark</span>
-              <span class="stack-badge">Kali Linux</span>
-              <span class="stack-badge">Git</span>
+            <div class="stack-group">
+              <span class="stack-group-title">Development &amp; Data</span>
+              <div class="badges-row">
+                <span class="stack-badge">Node.js</span>
+                <span class="stack-badge">PostgreSQL</span>
+                <span class="stack-badge">Docker</span>
+                <span class="stack-badge">Git</span>
+                <span class="stack-badge">Linux</span>
+              </div>
+            </div>
+            <div class="stack-group">
+              <span class="stack-group-title">Cybersecurity Toolkit</span>
+              <div class="badges-row">
+                <span class="stack-badge">Nmap</span>
+                <span class="stack-badge">Burp Suite</span>
+                <span class="stack-badge">OWASP ZAP</span>
+                <span class="stack-badge">Wireshark</span>
+                <span class="stack-badge">Kali Linux</span>
+                <span class="stack-badge">Metasploit</span>
+                <span class="stack-badge">Ghidra</span>
+                <span class="stack-badge">Semgrep</span>
+                <span class="stack-badge">Trivy</span>
+              </div>
             </div>
           </div>
         </div>
