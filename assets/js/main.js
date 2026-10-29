@@ -391,7 +391,7 @@
   }
 
   const track = document.querySelector("[data-carousel]");
-  if (!track || track.hasAttribute("data-static")) return;
+  if (!track) return;
 
   const N_CARDS = 8;
   const CARD_W = 340;
@@ -452,7 +452,10 @@
   window.addEventListener(
     "wheel",
     (e) => {
-      if (window.matchMedia("(max-width: 720px)").matches) return;
+      if (
+        track.hasAttribute("data-static") ||
+        window.matchMedia("(max-width: 720px)").matches
+      ) return;
       e.preventDefault();
       const delta = e.deltaY + e.deltaX;
       scrollN = uZ(scrollN + delta, -MAX_SCROLL, MAX_SCROLL);
@@ -464,6 +467,7 @@
 
   // Keyboard navigation
   document.addEventListener("keydown", (e) => {
+    if (track.hasAttribute("data-static")) return;
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     const dir = e.key === "ArrowRight" ? 1 : -1;
     const nSpeed = e.shiftKey ? 500 : 10;
@@ -747,10 +751,12 @@ void main(){
       t0 = Date.now(),
       rafId = null,
       isLooping = false,
-      idleTimer = null;
+      lastFrame = 0;
 
     function renderFrame() {
       const now = Date.now();
+      if (now - lastFrame < 1000 / 30) return;
+      lastFrame = now;
       elapsed += (now - t0) / 2000;
       t0 = now;
       gl.uniform1f(uTime, elapsed);
@@ -767,17 +773,20 @@ void main(){
           rafId = requestAnimationFrame(tick);
         })();
       }
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => {
-        isLooping = false;
-        cancelAnimationFrame(rafId);
-      }, 1200);
     }
 
     // Render single initial frame so shader is ready without continuous background drain
     renderFrame();
 
     window.__wakeNoiseCanvas = startLoop;
+    startLoop();
+    const noiseWrap = canvas.closest(".noise-canvas-wrap");
+    if (noiseWrap) {
+      noiseWrap.style.opacity = "1";
+      noiseWrap.style.mixBlendMode = document.documentElement.classList.contains("dark")
+        ? "color-burn"
+        : "color-dodge";
+    }
     window.addEventListener("scroll", startLoop, { passive: true });
     window.addEventListener("wheel", startLoop, { passive: true });
     window.addEventListener("pointerdown", startLoop, { passive: true });
@@ -788,6 +797,7 @@ void main(){
         cancelAnimationFrame(rafId);
       } else {
         renderFrame();
+        startLoop();
       }
     });
   } catch (e) { }
