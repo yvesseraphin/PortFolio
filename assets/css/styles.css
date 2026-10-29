@@ -92,6 +92,53 @@ body {
   margin: 0;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
+.not-found-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.not-found-content {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  color: var(--gray12);
+  text-align: center;
+}
+
+.not-found-content h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.not-found-content p {
+  border-left: 1px solid var(--gray7);
+  padding: 8px 0 8px 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  .not-found-content {
+    gap: 14px;
+  }
+
+  .not-found-content p {
+    padding-left: 14px;
+    font-size: 13px;
+  }
+}
+
 ::selection {
   background: #fff9a8;
   color: black;
