@@ -13,6 +13,35 @@
   ],
   "headers": [
     {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-4uZodEmjIS1LXF5ZUSqDLOAkI8qEHG7eQl+FzZ4O/k4=' 'sha256-UePtqgdGYenDNaY5YRQB24ngRqLO/yGPsBIvrdU5YH4=' 'sha256-lcXBNxkow4RkzG3cPee+7DX5Pr/yPMm+cjwb2dH/iBI=' 'sha256-Xu56lRJN1pHtZzMiUh6j+O8NAp91AicwfcbpocPF72I=' 'sha256-nuo7AlGhyfmeotVzlznQgxZEunLtL2tOXnmK/vqjoLM=' 'sha256-NXR0/JAnFuVSnz+iUAbvNMgTv3yKx30GNOdr+1JY8gQ=' 'sha256-PyswbUfFLFJBtP5bBvMjQToZ+JLgVQzN6Kt7Pdn4NdQ='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io; font-src 'self' data:; connect-src 'self' https://m77bsvm1.apicdn.sanity.io; media-src 'self' https://cdn.sanity.io; upgrade-insecure-requests"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000"
+        }
+      ]
+    },
+    {
       "source": "/sitemap.xml",
       "headers": [
         {

@@ -39,6 +39,18 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
   }
+  function safeHref(value) {
+    try {
+      var raw = String(value || "").trim();
+      if (!raw) return "";
+      var url = new URL(raw, window.location.href);
+      if (!["http:", "https:", "mailto:"].includes(url.protocol)) return "";
+      if (!/^(https?:|mailto:)/i.test(raw) && url.origin !== window.location.origin) return "";
+      return url.href;
+    } catch (e) {
+      return "";
+    }
+  }
   function slugify(str) {
     return String(str || "")
       .toLowerCase()
@@ -273,12 +285,13 @@
             var def = (markDefs || []).find(function (d) {
               return d._key === mark;
             });
-            if (def && def._type === "link" && def.href) {
+            var href = def && def._type === "link" ? safeHref(def.href) : "";
+            if (href) {
               text =
                 '<a class="' +
                 P +
                 ' c-iLbGmI-ikkecHh-css" href="' +
-                esc(def.href) +
+                esc(href) +
                 '" target="_blank" rel="noopener noreferrer">' +
                 text +
                 "</a>";
@@ -314,10 +327,11 @@
       '<ol class="c-lesPJm c-lesPJm-iilMZTZ-css c-lesPJm-ildRkSF-css" style="color:var(--colors-gray12);padding-left:20px;margin-top:12px">';
     items.forEach(function (item) {
       html += '<li style="color:var(--colors-gray12);margin-bottom:8px">';
-      if (item && item.url) {
+      var href = safeHref(item && item.url);
+      if (href) {
         html +=
           '<a href="' +
-          esc(item.url) +
+          esc(href) +
           '" target="_blank" rel="noopener noreferrer" class="' +
           LINK_CLS +
           '">' +

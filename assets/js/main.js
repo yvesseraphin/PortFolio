@@ -1282,7 +1282,7 @@ void main(){
 
     var mediaEl = mediaSrc
       ? '<img src="' +
-      mediaSrc +
+      escapeHtml(mediaSrc) +
       '" alt="' +
       title +
       '" loading="' + loadMode + '" decoding="async"' +
