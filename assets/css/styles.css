@@ -492,6 +492,11 @@ strong {
   -webkit-user-select: none;
 }
 
+.carousel-track[data-static] {
+  pointer-events: none;
+  cursor: default;
+}
+
 .carousel-track:active {
   cursor: grabbing;
 }

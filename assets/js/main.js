@@ -391,7 +391,7 @@
   }
 
   const track = document.querySelector("[data-carousel]");
-  if (!track) return;
+  if (!track || track.hasAttribute("data-static")) return;
 
   const N_CARDS = 8;
   const CARD_W = 340;
