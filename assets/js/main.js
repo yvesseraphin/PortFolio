@@ -404,9 +404,8 @@
   function getDerived() {
     const i = scrollN < -250 ? -1 * scrollN - 250 : scrollN;
     const a = uZ(0.2 * i, 0, 250);
-    const l = uZ(1 - 0.002 * i, 0, 1);
-    const s = 1 - l === 1;
-    return { i, a, l, s };
+    const s = i >= 500;
+    return { i, a, s };
   }
 
   let trackOffset = 0;
@@ -416,10 +415,8 @@
     track.style.transform = `translate3d(${-trackOffset}px, 0, 0) translateZ(0)`;
   }
 
-  const noiseWrap = document.querySelector(".noise-canvas-wrap");
-
   function onScroll() {
-    const { i, a, l, s } = getDerived();
+    const { i, a, s } = getDerived();
 
     updateLetterParallax(i, a);
 
@@ -438,14 +435,6 @@
       if (s) btn.style.removeProperty("opacity");
       else btn.style.setProperty("opacity", "0");
     });
-
-    if (noiseWrap) {
-      noiseWrap.style.opacity = String(l);
-      noiseWrap.style.mixBlendMode = isDark ? "color-burn" : "color-dodge";
-      if (l > 0.01 && window.__wakeNoiseCanvas) {
-        window.__wakeNoiseCanvas();
-      }
-    }
   }
 
   // Wheel scrolling
@@ -503,7 +492,6 @@
       track.setPointerCapture(e.pointerId);
     } catch (_) { }
     track.style.cursor = "grabbing";
-    if (window.__wakeNoiseCanvas) window.__wakeNoiseCanvas();
   }
 
   track.addEventListener("pointerdown", onPointerDown);
@@ -618,196 +606,6 @@
   });
 
   onScroll();
-})();
-
-(function () {
-  "use strict";
-
-  const canvas = document.getElementById("noise-canvas");
-  if (!canvas) return;
-
-  const VERT = `#version 300 es
-in vec4 position;
-void main(){ gl_Position = position; }`;
-
-  const FRAG = `#version 300 es
-precision mediump float;
-out vec4 fragColor;
-uniform float time;
-uniform float width;
-uniform float height;
-float blendOverlay(float b,float bl){return b<0.5?(2.0*b*bl):(1.0-2.0*(1.0-b)*(1.0-bl));}
-vec3 blendOverlay(vec3 b,vec3 bl){return vec3(blendOverlay(b.r,bl.r),blendOverlay(b.g,bl.g),blendOverlay(b.b,bl.b));}
-vec3 blendOverlay(vec3 b,vec3 bl,float op){return(blendOverlay(b,bl)*op+b*(1.0-op));}
-float random(in vec2 st){return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123);}
-vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
-vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
-vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
-vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
-vec3 fade(vec3 t){return t*t*t*(t*(t*6.0-15.0)+10.0);}
-float cnoise(vec3 P){
-  vec3 Pi0=floor(P),Pi1=Pi0+vec3(1.0);
-  Pi0=mod289(Pi0);Pi1=mod289(Pi1);
-  vec3 Pf0=fract(P),Pf1=Pf0-vec3(1.0);
-  vec4 ix=vec4(Pi0.x,Pi1.x,Pi0.x,Pi1.x);
-  vec4 iy=vec4(Pi0.yy,Pi1.yy);
-  vec4 iz0=Pi0.zzzz,iz1=Pi1.zzzz;
-  vec4 ixy=permute(permute(ix)+iy);
-  vec4 ixy0=permute(ixy+iz0),ixy1=permute(ixy+iz1);
-  vec4 gx0=ixy0*(1.0/7.0),gy0=fract(floor(gx0)*(1.0/7.0))-0.5;
-  gx0=fract(gx0);
-  vec4 gz0=vec4(0.5)-abs(gx0)-abs(gy0),sz0=step(gz0,vec4(0.0));
-  gx0-=sz0*(step(0.0,gx0)-0.5);gy0-=sz0*(step(0.0,gy0)-0.5);
-  vec4 gx1=ixy1*(1.0/7.0),gy1=fract(floor(gx1)*(1.0/7.0))-0.5;
-  gx1=fract(gx1);
-  vec4 gz1=vec4(0.5)-abs(gx1)-abs(gy1),sz1=step(gz1,vec4(0.0));
-  gx1-=sz1*(step(0.0,gx1)-0.5);gy1-=sz1*(step(0.0,gy1)-0.5);
-  vec3 g000=vec3(gx0.x,gy0.x,gz0.x),g100=vec3(gx0.y,gy0.y,gz0.y);
-  vec3 g010=vec3(gx0.z,gy0.z,gz0.z),g110=vec3(gx0.w,gy0.w,gz0.w);
-  vec3 g001=vec3(gx1.x,gy1.x,gz1.x),g101=vec3(gx1.y,gy1.y,gz1.y);
-  vec3 g011=vec3(gx1.z,gy1.z,gz1.z),g111=vec3(gx1.w,gy1.w,gz1.w);
-  vec4 norm0=taylorInvSqrt(vec4(dot(g000,g000),dot(g010,g010),dot(g100,g100),dot(g110,g110)));
-  g000*=norm0.x;g010*=norm0.y;g100*=norm0.z;g110*=norm0.w;
-  vec4 norm1=taylorInvSqrt(vec4(dot(g001,g001),dot(g011,g011),dot(g101,g101),dot(g111,g111)));
-  g001*=norm1.x;g011*=norm1.y;g101*=norm1.z;g111*=norm1.w;
-  float n000=dot(g000,Pf0),n100=dot(g100,vec3(Pf1.x,Pf0.yz));
-  float n010=dot(g010,vec3(Pf0.x,Pf1.y,Pf0.z)),n110=dot(g110,vec3(Pf1.xy,Pf0.z));
-  float n001=dot(g001,vec3(Pf0.xy,Pf1.z)),n101=dot(g101,vec3(Pf1.x,Pf0.y,Pf1.z));
-  float n011=dot(g011,vec3(Pf0.x,Pf1.yz)),n111=dot(g111,Pf1);
-  vec3 fade_xyz=fade(Pf0);
-  vec4 n_z=mix(vec4(n000,n100,n010,n110),vec4(n001,n101,n011,n111),fade_xyz.z);
-  vec2 n_yz=mix(n_z.xy,n_z.zw,fade_xyz.y);
-  return 2.2*mix(n_yz.x,n_yz.y,fade_xyz.x);
-}
-vec3 palette(in float t,in vec3 a,in vec3 b,in vec3 c,in vec3 d){return a+b*cos(6.4*(c*t+d));}
-void main(){
-  vec2 res=vec2(width,height);
-  vec2 vUv=gl_FragCoord.xy/res.xy;
-  vec2 uv=vUv*6.0;
-  float t=time*2.0;
-  vec2 st=gl_FragCoord.xy/res.xy;
-  float noise=random(st);
-  fragColor=vec4(blendOverlay(
-    palette(cnoise(vec3(uv.x,uv.y+sin(uv.x+1.15+t)*3.0,t)*0.4),
-      vec3(0.45,0.29,0.45),vec3(0.5,0.3,0.1),vec3(1.0,1.1,1.1),vec3(0.38,0.25,1.1)),
-    vec3(noise),0.2),1.0);
-}`;
-
-  const initializeNoiseCanvas = () => {
-  try {
-    const getH = () => canvas.clientHeight || 340;
-    canvas.width = Math.min(window.innerWidth, 1440);
-    canvas.height = getH();
-
-    const gl = canvas.getContext("webgl2");
-    if (!gl) return;
-
-    function sh(src, type) {
-      const s = gl.createShader(type);
-      gl.shaderSource(s, src);
-      gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.warn(gl.getShaderInfoLog(s));
-        return null;
-      }
-      return s;
-    }
-
-    const prog = gl.createProgram();
-    const vs = sh(VERT, gl.VERTEX_SHADER);
-    const fs = sh(FRAG, gl.FRAGMENT_SHADER);
-    if (!vs || !fs) return;
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
-
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]),
-      gl.STATIC_DRAW,
-    );
-    const posLoc = gl.getAttribLocation(prog, "position");
-    gl.enableVertexAttribArray(posLoc);
-    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 8, 0);
-
-    const uTime = gl.getUniformLocation(prog, "time");
-    const uWidth = gl.getUniformLocation(prog, "width");
-    const uHeight = gl.getUniformLocation(prog, "height");
-    gl.uniform1f(uWidth, canvas.width);
-    gl.uniform1f(uHeight, canvas.height);
-
-    window.addEventListener("resize", () => {
-      canvas.width = Math.min(window.innerWidth, 1440);
-      canvas.height = getH();
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform1f(uWidth, canvas.width);
-      gl.uniform1f(uHeight, canvas.height);
-    });
-
-    let elapsed = 0,
-      t0 = Date.now(),
-      rafId = null,
-      isLooping = false,
-      lastFrame = 0;
-
-    function renderFrame() {
-      const now = Date.now();
-      if (now - lastFrame < 1000 / 30) return;
-      lastFrame = now;
-      elapsed += (now - t0) / 2000;
-      t0 = now;
-      gl.uniform1f(uTime, elapsed);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    }
-
-    function startLoop() {
-      t0 = Date.now();
-      if (!isLooping) {
-        isLooping = true;
-        (function tick() {
-          if (!isLooping) return;
-          renderFrame();
-          rafId = requestAnimationFrame(tick);
-        })();
-      }
-    }
-
-    // Render single initial frame so shader is ready without continuous background drain
-    renderFrame();
-
-    window.__wakeNoiseCanvas = startLoop;
-    startLoop();
-    const noiseWrap = canvas.closest(".noise-canvas-wrap");
-    if (noiseWrap) {
-      noiseWrap.style.opacity = "1";
-      noiseWrap.style.mixBlendMode = document.documentElement.classList.contains("dark")
-        ? "color-burn"
-        : "color-dodge";
-    }
-    window.addEventListener("scroll", startLoop, { passive: true });
-    window.addEventListener("wheel", startLoop, { passive: true });
-    window.addEventListener("pointerdown", startLoop, { passive: true });
-    window.addEventListener("touchmove", startLoop, { passive: true });
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        isLooping = false;
-        cancelAnimationFrame(rafId);
-      } else {
-        renderFrame();
-        startLoop();
-      }
-    });
-  } catch (e) { }
-  };
-
-  if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(initializeNoiseCanvas, { timeout: 1200 });
-  } else {
-    window.setTimeout(initializeNoiseCanvas, 0);
-  }
 })();
 
 (function () {
